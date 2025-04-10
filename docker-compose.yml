@@ -1,0 +1,7 @@
+version: '3.8'
+
+services:
+  cartas:
+    build: .  # Usa el contexto actual (donde está el Dockerfile)
+    ports:
+      - "8080:8080"  # Mapea el puerto 8080 de tu contenedor al puerto 8080 de tu máquina
