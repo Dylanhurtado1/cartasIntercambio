@@ -4,6 +4,8 @@ import com.example.cartasIntercambio.dto.CartaDto;
 import com.example.cartasIntercambio.service.CartaServiceImpl;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,14 +24,15 @@ public class CartaController {
   }
 
   @PostMapping
-  public CartaDto crearCarta(@RequestBody CartaDto cartaDTO) {
+  public ResponseEntity<CartaDto> crearCarta(@RequestBody CartaDto cartaDTO) {
     cartaService.guardarCarta(cartaDTO);
-    return cartaDTO;
+    return new ResponseEntity<>(cartaDTO, HttpStatus.CREATED);
   }
 
   @GetMapping
-  public List<CartaDto> listarCartas() {
-    return cartaService.listarCartas();
+  public ResponseEntity<List<CartaDto>> listarCartas() {
+    List<CartaDto> cartas = cartaService.listarCartas();
+    return new ResponseEntity<>(cartas, HttpStatus.OK);
   }
 
 
