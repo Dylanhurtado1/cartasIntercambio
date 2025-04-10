@@ -51,15 +51,15 @@ La estructura del proyecto es la siguiente:
 
 Navega al directorio del proyecto:
 
-cd cartasIntercambio
+```bash cd cartasIntercambio```
 
 Compila el proyecto:
 
-mvn clean package
+```mvn clean package```
 
 Construye y ejecuta el contenedor:
 
-docker-compose up
+```docker-compose up```
 
 Accede a la API:
 
