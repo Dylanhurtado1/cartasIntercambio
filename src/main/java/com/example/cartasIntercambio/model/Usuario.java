@@ -9,10 +9,12 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Oferta {
-  private Date fecha;
-  private Publicacion publicacion;
-  private Double monto;
-  private Usuario oferente;
-  private String estado;
+public class Usuario {
+
+    private String user;
+    private String nombre;
+    private String apellido;
+    private String email;
+    private Date fechaNacimiento;
+
 }

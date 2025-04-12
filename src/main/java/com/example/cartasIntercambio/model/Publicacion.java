@@ -5,14 +5,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Oferta {
-  private Date fecha;
-  private Publicacion publicacion;
-  private Double monto;
-  private Usuario oferente;
-  private String estado;
+public class Publicacion {
+    private Date fecha;
+    private Demanda demanda;
+    private List<Oferta> ofertas;
+    private Usuario dueno;
+    private String estado;
+
 }
