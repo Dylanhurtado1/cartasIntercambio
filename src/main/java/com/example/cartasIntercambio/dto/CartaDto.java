@@ -13,6 +13,4 @@ public class CartaDto {
   private String nombre;
   private String estado;
   private List<String> imagenes;
-  private Double valorEstimado;
-  private List<String> cartasInteres;
 }

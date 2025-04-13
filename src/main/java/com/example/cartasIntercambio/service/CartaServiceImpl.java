@@ -22,12 +22,10 @@ public class CartaServiceImpl implements ICartaService {
   @Override
   public void guardarCarta(CartaDto cartaDTO) {
     Carta carta = new Carta(
-        cartaDTO.getJuego(),
         cartaDTO.getNombre(),
+        cartaDTO.getJuego(),
         cartaDTO.getEstado(),
-        cartaDTO.getImagenes(),
-        cartaDTO.getValorEstimado(),
-        cartaDTO.getCartasInteres()
+        cartaDTO.getImagenes()
     );
     cartaRepositoryImpl.save(carta);
   }
@@ -40,9 +38,7 @@ public class CartaServiceImpl implements ICartaService {
             carta.getJuego(),
             carta.getNombre(),
             carta.getEstado(),
-            carta.getImagenes(),
-            carta.getValorEstimado(),
-            carta.getCartasInteres()
+            carta.getImagenes()
         ))
         .collect(Collectors.toList());
   }
@@ -57,9 +53,7 @@ public class CartaServiceImpl implements ICartaService {
         carta.getJuego(),
         carta.getNombre(),
         carta.getEstado(),
-        carta.getImagenes(),
-        carta.getValorEstimado(),
-        carta.getCartasInteres()
+        carta.getImagenes()
     )).collect(Collectors.toList());
   }
 
@@ -73,9 +67,7 @@ public class CartaServiceImpl implements ICartaService {
         carta.getJuego(),
         carta.getNombre(),
         carta.getEstado(),
-        carta.getImagenes(),
-        carta.getValorEstimado(),
-        carta.getCartasInteres()
+        carta.getImagenes()
     )).collect(Collectors.toList());
   }
 
@@ -89,9 +81,8 @@ public class CartaServiceImpl implements ICartaService {
         carta.getJuego(),
         carta.getNombre(),
         carta.getEstado(),
-        carta.getImagenes(),
-        carta.getValorEstimado(),
-        carta.getCartasInteres()
+        carta.getImagenes()
     )).collect(Collectors.toList());
   }
+
 }
