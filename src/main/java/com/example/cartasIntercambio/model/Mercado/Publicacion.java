@@ -1,5 +1,6 @@
 package com.example.cartasIntercambio.model.Mercado;
 
+import com.example.cartasIntercambio.dto.PublicacionDto;
 import com.example.cartasIntercambio.model.Usuario.Usuario;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Publicacion {
+    private Long id;
     private Date fecha;
     private String descripcion;
     private Demanda demanda;

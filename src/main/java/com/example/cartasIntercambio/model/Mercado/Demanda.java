@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 public class Demanda {
 
-    private List<Carta> cartasOfrecidads;
+    private List<Carta> cartasOfrecidas;
     private String descripcion;
     private Double precio;
     private List<Carta> cartasInteres;

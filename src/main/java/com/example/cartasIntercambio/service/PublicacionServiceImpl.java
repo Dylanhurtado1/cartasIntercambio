@@ -1,7 +1,9 @@
 package com.example.cartasIntercambio.service;
 
+import com.example.cartasIntercambio.dto.CartaDto;
 import com.example.cartasIntercambio.dto.PublicacionDto;
 import com.example.cartasIntercambio.model.Mercado.Publicacion;
+import com.example.cartasIntercambio.model.Producto_Carta.Carta;
 import com.example.cartasIntercambio.repository.PublicacionRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,8 @@ public class PublicacionServiceImpl implements IPublicacionService {
         this.publicacionRepository = publicacionRepository;
     }
 
+    
+    @Override
     public List<PublicacionDto> listarPublicaciones() {
         List<Publicacion> publicaciones = publicacionRepository.findAll();
 
@@ -29,6 +33,20 @@ public class PublicacionServiceImpl implements IPublicacionService {
                 publicacion.getPublicador(),
                 publicacion.getEstado()
         )).collect(Collectors.toList());
+    }
+    
+    @Override
+    public void guardarPublicacion(PublicacionDto nuevaPublicacionDto) {
+        Publicacion nuevaPublicacion = new Publicacion(
+            null,
+            nuevaPublicacionDto.getFecha(),
+            nuevaPublicacionDto.getDescripcion(),
+            nuevaPublicacionDto.getDemanda(),
+            nuevaPublicacionDto.getOfertas(),
+            nuevaPublicacionDto.getPublicador(),
+            nuevaPublicacionDto.getEstado()
+        );
+        publicacionRepository.save(nuevaPublicacion);
     }
 
 }

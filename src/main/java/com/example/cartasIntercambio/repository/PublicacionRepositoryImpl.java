@@ -14,8 +14,9 @@ public class PublicacionRepositoryImpl implements IPublicacionRepository {
   private List<Publicacion> publicaciones = new ArrayList<>();
 
   @Override
-  public void save(Publicacion Publicacion) {
-    publicaciones.add(Publicacion);
+  public void save(Publicacion NuevaPublicacion) {
+    NuevaPublicacion.setId((long) (publicaciones.size() + 1));
+    publicaciones.add(NuevaPublicacion);
   }
 
   @Override
