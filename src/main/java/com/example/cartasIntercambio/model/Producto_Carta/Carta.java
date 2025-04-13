@@ -1,4 +1,4 @@
-package com.example.cartasIntercambio.model;
+package com.example.cartasIntercambio.model.Producto_Carta;
 
 import java.util.List;
 import lombok.AllArgsConstructor;

@@ -1,12 +1,14 @@
 package com.example.cartasIntercambio.repository;
 
-import com.example.cartasIntercambio.model.Carta;
+import com.example.cartasIntercambio.model.Producto_Carta.Carta;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.example.cartasIntercambio.repository.irepository.ICartaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class CartaRepositoryImpl implements ICartaRepository{
+public class CartaRepositoryImpl implements ICartaRepository {
 
   private List<Carta> cartas = new ArrayList<>();
 

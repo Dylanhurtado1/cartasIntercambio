@@ -1,7 +1,7 @@
 package com.example.cartasIntercambio.service;
 
 import com.example.cartasIntercambio.dto.CartaDto;
-import com.example.cartasIntercambio.model.Carta;
+import com.example.cartasIntercambio.model.Producto_Carta.Carta;
 import com.example.cartasIntercambio.repository.CartaRepositoryImpl;
 import java.util.ArrayList;
 import java.util.List;

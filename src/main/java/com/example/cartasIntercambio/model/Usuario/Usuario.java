@@ -1,4 +1,4 @@
-package com.example.cartasIntercambio.model;
+package com.example.cartasIntercambio.model.Usuario;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

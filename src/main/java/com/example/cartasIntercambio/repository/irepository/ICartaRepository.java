@@ -1,6 +1,6 @@
-package com.example.cartasIntercambio.repository;
+package com.example.cartasIntercambio.repository.irepository;
 
-import com.example.cartasIntercambio.model.Carta;
+import com.example.cartasIntercambio.model.Producto_Carta.Carta;
 import java.util.List;
 
 public interface ICartaRepository {
