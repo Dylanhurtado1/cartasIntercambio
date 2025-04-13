@@ -21,4 +21,8 @@ public class Publicacion {
     private Usuario publicador;
     private String estado;
 
+    public void agregarOferta(Oferta oferta) {
+        ofertas.add(oferta);
+    }
+
 }

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class PublicacionRepositoryImpl implements IPublicacionRepository {
@@ -28,4 +29,16 @@ public class PublicacionRepositoryImpl implements IPublicacionRepository {
   public List<Publicacion> findByPublicador(Usuario publicador) {
     return publicaciones.stream().filter(publicacion -> publicacion.getPublicador().equals(publicador)).toList();
   }
+
+  @Override
+  public Optional<Publicacion> findById(Long id) {
+    if (id == null) {
+      return Optional.empty();
+    }
+
+    return publicaciones.stream().filter(
+            publicacion -> publicacion.getId().equals(id)
+    ).findFirst();
+  }
+
 }

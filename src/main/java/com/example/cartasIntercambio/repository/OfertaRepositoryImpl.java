@@ -25,6 +25,6 @@ public class OfertaRepositoryImpl implements IOfertaRepository {
 
   @Override
   public List<Oferta> findByOferente(Usuario oferente) {
-    return ofertas.stream().filter(carta -> carta.getOferente().equals(oferente)).toList();
+    return ofertas.stream().filter(carta -> carta.getOfertante().equals(oferente)).toList();
   }
 }

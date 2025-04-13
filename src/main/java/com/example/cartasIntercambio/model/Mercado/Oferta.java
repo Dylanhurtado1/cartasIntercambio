@@ -17,6 +17,6 @@ public class Oferta {
   private Publicacion publicacion;
   private Double monto;
   private List<Carta> cartasOfrecidas;
-  private Usuario oferente;
+  private Usuario ofertante;
   private String estado;
 }
