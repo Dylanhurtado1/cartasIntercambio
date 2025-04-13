@@ -15,4 +15,12 @@ public interface IPublicacionService {
 
     void guardarPublicacion(PublicacionDto nuevaPublicacionDto);
 
+    List<PublicacionDto> buscarPublicacionPorNombre(String nombre);
+    List<PublicacionDto> buscarPublicacionPorJuego(String juego);
+    List<PublicacionDto> buscarPublicacionPorEstadoDeCarta(String estado);
+    List<PublicacionDto> buscarPublicacionPorPrecio(Float precio);
+
+
+    
+
 }

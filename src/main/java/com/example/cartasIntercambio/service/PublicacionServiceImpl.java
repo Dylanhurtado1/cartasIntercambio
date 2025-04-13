@@ -8,6 +8,7 @@ import com.example.cartasIntercambio.repository.PublicacionRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,6 +49,70 @@ public class PublicacionServiceImpl implements IPublicacionService {
             nuevaPublicacionDto.getEstado()
         );
         publicacionRepository.save(nuevaPublicacion);
+    }
+
+    @Override
+    public List<PublicacionDto> buscarPublicacionPorNombre(String nombre) {
+        List<Publicacion> lista = publicacionRepository.findByCardName(nombre);
+        
+        return lista.stream().map(
+        publicacion -> new PublicacionDto(
+            publicacion.getId(),
+            publicacion.getFecha(),
+            publicacion.getDescripcion(),
+            publicacion.getDemanda(),
+            publicacion.getOfertas(),
+            publicacion.getPublicador(),
+            publicacion.getEstado()
+        )).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<PublicacionDto> buscarPublicacionPorJuego(String juego) {
+        List<Publicacion> lista = publicacionRepository.findByGameName(juego);
+        
+        return lista.stream().map(
+        publicacion -> new PublicacionDto(
+            publicacion.getId(),
+            publicacion.getFecha(),
+            publicacion.getDescripcion(),
+            publicacion.getDemanda(),
+            publicacion.getOfertas(),
+            publicacion.getPublicador(),
+            publicacion.getEstado()
+        )).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<PublicacionDto> buscarPublicacionPorEstadoDeCarta(String estado) {
+        List<Publicacion> lista = publicacionRepository.findByCardState(estado);
+        
+        return lista.stream().map(
+        publicacion -> new PublicacionDto(
+            publicacion.getId(),
+            publicacion.getFecha(),
+            publicacion.getDescripcion(),
+            publicacion.getDemanda(),
+            publicacion.getOfertas(),
+            publicacion.getPublicador(),
+            publicacion.getEstado()
+        )).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<PublicacionDto> buscarPublicacionPorPrecio(Float precio) {
+        List<Publicacion> lista = publicacionRepository.findByCost(precio);
+        
+        return lista.stream().map(
+        publicacion -> new PublicacionDto(
+            publicacion.getId(),
+            publicacion.getFecha(),
+            publicacion.getDescripcion(),
+            publicacion.getDemanda(),
+            publicacion.getOfertas(),
+            publicacion.getPublicador(),
+            publicacion.getEstado()
+        )).collect(Collectors.toList());
     }
 
 }
