@@ -26,6 +26,7 @@ public class PublicacionServiceImpl implements IPublicacionService {
         List<Publicacion> publicaciones = publicacionRepository.findAll();
 
         return publicaciones.stream().map(publicacion -> new PublicacionDto(
+                publicacion.getId(),
                 publicacion.getFecha(),
                 publicacion.getDescripcion(),
                 publicacion.getDemanda(),
@@ -38,7 +39,7 @@ public class PublicacionServiceImpl implements IPublicacionService {
     @Override
     public void guardarPublicacion(PublicacionDto nuevaPublicacionDto) {
         Publicacion nuevaPublicacion = new Publicacion(
-            null,
+            null, //se sube sin ningun ID
             nuevaPublicacionDto.getFecha(),
             nuevaPublicacionDto.getDescripcion(),
             nuevaPublicacionDto.getDemanda(),

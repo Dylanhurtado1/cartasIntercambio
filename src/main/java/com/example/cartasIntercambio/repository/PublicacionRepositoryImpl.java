@@ -15,7 +15,7 @@ public class PublicacionRepositoryImpl implements IPublicacionRepository {
 
   @Override
   public void save(Publicacion NuevaPublicacion) {
-    NuevaPublicacion.setId((long) (publicaciones.size() + 1));
+    NuevaPublicacion.setId((long) (publicaciones.size() + 1)); //al no tener ninguna DB, por ahora el ID será la posición del array
     publicaciones.add(NuevaPublicacion);
   }
 

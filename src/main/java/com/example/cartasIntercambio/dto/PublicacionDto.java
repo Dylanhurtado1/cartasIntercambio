@@ -16,6 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PublicacionDto {
+    private Long ID;
     private Date fecha;
     private String descripcion;
     private Demanda demanda;
