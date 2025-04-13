@@ -13,4 +13,12 @@ public interface IPublicacionService {
 
     void crearOferta(Long idPublicacion, OfertaDto ofertaDto);
 
+    List<PublicacionDto> buscarPublicacionPorNombre(String nombre);
+
+    List<PublicacionDto> buscarPublicacionPorJuego(String juego);
+
+    List<PublicacionDto> buscarPublicacionPorEstadoDeCarta(String estado);
+
+    List<PublicacionDto> buscarPublicacionPorPrecio(Float precio);
+
 }

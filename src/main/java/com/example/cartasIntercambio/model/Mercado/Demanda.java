@@ -14,6 +14,6 @@ public class Demanda {
 
     private List<Carta> cartasOfrecidas;
     private String descripcion;
-    private Double precio;
+    private Float precio;
     private List<Carta> cartasInteres;
 }

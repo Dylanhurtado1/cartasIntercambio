@@ -16,4 +16,12 @@ public interface IPublicacionRepository {
 
   Optional<Publicacion> findById(Long id);
 
+  List<Publicacion> findByCardName(String name);
+
+  List<Publicacion> findByGameName(String game);
+
+  List<Publicacion> findByCardState(String state);
+
+  List<Publicacion> findByCost(Float precio);
+
 }
