@@ -7,7 +7,9 @@ import com.example.cartasIntercambio.model.Mercado.Publicacion;
 import com.example.cartasIntercambio.repository.OfertaRepositoryImpl;
 import com.example.cartasIntercambio.repository.PublicacionRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,10 +24,17 @@ public class PublicacionServiceImpl implements IPublicacionService {
         this.publicacionRepository = publicacionRepository;
         this.ofertaRepository = ofertaRepository;
     }
-    
+
     @Override
-    public List<PublicacionDto> listarPublicaciones() {
-        List<Publicacion> publicaciones = publicacionRepository.findAll();
+    public Publicacion buscarPublicacionPorId(Long idPublicacion) {
+
+        return publicacionRepository.findById(idPublicacion)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe la publicación"));
+    }
+
+    @Override
+    public List<PublicacionDto> buscarPublicacionesPorUsuario(Long idUsuario) {
+        List<Publicacion> publicaciones = publicacionRepository.findByPublicadorId(idUsuario);
 
         return publicaciones.stream().map(publicacion -> new PublicacionDto(
                 publicacion.getId(),
@@ -116,7 +125,7 @@ public class PublicacionServiceImpl implements IPublicacionService {
     }
 
     @Override
-    public void crearOferta(Long idPublicacion, OfertaDto ofertaDto) { // TODO: Ver si conviene crear OfertaService
+    public void crearOferta(Long idPublicacion, OfertaDto ofertaDto) {
         Oferta nuevaOferta = new Oferta(
                 ofertaDto.getFecha(),
                 ofertaDto.getPublicacion(),
@@ -126,8 +135,28 @@ public class PublicacionServiceImpl implements IPublicacionService {
                 ofertaDto.getEstado()
         );
 
-        publicacionRepository.findById(idPublicacion).get().agregarOferta(nuevaOferta);
+        this.buscarPublicacionPorId(idPublicacion).agregarOferta(nuevaOferta);
         ofertaRepository.save(nuevaOferta);
     }
+
+    public List<OfertaDto> buscarOfertasPorPublicacion(Long idPublicacion, Long idUsuario) {
+        Publicacion publicacion = buscarPublicacionPorId(idPublicacion);
+
+        if(!publicacion.getPublicador().getId().equals(idUsuario)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tiene permiso para ver esta publicación");
+        }
+
+        return publicacion.getOfertas().stream()
+                .map(oferta -> new OfertaDto(
+                        oferta.getFecha(),
+                        oferta.getPublicacion(),
+                        oferta.getMonto(),
+                        oferta.getCartasOfrecidas(),
+                        oferta.getOfertante(),
+                        oferta.getEstado()))
+                .collect(Collectors.toList());
+    }
+
+    // TODO: Filtrar ofertas hechas a publicaciones de otros usuarios (crear OfertaController y OfertaService)?
 
 }

@@ -2,12 +2,15 @@ package com.example.cartasIntercambio.service;
 
 import com.example.cartasIntercambio.dto.OfertaDto;
 import com.example.cartasIntercambio.dto.PublicacionDto;
+import com.example.cartasIntercambio.model.Mercado.Publicacion;
 
 import java.util.List;
 
 public interface IPublicacionService {
 
-    List<PublicacionDto> listarPublicaciones();
+    Publicacion buscarPublicacionPorId(Long idPublicacion);
+
+    List<PublicacionDto> buscarPublicacionesPorUsuario(Long idUsuario);
 
     void guardarPublicacion(PublicacionDto nuevaPublicacionDto);
 
@@ -20,5 +23,7 @@ public interface IPublicacionService {
     List<PublicacionDto> buscarPublicacionPorEstadoDeCarta(String estado);
 
     List<PublicacionDto> buscarPublicacionPorPrecio(Float precio);
+
+    List<OfertaDto> buscarOfertasPorPublicacion(Long idPublicacion, Long idUsuario);
 
 }

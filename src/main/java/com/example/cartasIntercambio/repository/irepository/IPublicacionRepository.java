@@ -12,7 +12,7 @@ public interface IPublicacionRepository {
 
   List<Publicacion> findAll();
 
-  List<Publicacion> findByPublicador(Usuario publicador);
+  List<Publicacion> findByPublicadorId(Long idUser);
 
   Optional<Publicacion> findById(Long id);
 

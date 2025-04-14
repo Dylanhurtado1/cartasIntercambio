@@ -24,13 +24,6 @@ public class PublicacionController {
     public PublicacionController(PublicacionServiceImpl publicacionService) {
         this.publicacionService = publicacionService;
     }
-
-    @GetMapping
-    public ResponseEntity<List<PublicacionDto>> listarPublicaciones() {
-        List<PublicacionDto> publicaciones = publicacionService.listarPublicaciones();
-
-        return new ResponseEntity<>(publicaciones, HttpStatus.OK);
-    }
     
     @GetMapping("/nombre/{nombre}") 
     public ResponseEntity<List<PublicacionDto>> buscarPublicacionPorNombreDeCarta(@PathVariable String nombre) {
@@ -59,11 +52,28 @@ public class PublicacionController {
         return new ResponseEntity<>(publicacionDto, HttpStatus.CREATED);
     }
 
-    @PostMapping("/{idPublicacion}/oferta")
+    @PostMapping("/{idPublicacion}/ofertas")
     public ResponseEntity<OfertaDto> crearOferta(@PathVariable("idPublicacion") Long idPublicacion, @RequestBody OfertaDto ofertaDto) {
         publicacionService.crearOferta(idPublicacion, ofertaDto);
 
         return new ResponseEntity<>(ofertaDto, HttpStatus.CREATED);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<PublicacionDto>> listarPublicacionesPorUsuario(Long idUsuario) {
+        // TODO: Asumo que el ID del usuario no lo vamos a pasar por URL.
+        //  Queda pendiente resolver eso, paso provisoriamente el id por parametro para que no tire error.
+        List<PublicacionDto> publicaciones = publicacionService.buscarPublicacionesPorUsuario(idUsuario);
+
+        return new ResponseEntity<>(publicaciones, HttpStatus.OK);
+    }
+
+    @GetMapping("/{idPublicacion}/ofertas") // Ofertas recibidas para una publicacion del usuario logueado
+    public ResponseEntity<List<OfertaDto>> listarOfertasRecibidas(@PathVariable("idPublicacion") Long idPublicacion, Long idUsuario) {
+        // TODO: Asumo que el ID del usuario no lo vamos a pasar por URL.
+        List<OfertaDto> ofertasRecibidas = publicacionService.buscarOfertasPorPublicacion(idPublicacion, idUsuario);
+
+        return new ResponseEntity<>(ofertasRecibidas, HttpStatus.OK);
     }
 
 }
