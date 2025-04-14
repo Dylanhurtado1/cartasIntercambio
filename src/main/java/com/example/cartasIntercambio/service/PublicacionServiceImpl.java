@@ -61,6 +61,21 @@ public class PublicacionServiceImpl implements IPublicacionService {
         publicacionRepository.save(nuevaPublicacion);
     }
 
+
+   public List<PublicacionDto> listarPublicaciones() {
+        List<Publicacion> publicaciones = publicacionRepository.findAll();
+        
+        return publicaciones.stream().map(publicacion -> new PublicacionDto(
+                publicacion.getId(),
+                publicacion.getFecha(),
+                publicacion.getDescripcion(),
+                publicacion.getDemanda(),
+                publicacion.getOfertas(),
+                publicacion.getPublicador(),
+                publicacion.getEstado()
+        )).collect(Collectors.toList());
+    }
+
     public List<PublicacionDto> buscarPublicacionPorNombre(String nombre) {
         List<Publicacion> lista = publicacionRepository.findByCardName(nombre);
         

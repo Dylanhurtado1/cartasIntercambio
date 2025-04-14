@@ -24,6 +24,8 @@ public interface IPublicacionService {
 
     List<PublicacionDto> buscarPublicacionPorPrecio(Float precio);
 
+    List<PublicacionDto> listarPublicaciones();
+
     List<OfertaDto> buscarOfertasPorPublicacion(Long idPublicacion, Long idUsuario);
 
 }
