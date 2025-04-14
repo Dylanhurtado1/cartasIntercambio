@@ -65,18 +65,17 @@ public class PublicacionController {
         return new ResponseEntity<>(ofertaDto, HttpStatus.CREATED);
     }
 
-    /*@GetMapping
-    public ResponseEntity<List<PublicacionDto>> listarPublicacionesPorUsuario(Long idUsuario) {
-        // TODO: Asumo que el ID del usuario no lo vamos a pasar por URL.
+    @GetMapping("/usuarios/{idUsuario}") // TODO: El ID del usuario no lo vamos a pasar por URL
+    public ResponseEntity<List<PublicacionDto>> listarPublicacionesPorUsuario(@PathVariable("idUsuario") Long idUsuario) {
         //  Queda pendiente resolver eso, paso provisoriamente el id por parametro para que no tire error.
         List<PublicacionDto> publicaciones = publicacionService.buscarPublicacionesPorUsuario(idUsuario);
 
         return new ResponseEntity<>(publicaciones, HttpStatus.OK);
-    }*/
+    }
 
-    @GetMapping("/{idPublicacion}/ofertas/{idUsuario}") // Ofertas recibidas para una publicacion del usuario logueado
-    public ResponseEntity<List<OfertaDto>> listarOfertasRecibidas(@PathVariable("idPublicacion") Long idPublicacion, Long idUsuario) {
-        // TODO: Asumo que el ID del usuario no lo vamos a pasar por URL.
+    // Ofertas recibidas para una publicacion del usuario logueado
+    @GetMapping("/{idPublicacion}/ofertas/{idUsuario}") // TODO: El ID del usuario no lo vamos a pasar por URL
+    public ResponseEntity<List<OfertaDto>> listarOfertasRecibidas(@PathVariable("idPublicacion") Long idPublicacion, @PathVariable("idUsuario") Long idUsuario) {
         List<OfertaDto> ofertasRecibidas = publicacionService.buscarOfertasPorPublicacion(idPublicacion, idUsuario);
 
         return new ResponseEntity<>(ofertasRecibidas, HttpStatus.OK);

@@ -34,7 +34,7 @@ public class PublicacionServiceImpl implements IPublicacionService {
 
     @Override
     public List<PublicacionDto> buscarPublicacionesPorUsuario(Long idUsuario) {
-        List<Publicacion> publicaciones = publicacionRepository.findByPublicadorId(idUsuario);
+        List<Publicacion> publicaciones = publicacionRepository.findByPublicadorId(idUsuario); // TODO: Validar que exista el user
 
         return publicaciones.stream().map(publicacion -> new PublicacionDto(
                 publicacion.getId(),
@@ -147,7 +147,7 @@ public class PublicacionServiceImpl implements IPublicacionService {
                 ofertaDto.getMonto(),
                 ofertaDto.getCartasOfrecidas(),
                 ofertaDto.getOfertante(),
-                ofertaDto.getEstado()
+                "PENDIENTE" // TODO: Luego cambiar por Enum
         );
 
         this.buscarPublicacionPorId(idPublicacion).agregarOferta(nuevaOferta);

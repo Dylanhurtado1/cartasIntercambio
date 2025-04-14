@@ -28,7 +28,9 @@ public class PublicacionRepositoryImpl implements IPublicacionRepository {
 
   @Override
   public List<Publicacion> findByPublicadorId(Long idUser) {
-    return publicaciones.stream().filter(publicacion -> publicacion.getPublicador().getId().equals(idUser)).toList();
+    return publicaciones.stream()
+            .filter(publicacion -> publicacion.getPublicador().getId().equals(idUser))
+            .collect(Collectors.toList());
   }
 
   @Override
