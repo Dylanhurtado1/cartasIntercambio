@@ -13,10 +13,20 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Oferta {
+  private Long id;
   private Date fecha;
   private Publicacion publicacion;
   private Double monto;
   private List<Carta> cartasOfrecidas;
   private Usuario ofertante;
   private String estado;
+
+  public Oferta(Date fecha, Publicacion publicacion, Double monto, List<Carta> cartasOfrecidas, Usuario ofertante, String estado) {
+    this.fecha = fecha;
+    this.publicacion = publicacion;
+    this.monto = monto;
+    this.cartasOfrecidas = cartasOfrecidas;
+    this.ofertante = ofertante;
+    this.estado = estado;
+  }
 }

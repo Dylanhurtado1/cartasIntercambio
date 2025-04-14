@@ -2,23 +2,27 @@ package com.example.cartasIntercambio.controller;
 
 import com.example.cartasIntercambio.dto.OfertaDto;
 import com.example.cartasIntercambio.dto.PublicacionDto;
+import com.example.cartasIntercambio.model.Mercado.Oferta;
+import com.example.cartasIntercambio.model.Mercado.Publicacion;
 import com.example.cartasIntercambio.service.PublicacionServiceImpl;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/publicaciones")
 public class PublicacionController {
     private final PublicacionServiceImpl publicacionService;
+
 
     @Autowired
     public PublicacionController(PublicacionServiceImpl publicacionService) {
@@ -79,6 +83,46 @@ public class PublicacionController {
         List<OfertaDto> ofertasRecibidas = publicacionService.buscarOfertasPorPublicacion(idPublicacion, idUsuario);
 
         return new ResponseEntity<>(ofertasRecibidas, HttpStatus.OK);
+    }
+
+    //Aceptar o rechazar una oferta
+    @PatchMapping(path = "/{idPublicacion}/ofertas/{idUsuario}/{idOferta}", consumes = "application/json-patch+json")
+    public ResponseEntity<OfertaDto> responderOferta(@PathVariable("idPublicacion") Long idPublicacion, @PathVariable("idUsuario") Long idUsuario, @PathVariable("idOferta") Long idOferta, @RequestBody JsonPatch patch) {
+        List<OfertaDto> ofertasRecibidas = publicacionService.buscarOfertasPorPublicacion(idPublicacion, idUsuario);
+        OfertaDto oferta = ofertasRecibidas.stream().filter(unaOferta -> unaOferta.getId().equals(idOferta)).findAny().orElse(null);
+        //Si la url es directamente con el id de la oferta => Oferta oferta = findById(idOferta);
+        try {
+            OfertaDto ofertaActualizada = patchOferta(patch, oferta);
+            publicacionService.actualizarOferta(ofertaActualizada);
+            return new ResponseEntity<>(ofertaActualizada, HttpStatus.OK);
+        } catch (JsonPatchException | JsonProcessingException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    private OfertaDto patchOferta (JsonPatch patch, OfertaDto oferta) throws JsonPatchException, JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode patched = patch.apply(mapper.convertValue(oferta, JsonNode.class));
+        return mapper.treeToValue(patched, OfertaDto.class);
+    }
+
+    @GetMapping("estadisticas/publicaciones")
+    public ResponseEntity<Integer> estadisticasPublicaciones() {
+        List<PublicacionDto> publicaciones = publicacionService.listarPublicaciones();
+        return new ResponseEntity<>(publicaciones.size(), HttpStatus.OK);
+    }
+
+    @GetMapping("estadisticas/juegos")
+    public ResponseEntity<Map<String, Integer>> estadisticasPublicacionesPorJuego() {
+        List<PublicacionDto> publicacionesMagic = publicacionService.buscarPublicacionPorJuego("Magic");
+        List<PublicacionDto> publicacionesPokemon = publicacionService.buscarPublicacionPorJuego("Pokemon");
+        List<PublicacionDto> publicacionesYuGiOh = publicacionService.buscarPublicacionPorJuego("YuGiOh");
+        Map<String, Integer> counts = Map.of(
+                "Magic", publicacionesMagic.size(),
+                "Pokemon", publicacionesPokemon.size(),
+                "YuGiOh", publicacionesYuGiOh.size()
+        );
+        return new ResponseEntity<>(counts, HttpStatus.OK);
     }
 
 }

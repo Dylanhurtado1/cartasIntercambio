@@ -27,4 +27,6 @@ public class OfertaRepositoryImpl implements IOfertaRepository {
   public List<Oferta> findByOferente(Usuario oferente) {
     return ofertas.stream().filter(carta -> carta.getOfertante().equals(oferente)).toList();
   }
+
+
 }

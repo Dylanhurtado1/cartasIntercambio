@@ -14,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OfertaDto {
+    private Long id;
     private Date fecha;
     private Publicacion publicacion;
     private Double monto;
@@ -21,4 +22,12 @@ public class OfertaDto {
     private Usuario ofertante;
     private String estado;
 
+    public OfertaDto(Date fecha, Publicacion publicacion, Double monto, List<Carta> cartasOfrecidas, Usuario ofertante, String estado) {
+        this.fecha = fecha;
+        this.publicacion = publicacion;
+        this.monto = monto;
+        this.cartasOfrecidas = cartasOfrecidas;
+        this.ofertante = ofertante;
+        this.estado = estado;
+    }
 }

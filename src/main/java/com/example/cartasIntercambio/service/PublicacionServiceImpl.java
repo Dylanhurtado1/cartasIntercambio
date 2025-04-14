@@ -154,6 +154,22 @@ public class PublicacionServiceImpl implements IPublicacionService {
         ofertaRepository.save(nuevaOferta);
     }
 
+    public void actualizarOferta(OfertaDto ofertaDto) {
+        Oferta ofertaActualizada = new Oferta(
+                ofertaDto.getId(),
+                ofertaDto.getFecha(),
+                ofertaDto.getPublicacion(),
+                ofertaDto.getMonto(),
+                ofertaDto.getCartasOfrecidas(),
+                ofertaDto.getOfertante(),
+                "ACEPTADA" // TODO: Luego cambiar por Enum
+        );
+
+        //TODO: Save referancias a la publicacion en crear y en actualizar
+        ofertaRepository.save(ofertaActualizada); //TODO: Save deberia actualizar tambien
+    }
+
+    //TODO: DTOs?
     public List<OfertaDto> buscarOfertasPorPublicacion(Long idPublicacion, Long idUsuario) {
         Publicacion publicacion = buscarPublicacionPorId(idPublicacion);
 
