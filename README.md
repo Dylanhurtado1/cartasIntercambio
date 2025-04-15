@@ -115,10 +115,28 @@ Esta es una aplicación para intercambiar cartas de juegos coleccionables como M
     - **URLs**: `publicaciones/usuarios/{idUsuario}`     
     - **Descripción**: Permite filtrar las publicaciones por ID de usuario.
 
- 6. **Buscar publicaciones por usuario**
+ 6. **Buscar ofertas para una publicacion de un usuario**
     - **Método**: `GET`
     - **URLs**: `publicaciones/{idPublicacion}/ofertas/{idUsuario}`     
     - **Descripción**: Permite obtener las ofertas realizadas por un usuario.
+   
+7. **Responder a una oferta de una publicacion de un usuario**
+   - **Método**: `PUT`
+   - **URLs**: `publicaciones/{idPublicacion}/ofertas/{idUsuario}/{idOferta}`     
+   - **Descripción**: Permite aceptar o rechazar una oferta.
+   - **Cuerpo de la Solicitud (JSON)**:
+      ```json
+      Respuesta
+ 
+ 8. **Buscar estadisticas sobre cantidad de publicaciones**
+    - **Método**: `GET`
+    - **URLs**: `publicaciones/estadisticas/publicaciones`     
+    - **Descripción**: Permite obtener la cantidad de publicaciones creadas por los usuarios.
+   
+ 9. **Buscar estadisticas sobre cantidad de publicaciones por juego**
+    - **Método**: `GET`
+    - **URLs**: `publicaciones/estadisticas/juegos`     
+    - **Descripción**: Permite obtener la cantidad de publicaciones creadas por los usuarios para cada juego.
       
 ## Estructura del Proyecto
 
