@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 public class Carta {
   private String nombre;
   private String juego;
-  private String estado;
+  private EstadoCarta estado;
   private List<String> imagenes;
 
 

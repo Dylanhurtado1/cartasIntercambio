@@ -1,5 +1,9 @@
 package com.example.cartasIntercambio.model.Producto_Carta;
 
 public enum EstadoCarta {
-    Nuevo, Muy_bueno, Bueno, Malo, Muy_malo
+    NUEVO,
+    MUY_BUENO,
+    BUENO,
+    MALO,
+    MUY_MALO
 }
