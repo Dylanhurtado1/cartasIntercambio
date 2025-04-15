@@ -86,25 +86,39 @@ public class PublicacionController {
     }
 
     //Aceptar o rechazar una oferta
-    @PatchMapping(path = "/{idPublicacion}/ofertas/{idUsuario}/{idOferta}", consumes = "application/json-patch+json")
-    public ResponseEntity<OfertaDto> responderOferta(@PathVariable("idPublicacion") Long idPublicacion, @PathVariable("idUsuario") Long idUsuario, @PathVariable("idOferta") Long idOferta, @RequestBody JsonPatch patch) {
+//    @PatchMapping(path = "/{idPublicacion}/ofertas/{idUsuario}/{idOferta}", consumes = "application/json-patch+json")
+//    public ResponseEntity<OfertaDto> responderOferta(@PathVariable("idPublicacion") Long idPublicacion, @PathVariable("idUsuario") Long idUsuario, @PathVariable("idOferta") Long idOferta, @RequestBody JsonPatch patch) {
+//        List<OfertaDto> ofertasRecibidas = publicacionService.buscarOfertasPorPublicacion(idPublicacion, idUsuario);
+//        OfertaDto oferta = ofertasRecibidas.stream().filter(unaOferta -> unaOferta.getId().equals(idOferta)).findAny().orElse(null);
+//        //Si la url es directamente con el id de la oferta => Oferta oferta = findById(idOferta);
+//        try {
+//            OfertaDto ofertaActualizada = patchOferta(patch, oferta);
+//            publicacionService.actualizarOferta(ofertaActualizada);
+//            return new ResponseEntity<>(ofertaActualizada, HttpStatus.OK);
+//        } catch (JsonPatchException | JsonProcessingException e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+//        }
+//    }
+
+    @PutMapping(path = "/{idPublicacion}/ofertas/{idUsuario}/{idOferta}")
+    public ResponseEntity<OfertaDto> rresponderOferta(@PathVariable("idPublicacion") Long idPublicacion, @PathVariable("idUsuario") Long idUsuario, @PathVariable("idOferta") Long idOferta, @RequestBody String respuesta) {
         List<OfertaDto> ofertasRecibidas = publicacionService.buscarOfertasPorPublicacion(idPublicacion, idUsuario);
-        OfertaDto oferta = ofertasRecibidas.stream().filter(unaOferta -> unaOferta.getId().equals(idOferta)).findAny().orElse(null);
+        OfertaDto oferta = ofertasRecibidas.stream().findAny().orElse(null);//TODO: Deberia buscar por id
         //Si la url es directamente con el id de la oferta => Oferta oferta = findById(idOferta);
         try {
-            OfertaDto ofertaActualizada = patchOferta(patch, oferta);
-            publicacionService.actualizarOferta(ofertaActualizada);
-            return new ResponseEntity<>(ofertaActualizada, HttpStatus.OK);
-        } catch (JsonPatchException | JsonProcessingException e) {
+            oferta.setEstado(respuesta);
+            publicacionService.actualizarOferta(oferta);
+            return new ResponseEntity<>(oferta, HttpStatus.OK);
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    private OfertaDto patchOferta (JsonPatch patch, OfertaDto oferta) throws JsonPatchException, JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode patched = patch.apply(mapper.convertValue(oferta, JsonNode.class));
-        return mapper.treeToValue(patched, OfertaDto.class);
-    }
+//    private OfertaDto patchOferta (JsonPatch patch, OfertaDto oferta) throws JsonPatchException, JsonProcessingException {
+//        ObjectMapper mapper = new ObjectMapper();
+//        JsonNode patched = patch.apply(mapper.convertValue(oferta, JsonNode.class));
+//        return mapper.treeToValue(patched, OfertaDto.class);
+//    }
 
     @GetMapping("estadisticas/publicaciones")
     public ResponseEntity<Integer> estadisticasPublicaciones() {
