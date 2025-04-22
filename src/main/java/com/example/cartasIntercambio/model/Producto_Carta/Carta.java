@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 public class Carta {
   private String nombre;
   private String juego;
-  private EstadoCarta estado;
+  private String estado;//TODO: pasarlo al enum EstadoCarta
   private List<String> imagenes;
 
 
