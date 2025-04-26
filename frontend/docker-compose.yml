@@ -1,0 +1,8 @@
+version: '3.8'
+
+services:
+  node-html-server:
+    build: .
+    ports:
+      - "9090:9090"
+    container_name: servidor-html-node
