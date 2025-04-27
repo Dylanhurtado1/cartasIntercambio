@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Crear Publicación</title>
+    <link rel="stylesheet" href="public/css/style.css">
+    <link rel="stylesheet" href="public/css/formulario.css">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Publicar una carta </h1>
+        <p>Completá el formulario para agregar tu carta</p>
+    </header>
+
+    <main id="app">
+        <section class="formulario-publicacion">
+            <form @submit.prevent="submitForm">
+
+                <label for="nombre">Nombre de la carta</label>
+                <input type="text" id="nombreCarta" v-model="form.nombreCarta" required>
+
+                <label for="juego">Nombre del juego</label>
+                <input type="text" id="nombreJuego" v-model="form.nombreJuego" required>
+
+                <label for="descripcion">Descripción de la carta</label>
+                <textarea id="descripcion" v-model="form.descripcion" rows="4" required></textarea>
+
+                <label for="estado">Estado</label>
+                <select id="estado" v-model="form.estado" required>
+                    <option value="">Seleccionar estado</option>
+                    <option value="NUEVO">NUEVO</option>
+                    <option value="MUY_BUENO">MUY BUENO</option>
+                    <option value="BUENO">BUENO</option>
+                    <option value="MALO">MALO</option>
+                    <option value="MUY_MALO">MUY MALO</option>
+                </select>
+
+                <label>Imágenes de la carta</label>
+                <input type="file" @change="onMainImagesChange" multiple accept="image/*" required>
+
+                <label for="precio">Precio de la carta</label>
+                <input type="number" id="precio" v-model="form.precio" min="0" step="0.01">
+
+                <label>Cartas de Interés: {{form.cartasDeInteres.length}}</label>
+                <div id="cartasInteres">
+                    <button type="button" v-if="form.cartasDeInteres.length > 0" @click="eliminarTodasCartasInteres">Eliminar todas las cartas</button>
+
+                    <div v-for="(carta, index) in form.cartasDeInteres" :key="index" class="carta-interes">
+                        <label>Nombre de la carta de interés</label>
+                        <input type="text" v-model="carta.nombre" required>
+
+                        <label>Juego de la carta de interés</label>
+                        <input type="text" v-model="carta.juego" required>
+
+                        <label>Estado de la carta de interés</label>
+                        <select v-model="carta.estado" required>
+                            <option value="">Seleccionar estado</option>
+                            <option value="NUEVO">NUEVO</option>
+                            <option value="MUY_BUENO">MUY BUENO</option>
+                            <option value="BUENO">BUENO</option>
+                            <option value="MALO">MALO</option>
+                            <option value="MUY_MALO">MUY MALO</option>
+                        </select>
+
+                        <label>Imágenes de la carta de interés</label>
+                        <input type="file" @change="onInterestImagesChange($event, index)" multiple accept="image/*" required>
+
+                        <button type="button" @click="eliminarCartaInteres(index)">Eliminar</button>
+                    </div>
+                </div>
+
+                <button type="button" @click="agregarCartaInteres">Agregar Carta de Interés</button>
+
+                <br><br>
+
+                <button type="submit">Enviar (por ahora genera un JSON como prueba)</button>
+            </form>
+
+            <pre id="resultado">{{ jsonResultado }}</pre>
+        </section>
+    </main>
+
+    <script src="public/js/formulario.js"></script>
+</body>
+</html>
