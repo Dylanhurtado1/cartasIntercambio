@@ -34,11 +34,11 @@
 
     <main>
         <section class="productos">
-            <a v-for="carta in listaDeCartas" class="producto" href="#">
+            <a v-for="carta in listaDePublicaciones" class="producto" href="#">
                 <img src="img/carta1.jpg" alt="Carta 1"> <!-- por ahora todos tienen la misma imagen, luego se cambiará por cada uno -->
-                <h2>{{carta.demanda.cartasOfrecidas[0].nombre}}</h2> 
-                <p>{{carta.demanda.cartasOfrecidas[0].juego}}</p> 
-                <span>${{carta.demanda.precio}}</span>
+                <h2>{{carta.demanda.cartaOfrecida.nombre}}</h2> 
+                <p>{{carta.demanda.cartaOfrecida.juego}}</p> 
+                <span>$ {{carta.demanda.precio}} </span>
                 <!-- 
                     Por ahora asumo que la primera carta del pack se muestra, 
                     tengo una ganas de liquidar eso de ofrecer un pack con todas mis fuerzas 
@@ -47,7 +47,7 @@
 
         </section>
     </main>
+    <script type="text/javascript"  src="public/js/home.js"></script>
 
-    <script src="public/js/home.js"></script>
 </body>
 </html>

@@ -4,21 +4,22 @@ const backendURL = "http://localhost:8080"; //ahora como modo de prueba, se deja
 
 createApp({
   setup() {
-    let listaDeCartas = ref([])
+    let listaDePublicaciones = ref([])
 
     function getPublicaciones(){
         fetch(backendURL + "/publicaciones")
         .then(response => response.json())  // convertir a json
         .then(json => {
-            listaDeCartas.value = json
+            listaDePublicaciones.value = json
+            console.log(listaDePublicaciones.value)
         })    
-        .catch(err => console.log('Solicitud fallida:', err)); // Capturar errores
+        .catch(err => console.log('Solicitud fallida: ', err)) // Capturar errores
     }
 
     getPublicaciones()
     
     return {
-      listaDeCartas
+      listaDePublicaciones: listaDePublicaciones
     }
   }
-}).mount('#app')
+}).mount('#app');

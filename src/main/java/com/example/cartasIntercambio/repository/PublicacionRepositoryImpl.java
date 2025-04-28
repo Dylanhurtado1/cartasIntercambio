@@ -47,10 +47,7 @@ public class PublicacionRepositoryImpl implements IPublicacionRepository {
   public List<Publicacion> findByCardName(String nombreDeCartaBuscado) {
     return publicaciones.stream()
     .filter(
-      publicacion -> publicacion.getDemanda().getCartasOfrecidas().stream()
-        .anyMatch(carta ->
-          carta.getNombre().equals(nombreDeCartaBuscado)
-        )
+      publicacion -> publicacion.getDemanda().getCartaOfrecida().getNombre().contains(nombreDeCartaBuscado)
     ).collect(Collectors.toList());
   }
 
@@ -58,10 +55,7 @@ public class PublicacionRepositoryImpl implements IPublicacionRepository {
   public List<Publicacion> findByGameName(String game) {
     return publicaciones.stream()
     .filter(
-      publicacion -> publicacion.getDemanda().getCartasOfrecidas().stream()
-        .anyMatch(carta -> 
-          carta.getJuego().equals(game)
-        )
+      publicacion -> publicacion.getDemanda().getCartaOfrecida().getJuego().contains(game)
     ).collect(Collectors.toList());
   }
 
@@ -69,10 +63,7 @@ public class PublicacionRepositoryImpl implements IPublicacionRepository {
   public List<Publicacion> findByCardState(String state) {
     return publicaciones.stream()
     .filter(
-      publicacion -> publicacion.getDemanda().getCartasOfrecidas().stream()
-        .anyMatch(carta -> 
-          carta.getEstado().equals(state)
-        )
+      publicacion -> publicacion.getDemanda().getCartaOfrecida().getEstado().equals(state)
     ).collect(Collectors.toList());
   }
 

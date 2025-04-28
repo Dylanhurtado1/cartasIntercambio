@@ -1,7 +1,8 @@
 .formulario-publicacion {
     background-color: #fff;
     padding: 2em;
-    margin: 2em auto;
+    margin: 1em auto;
+    margin-top: 0;
     border-radius: 8px;
     max-width: 800px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -44,7 +45,7 @@
 }
 
 .carta-interes {
-    border: 1px solid #eee;
+    border: 1px solid #828282;
     padding: 1em;
     background-color: #fafafa;
     position: relative;
@@ -63,4 +64,36 @@ pre#resultado {
     margin-top: 2em;
     white-space: pre-wrap;
     word-wrap: break-word;
+}
+
+@media (max-width: 600px) {
+    .formulario-publicacion {
+        padding: 1em; /* Menos espacio en los márgenes */
+        margin: 0.5em; /* Reducir el margen en pantallas pequeñas */
+        max-width: 100%; /* Que ocupe el 100% del ancho disponible */
+        box-sizing: border-box; /* Asegura que el padding no afecte el ancho total */
+    }
+
+    .formulario-publicacion form {
+        gap: 0.75em; /* Reducir el espacio entre los elementos del formulario */
+    }
+
+    .formulario-publicacion input,
+    .formulario-publicacion textarea,
+    .formulario-publicacion select,
+    .formulario-publicacion button {
+        padding: 0.5em; /* Reducir el padding de los inputs y botones */
+    }
+
+    #cartasInteres {
+        gap: 1em; /* Reducir el espacio entre las cartas de interés */
+    }
+
+    .carta-interes {
+        padding: 0.75em; /* Reducir el padding de las cartas */
+    }
+
+    pre#resultado {
+        padding: 0.75em; /* Reducir padding en el bloque de resultados */
+    }
 }

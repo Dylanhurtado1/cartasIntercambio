@@ -1,9 +1,10 @@
 package com.example.cartasIntercambio.dto;
 
 import com.example.cartasIntercambio.model.Mercado.Demanda;
-import com.example.cartasIntercambio.model.Mercado.EstadoPublicacion;
 import com.example.cartasIntercambio.model.Mercado.Oferta;
 import com.example.cartasIntercambio.model.Usuario.Usuario;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,8 @@ import java.util.List;
 @NoArgsConstructor
 public class PublicacionDto {
     private Long id;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private Date fecha;
     private String descripcion;
     private Demanda demanda;

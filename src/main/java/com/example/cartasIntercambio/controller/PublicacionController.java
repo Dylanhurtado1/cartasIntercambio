@@ -58,7 +58,6 @@ public class PublicacionController {
     @PostMapping
     public ResponseEntity<PublicacionDto> crearPublicacion(@RequestBody PublicacionDto publicacionDto) {
         publicacionService.guardarPublicacion(publicacionDto);
-
         return new ResponseEntity<>(publicacionDto, HttpStatus.CREATED);
     }
 
@@ -72,9 +71,9 @@ public class PublicacionController {
     @GetMapping("/usuarios/{idUsuario}") // TODO: El ID del usuario no lo vamos a pasar por URL
     public ResponseEntity<List<PublicacionDto>> listarPublicacionesPorUsuario(@PathVariable("idUsuario") Long idUsuario) {
         //  Queda pendiente resolver eso, paso provisoriamente el id por parametro para que no tire error.
-        List<PublicacionDto> publicaciones = publicacionService.buscarPublicacionesPorUsuario(idUsuario);
+        List<PublicacionDto> publicacionesDTO = publicacionService.buscarPublicacionesPorUsuario(idUsuario);
 
-        return new ResponseEntity<>(publicaciones, HttpStatus.OK);
+        return new ResponseEntity<>(publicacionesDTO, HttpStatus.OK);
     }
 
     // Ofertas recibidas para una publicacion del usuario logueado

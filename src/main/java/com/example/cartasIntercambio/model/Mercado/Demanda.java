@@ -12,8 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 public class Demanda {
 
-    private List<Carta> cartasOfrecidas;
-    private String descripcion;
+    private Carta cartaOfrecida;
     private Float precio;
     private List<Carta> cartasInteres;
 }

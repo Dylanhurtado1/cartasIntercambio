@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -17,7 +18,7 @@ public class Publicacion {
     private Date fecha;
     private String descripcion;
     private Demanda demanda;
-    private List<Oferta> ofertas;
+    private List<Oferta> ofertas = new ArrayList<>();
     private Usuario publicador;
     private String estado;
 

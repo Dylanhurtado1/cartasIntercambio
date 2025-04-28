@@ -60,19 +60,42 @@ createApp({
 
             // CREAR JSON
             const data = {
-                nombre: this.form.nombreCarta,
-                juego: this.form.nombreJuego,
+                fecha: new Date().toJSON(),
                 descripcion: this.form.descripcion,
-                estado: this.form.estado,
-                precio: parseFloat(this.form.precio) > 0 ? parseFloat(this.form.precio) : null,
-                imagenes: this.form.imagenesCarta.map(file => file.name),
-                cartasDeInteres: this.form.cartasDeInteres.map(carta => ({
-                    nombre: carta.nombre,
-                    juego: carta.juego,
-                    estado: carta.estado,
-                    imagenes: carta.imagenes.map(file => file.name)
-                }))
+                demanda: {
+                    cartaOfrecida: {
+                        nombre: this.form.nombreCarta,
+                        juego: this.form.nombreJuego,
+                        estado: this.form.estado,
+                        imagenes: this.form.imagenesCarta.map(file => file.name)        
+                    },
+                    precio: parseFloat(this.form.precio) > 0 ? parseFloat(this.form.precio) : null,
+                    cartasInteres: this.form.cartasDeInteres.map(cartaInd => ({
+                        nombre: cartaInd.nombre,
+                        juego: cartaInd.juego,
+                        estado: cartaInd.estado,
+                        imagenes: cartaInd.imagenes.map(file => file.name)
+                    }))
+                },
+                publicador: {} // por ahora se quedará como un objetov vacío
+                
             };
+            
+            // CREAR PUBLICACIÓN EN SERVER
+            fetch(backendURL + "/publicaciones", {
+                method: "POST",
+                body: JSON.stringify(data),
+                headers: {"Content-type": "application/json; charset=UTF-8"}
+            })
+            .then(response => response.json()) 
+            .then(json => {
+                console.log(json)
+                window.location.href = '../'
+            })
+            .catch(err => {
+                console.log(err)
+                alert('Error con el servidor')
+            })
 
             this.jsonResultado = JSON.stringify(data, null, 2);
         }

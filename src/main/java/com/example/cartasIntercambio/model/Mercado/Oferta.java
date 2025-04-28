@@ -2,6 +2,8 @@ package com.example.cartasIntercambio.model.Mercado;
 
 import com.example.cartasIntercambio.model.Producto_Carta.Carta;
 import com.example.cartasIntercambio.model.Usuario.Usuario;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,16 +16,20 @@ import java.util.List;
 @NoArgsConstructor
 public class Oferta {
   private Long id;
-  private Date fecha;
-  private Publicacion publicacion;
+
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+  private Date fecha;  
+  //private Publicacion publicacion;
+  private Long idPublicacion;
   private Double monto;
   private List<Carta> cartasOfrecidas;
   private Usuario ofertante;
   private String estado;
 
-  public Oferta(Date fecha, Publicacion publicacion, Double monto, List<Carta> cartasOfrecidas, Usuario ofertante, String estado) {
+  public Oferta(Date fecha, /*Publicacion publicacion*/ Long idPublicacion, Double monto, List<Carta> cartasOfrecidas, Usuario ofertante, String estado) {
     this.fecha = fecha;
-    this.publicacion = publicacion;
+    //this.publicacion = publicacion;
+    this.idPublicacion = idPublicacion;
     this.monto = monto;
     this.cartasOfrecidas = cartasOfrecidas;
     this.ofertante = ofertante;

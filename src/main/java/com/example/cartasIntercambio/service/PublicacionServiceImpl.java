@@ -143,7 +143,8 @@ public class PublicacionServiceImpl implements IPublicacionService {
     public void crearOferta(Long idPublicacion, OfertaDto ofertaDto) {
         Oferta nuevaOferta = new Oferta(
                 ofertaDto.getFecha(),
-                ofertaDto.getPublicacion(),
+                ofertaDto.getIdPublicacion(),
+                //ofertaDto.getPublicacion(),
                 ofertaDto.getMonto(),
                 ofertaDto.getCartasOfrecidas(),
                 ofertaDto.getOfertante(),
@@ -158,7 +159,8 @@ public class PublicacionServiceImpl implements IPublicacionService {
         Oferta ofertaActualizada = new Oferta(
                 ofertaDto.getId(),
                 ofertaDto.getFecha(),
-                ofertaDto.getPublicacion(),
+                ofertaDto.getIdPublicacion(),
+                //ofertaDto.getPublicacion(),
                 ofertaDto.getMonto(),
                 ofertaDto.getCartasOfrecidas(),
                 ofertaDto.getOfertante(),
@@ -180,7 +182,8 @@ public class PublicacionServiceImpl implements IPublicacionService {
         return publicacion.getOfertas().stream()
                 .map(oferta -> new OfertaDto(
                         oferta.getFecha(),
-                        oferta.getPublicacion(),
+                        oferta.getIdPublicacion(),
+                        //ofertaDto.getPublicacion(),
                         oferta.getMonto(),
                         oferta.getCartasOfrecidas(),
                         oferta.getOfertante(),
