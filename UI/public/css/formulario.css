@@ -68,32 +68,32 @@ pre#resultado {
 
 @media (max-width: 600px) {
     .formulario-publicacion {
-        padding: 1em; /* Menos espacio en los márgenes */
-        margin: 0.5em; /* Reducir el margen en pantallas pequeñas */
-        max-width: 100%; /* Que ocupe el 100% del ancho disponible */
-        box-sizing: border-box; /* Asegura que el padding no afecte el ancho total */
+        padding: 1em; 
+        margin: 0.5em; 
+        max-width: 100%; 
+        box-sizing: border-box;
     }
 
     .formulario-publicacion form {
-        gap: 0.75em; /* Reducir el espacio entre los elementos del formulario */
+        gap: 0.75em; 
     }
 
     .formulario-publicacion input,
     .formulario-publicacion textarea,
     .formulario-publicacion select,
     .formulario-publicacion button {
-        padding: 0.5em; /* Reducir el padding de los inputs y botones */
+        padding: 0.5em; 
     }
 
     #cartasInteres {
-        gap: 1em; /* Reducir el espacio entre las cartas de interés */
+        gap: 1em; 
     }
 
     .carta-interes {
-        padding: 0.75em; /* Reducir el padding de las cartas */
+        padding: 0.75em; 
     }
 
     pre#resultado {
-        padding: 0.75em; /* Reducir padding en el bloque de resultados */
+        padding: 0.75em; 
     }
 }
