@@ -4,6 +4,7 @@ import com.example.cartasIntercambio.dto.OfertaDto;
 import com.example.cartasIntercambio.dto.PublicacionDto;
 import com.example.cartasIntercambio.model.Mercado.Publicacion;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface IPublicacionService {
@@ -22,7 +23,7 @@ public interface IPublicacionService {
 
     List<PublicacionDto> buscarPublicacionPorEstadoDeCarta(String estado);
 
-    List<PublicacionDto> buscarPublicacionPorPrecio(Float precio);
+    List<PublicacionDto> buscarPublicacionPorPrecio(BigDecimal precio);
 
     List<PublicacionDto> listarPublicaciones();
 

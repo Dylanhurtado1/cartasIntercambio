@@ -3,6 +3,7 @@ package com.example.cartasIntercambio.repository.irepository;
 import com.example.cartasIntercambio.model.Mercado.Publicacion;
 import com.example.cartasIntercambio.model.Usuario.Usuario;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +23,6 @@ public interface IPublicacionRepository {
 
   List<Publicacion> findByCardState(String state);
 
-  List<Publicacion> findByCost(Float precio);
+  List<Publicacion> findByCost(BigDecimal precio);
 
 }

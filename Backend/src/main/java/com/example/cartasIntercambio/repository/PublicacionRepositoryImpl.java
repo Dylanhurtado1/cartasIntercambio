@@ -5,6 +5,7 @@ import com.example.cartasIntercambio.model.Usuario.Usuario;
 import com.example.cartasIntercambio.repository.irepository.IPublicacionRepository;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -68,7 +69,7 @@ public class PublicacionRepositoryImpl implements IPublicacionRepository {
   }
 
   @Override
-  public List<Publicacion> findByCost(Float precio) {
+  public List<Publicacion> findByCost(BigDecimal precio) {
     return publicaciones.stream()
     .filter(
       publicacion -> publicacion.getDemanda().getPrecio().equals(precio)

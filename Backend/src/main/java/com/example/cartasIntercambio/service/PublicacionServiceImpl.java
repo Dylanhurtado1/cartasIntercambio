@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -124,7 +125,7 @@ public class PublicacionServiceImpl implements IPublicacionService {
     }
 
     @Override
-    public List<PublicacionDto> buscarPublicacionPorPrecio(Float precio) {
+    public List<PublicacionDto> buscarPublicacionPorPrecio(BigDecimal precio) {
         List<Publicacion> lista = publicacionRepository.findByCost(precio);
         
         return lista.stream().map(
