@@ -162,17 +162,20 @@ La estructura del proyecto es la siguiente:
 2. Navega al directorio del proyecto:
 
     ```bash cd cartasIntercambio```
+3. Navega a la carpetaBackend
 
-3. Compila el proyecto:
+   ```cd Backend```
+
+4. Compila el proyecto:
 
     ```mvn clean package```
 
-4. Construye y ejecuta el contenedor:
+5. Construye y ejecuta el contenedor:
 
-    ```docker-compose up```
+    ```docker compose up```
 
 ### Accede a la API:
 
-La API estará disponible en http://localhost:8080.
+El front estará disponible en http://localhost:9090.
 
 
