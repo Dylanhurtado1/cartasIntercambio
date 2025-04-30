@@ -1,3 +1,5 @@
+/* ## HEADER ## */
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -10,9 +12,90 @@ header {
     background-color: #333;
     color: white;
     padding: 1em;
+}
+
+.top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.top-header h1, p{
+    margin: 0px;
+    width: 100%;
     text-align: center;
 }
 
-main {
-    padding: 2em;
+/* ## MENU ## */
+
+.menu-toggle {
+    font-size: 1.5em;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    display: none;
+}
+
+nav.menu {
+    margin-top: 1em;
+}
+
+nav.menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1em;
+    justify-content: center;
+}
+
+nav.menu li a {
+    text-decoration: none;
+    color: white;
+    background-color: #555;
+    padding: 0.5em 1em;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+    display:inline-block;
+    width: 170px;
+    text-align: center;
+
+}
+
+nav.menu li a:hover {
+    background-color: #777;
+}
+
+@media (max-width: 600px) {
+    .top-header h1, p{
+        margin: 0px;
+        width: auto;
+        text-align: left;
+    }
+    .menu-toggle {
+        display: block;
+    }
+
+    nav.menu ul {
+        flex-direction: column;
+        display: none;
+        align-items: center;
+    }
+
+    nav.menu ul.show {
+        display: flex;
+    }
+
+    nav.menu li{
+        width: 100%;
+    }
+
+    nav.menu li a {
+        display:block;
+        text-align: center;
+        width: auto;
+    }
 }

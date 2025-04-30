@@ -1,25 +1,23 @@
-const { createApp, ref } = Vue
+let { ref } = Vue;
 
-const backendURL = "http://localhost:8080"; //ahora como modo de prueba, se dejará el link acá 
+const backendURL = "localhost:8080"
 
-createApp({
+Vue.createApp({
   setup() {
-    let listaDePublicaciones = ref([])
+    const listaDePublicaciones = ref([]);
 
-    function getPublicaciones(){
-        fetch(backendURL + "/publicaciones")
-        .then(response => response.json())  // convertir a json
+    function getPublicaciones() {
+      fetch(backendURL + "/publicaciones")
+        .then(res => res.json())
         .then(json => {
-            listaDePublicaciones.value = json
-            console.log(listaDePublicaciones.value)
-        })    
-        .catch(err => console.log('Solicitud fallida: ', err)) // Capturar errores
+          listaDePublicaciones.value = json;
+          console.log(listaDePublicaciones.value);
+        })
+        .catch(err => console.error("Error al cargar publicaciones:", err));
     }
 
-    getPublicaciones()
-    
-    return {
-      listaDePublicaciones: listaDePublicaciones
-    }
+    getPublicaciones();
+
+    return { listaDePublicaciones };
   }
-}).mount('#app');
+}).mount("#app");

@@ -1,55 +1,44 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Tienda de Cartas</title>
-    <link rel="stylesheet" href="public/css/style.css">
-    <link rel="stylesheet" href="public/css/home.css">
-
-
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <meta charset="UTF-8" />
+  <title>Tienda de Cartas</title>
+  <link rel="stylesheet" href="public/css/style.css" />
+  <link rel="stylesheet" href="public/css/home.css" />
 </head>
-<body id="app" @load="getPublicaciones">
-    <header>
-        <h1>Cartas Online</h1>
-        <p>Buscá y comprá cartas de Pokémon y Yu-Gi-Oh!</p>
-    </header>
+<body>
+  <!-- Menú -->
+  <header id="menu-app"></header>
 
-    <section class="buscador">
-        <form id="searchForm">
-            <input type="text" name="nombre" placeholder="Nombre de la carta">
+  <!-- Resto de la app -->
+  <section id="app" class="buscador">
+    <form id="searchForm">
+      <input type="text" name="nombre" placeholder="Nombre de la carta" />
+      <input type="number" name="precioMin" placeholder="Precio mínimo" min="0" step="0.01" />
+      <input type="number" name="precioMax" placeholder="Precio máximo" min="0" step="0.01" />
+      <input type="text" name="usuario" placeholder="Usuario" />
 
-            <input type="number" name="precioMin" placeholder="Precio mínimo" min="0" step="0.01">
-            <input type="number" name="precioMax" placeholder="Precio máximo" min="0" step="0.01">
+      <select name="juego">
+        <option value="">Todos los juegos</option>
+        <option value="pokemon">Pokémon</option>
+        <option value="yugioh">Yu-Gi-Oh!</option>
+      </select>
 
-            <input type="text" name="usuario" placeholder="Usuario">
+      <button>Buscar</button>
+    </form>
 
-            <select name="juego">
-                <option value="">Todos los juegos</option>
-                <option value="pokemon">Pokémon</option>
-                <option value="yugioh">Yu-Gi-Oh!</option>
-            </select>
-
-            <button>Buscar</button>
-        </form>
+    <section class="productos">
+      <a v-for="carta in listaDePublicaciones" class="producto" href="#">
+        <img src="img/carta1.jpg" alt="Carta 1" />
+        <h2>{{ carta.demanda.cartaOfrecida.nombre }}</h2>
+        <p>{{ carta.demanda.cartaOfrecida.juego }}</p>
+        <span>$ {{ carta.demanda.precio }}</span>
+      </a>
     </section>
+  </section>
 
-    <main>
-        <section class="productos">
-            <a v-for="carta in listaDePublicaciones" class="producto" href="#">
-                <img src="img/carta1.jpg" alt="Carta 1"> <!-- por ahora todos tienen la misma imagen, luego se cambiará por cada uno -->
-                <h2>{{carta.demanda.cartaOfrecida.nombre}}</h2> 
-                <p>{{carta.demanda.cartaOfrecida.juego}}</p> 
-                <span>$ {{carta.demanda.precio}} </span>
-                <!-- 
-                    Por ahora asumo que la primera carta del pack se muestra, 
-                    tengo una ganas de liquidar eso de ofrecer un pack con todas mis fuerzas 
-                -->
-            </a>
-
-        </section>
-    </main>
-    <script type="text/javascript"  src="public/js/home.js"></script>
-
+  <script src="https://unpkg.com/vue@3"></script>
+  <script src="public/js/menu.js"></script>
+  <script src="public/js/home.js"></script>
 </body>
 </html>

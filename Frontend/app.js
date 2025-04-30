@@ -15,7 +15,7 @@ app.get("/", (req, res) => {
     res.sendFile(pathHTML + '/index.html');
 })
 
-app.get("/formulario", (req, res) => {
+app.get("/publicar", (req, res) => {
     res.sendFile(pathHTML + '/formulario.html');
 })
 

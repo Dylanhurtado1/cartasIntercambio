@@ -5,7 +5,7 @@
     margin: 1em auto;
     border-radius: 8px;
     max-width: 800px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .buscador form {
@@ -48,7 +48,7 @@
     border-radius: 8px;
     width: 200px;
     text-align: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     text-decoration: none;
     color: inherit;
     transition: transform 0.2s;
