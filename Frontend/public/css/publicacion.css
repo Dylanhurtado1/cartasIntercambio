@@ -1,0 +1,55 @@
+.detalle-publicacion {
+    background: white;
+    padding: 2em;
+    margin-bottom: 2em;
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+  }
+  
+  .imagenes img {
+    width: 120px;
+    height: auto;
+    margin-right: 1em;
+    border-radius: 4px;
+  }
+  
+  .cartas-interes, .publicador, .formulario-oferta {
+    background: #fff;
+    padding: 1.5em;
+    margin-top: 1.5em;
+    border-radius: 6px;
+    box-shadow: 0 0 4px rgba(0,0,0,0.05);
+  }
+  
+  .formulario-oferta form {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+  }
+  
+  .formulario-oferta input {
+    padding: 0.5em;
+    font-size: 1em;
+    width: 100%;
+  }
+  
+  button {
+    padding: 0.6em 1.2em;
+    background: #333;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background: #555;
+  }
+  
+  .intercambio {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    margin-bottom: 1em;
+  }
+  

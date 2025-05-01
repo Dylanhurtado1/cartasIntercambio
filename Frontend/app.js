@@ -19,5 +19,9 @@ app.get("/publicar", (req, res) => {
     res.sendFile(pathHTML + '/formulario.html');
 })
 
+app.get("/publicacion/:idPublicacion", (req, res) => {
+    res.sendFile(pathHTML + '/publicacion.html');
+    //res.send(req.params)
+})
 
 

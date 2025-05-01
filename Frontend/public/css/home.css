@@ -32,6 +32,11 @@
     cursor: pointer;
 }
 
+.buscador h3{
+    text-align: center;
+    width: 100%;
+}
+
 /* ===== PRODUCTOS ===== */
 .productos {
     display: flex;
