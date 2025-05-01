@@ -37,6 +37,25 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.buscarUsuarioPorId(id));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<UsuarioResponseDto> actualizarUsuario(@PathVariable Long id, @RequestBody UsuarioDto usuarioDto) {
+        return ResponseEntity.ok(usuarioService.actualizarUsuario(id, usuarioDto));
+    }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> borrarUsuario(@PathVariable Long id) {
+        usuarioService.borrarUsuario(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<UsuarioResponseDto>> buscarUsuarios(
+            @RequestParam(required = false) String user,
+            @RequestParam(required = false) String nombre,
+            @RequestParam(required = false) String correo
+    ) {
+        List<UsuarioResponseDto> resultado = usuarioService.buscarUsuarios(user, nombre, correo);
+        return ResponseEntity.ok(resultado);
+    }
 
 }

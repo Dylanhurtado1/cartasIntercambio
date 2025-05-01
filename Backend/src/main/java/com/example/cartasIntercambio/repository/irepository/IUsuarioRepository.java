@@ -11,5 +11,7 @@ public interface IUsuarioRepository {
     List<Usuario> findAll();
     Optional<Usuario> findById(Long id);
     boolean existsByUser(String user);
-    public boolean existsByCorreo(String correo);
+    boolean existsByCorreo(String correo);
+    void update(Usuario usuario);
+    void deleteById(Long id);
 }

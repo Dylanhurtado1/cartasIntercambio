@@ -11,5 +11,7 @@ public interface IUsuarioService {
     void registrarUsuario(UsuarioDto usuarioDto);
     List<UsuarioResponseDto> listarUsuarios();
     UsuarioResponseDto buscarUsuarioPorId(Long id);
-
+    UsuarioResponseDto actualizarUsuario(Long id, UsuarioDto usuarioDto);
+    void borrarUsuario(Long id);
+    List<UsuarioResponseDto> buscarUsuarios(String user, String nombre, String correo);
 }
