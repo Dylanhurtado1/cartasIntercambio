@@ -39,5 +39,20 @@ public class UsuarioRepositoryImpl implements IUsuarioRepository {
         return usuarios.stream().anyMatch(u -> u.getEmail().equalsIgnoreCase(correo));
     }
 
+    @Override
+    public void update(Usuario usuarioActualizado) {
+        for (int i = 0; i < usuarios.size(); i++) {
+            if (usuarios.get(i).getId().equals(usuarioActualizado.getId())) {
+                usuarios.set(i, usuarioActualizado);
+                return;
+            }
+        }
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        usuarios.removeIf(u -> u.getId().equals(id));
+    }
+
 
 }

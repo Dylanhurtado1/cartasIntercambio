@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UsuarioServiceImpl implements IUsuarioService{
@@ -59,6 +60,49 @@ public class UsuarioServiceImpl implements IUsuarioService{
                 .nombre(usuario.getNombre())
                 .correo(usuario.getEmail())
                 .build();
+    }
+
+    @Override
+    public UsuarioResponseDto actualizarUsuario(Long id, UsuarioDto usuarioDto) {
+        Optional<Usuario> usuarioOpcional = usuarioRepository.findById(id);
+        if(usuarioOpcional.isEmpty()) {
+            throw new UsuarioNoEncontradoException("Usuario con id " + id + " no existe");
+        }
+        Usuario usuario = usuarioOpcional.get();
+        usuario.setUser(usuarioDto.getUser());
+        usuario.setNombre(usuarioDto.getNombre());
+        usuario.setEmail(usuarioDto.getCorreo());
+        usuario.setPassword(usuarioDto.getPassword());
+        usuarioRepository.update(usuario);
+        return UsuarioResponseDto.builder()
+                .user(usuario.getUser())
+                .nombre(usuario.getNombre())
+                .correo(usuario.getEmail())
+                .build();
+    }
+
+    @Override
+    public void borrarUsuario(Long id) {
+        Optional<Usuario> usuarioOpcional = usuarioRepository.findById(id);
+        if (usuarioOpcional.isEmpty()) {
+            throw new UsuarioNoEncontradoException("Usuario con id " + id + " no existe");
+        }
+        usuarioRepository.deleteById(id);
+    }
+
+    @Override
+    public List<UsuarioResponseDto> buscarUsuarios(String user, String nombre, String correo) {
+        List<Usuario> todos = usuarioRepository.findAll();
+        return todos.stream()
+                .filter(u -> user == null    || u.getUser().toLowerCase().contains(user.toLowerCase()))
+                .filter(u -> nombre == null  || u.getNombre().toLowerCase().contains(nombre.toLowerCase()))
+                .filter(u -> correo == null  || u.getEmail().toLowerCase().contains(correo.toLowerCase()))
+                .map(u -> UsuarioResponseDto.builder()
+                        .user(u.getUser())
+                        .nombre(u.getNombre())
+                        .correo(u.getEmail())
+                        .build())
+                .collect(Collectors.toList());
     }
 
 }
