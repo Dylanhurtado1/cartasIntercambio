@@ -1,6 +1,7 @@
 package com.example.cartasIntercambio.controller;
 
 import com.example.cartasIntercambio.dto.UsuarioDto;
+import com.example.cartasIntercambio.dto.UsuarioResponseDto;
 import com.example.cartasIntercambio.service.UsuarioServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,11 +28,14 @@ public class UsuarioController {
     }
 
     @GetMapping
-    public ResponseEntity<List<UsuarioDto>> listarUsuarios() {
-        usuarioService.listarUsuarios();
+    public ResponseEntity<List<UsuarioResponseDto>> listarUsuarios() {
         return ResponseEntity.ok(usuarioService.listarUsuarios());
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<UsuarioResponseDto> buscarUsuarioPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(usuarioService.buscarUsuarioPorId(id));
+    }
 
 
 
