@@ -6,27 +6,26 @@ import com.example.cartasIntercambio.model.Mercado.Publicacion;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 public interface IPublicacionService {
 
-    Publicacion buscarPublicacionPorId(Long idPublicacion);
+    List<PublicacionDto> listarPublicaciones();
+
+    Optional<Publicacion> buscarPublicacionPorId(Long idPublicacion);
 
     List<PublicacionDto> buscarPublicacionesPorUsuario(Long idUsuario);
 
     void guardarPublicacion(PublicacionDto nuevaPublicacionDto);
 
-    void crearOferta(Long idPublicacion, OfertaDto ofertaDto);
+//    List<PublicacionDto> buscarPublicacionPorNombre(String nombre);
+//
+//    List<PublicacionDto> buscarPublicacionPorJuego(String juego);
+//
+//    List<PublicacionDto> buscarPublicacionPorEstadoDeCarta(String estado);
+//
+//    List<PublicacionDto> buscarPublicacionPorPrecio(BigDecimal precio);
 
-    List<PublicacionDto> buscarPublicacionPorNombre(String nombre);
-
-    List<PublicacionDto> buscarPublicacionPorJuego(String juego);
-
-    List<PublicacionDto> buscarPublicacionPorEstadoDeCarta(String estado);
-
-    List<PublicacionDto> buscarPublicacionPorPrecio(BigDecimal precio);
-
-    List<PublicacionDto> listarPublicaciones();
-
-    List<OfertaDto> buscarOfertasPorPublicacion(Long idPublicacion, Long idUsuario);
+//    List<OfertaDto> buscarOfertasPorPublicacion(Long idPublicacion, Long idUsuario);
 
 }

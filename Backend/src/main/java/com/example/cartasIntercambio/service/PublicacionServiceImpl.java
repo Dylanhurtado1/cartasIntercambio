@@ -2,6 +2,8 @@ package com.example.cartasIntercambio.service;
 
 import com.example.cartasIntercambio.dto.OfertaDto;
 import com.example.cartasIntercambio.dto.PublicacionDto;
+import com.example.cartasIntercambio.model.Mercado.EstadoOferta;
+import com.example.cartasIntercambio.model.Mercado.EstadoPublicacion;
 import com.example.cartasIntercambio.model.Mercado.Oferta;
 import com.example.cartasIntercambio.model.Mercado.Publicacion;
 import com.example.cartasIntercambio.repository.OfertaRepositoryImpl;
@@ -13,39 +15,30 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class PublicacionServiceImpl implements IPublicacionService {
     private final PublicacionRepositoryImpl publicacionRepository;
-    private final OfertaRepositoryImpl ofertaRepository;
+
 
     @Autowired
-    public PublicacionServiceImpl(PublicacionRepositoryImpl publicacionRepository, OfertaRepositoryImpl ofertaRepository) {
+    public PublicacionServiceImpl(PublicacionRepositoryImpl publicacionRepository) {
         this.publicacionRepository = publicacionRepository;
-        this.ofertaRepository = ofertaRepository;
     }
 
     @Override
-    public Publicacion buscarPublicacionPorId(Long idPublicacion) {
+    public Optional<Publicacion> buscarPublicacionPorId(Long idPublicacion) {
 
-        return publicacionRepository.findById(idPublicacion)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe la publicación"));
+        return publicacionRepository.findById(idPublicacion);
     }
 
     @Override
     public List<PublicacionDto> buscarPublicacionesPorUsuario(Long idUsuario) {
         List<Publicacion> publicaciones = publicacionRepository.findByPublicadorId(idUsuario); // TODO: Validar que exista el user
 
-        return publicaciones.stream().map(publicacion -> new PublicacionDto(
-                publicacion.getId(),
-                publicacion.getFecha(),
-                publicacion.getDescripcion(),
-                publicacion.getDemanda(),
-                publicacion.getOfertas(),
-                publicacion.getPublicador(),
-                publicacion.getEstado()
-        )).collect(Collectors.toList());
+        return publicaionADto(publicaciones);
     }
     
     @Override
@@ -54,10 +47,11 @@ public class PublicacionServiceImpl implements IPublicacionService {
             null, //se sube sin ningun ID
             nuevaPublicacionDto.getFecha(),
             nuevaPublicacionDto.getDescripcion(),
-            nuevaPublicacionDto.getDemanda(),
-            nuevaPublicacionDto.getOfertas(),
+            nuevaPublicacionDto.getCartaOfrecida(),
+            nuevaPublicacionDto.getPrecio(),
+            nuevaPublicacionDto.getCartasInteres(),
             nuevaPublicacionDto.getPublicador(),
-            nuevaPublicacionDto.getEstado()
+            EstadoPublicacion.valueOf(nuevaPublicacionDto.getEstado())
         );
         publicacionRepository.save(nuevaPublicacion);
     }
@@ -66,132 +60,122 @@ public class PublicacionServiceImpl implements IPublicacionService {
    public List<PublicacionDto> listarPublicaciones() {
         List<Publicacion> publicaciones = publicacionRepository.findAll();
         
+        return publicaionADto(publicaciones);
+    }
+
+//    public List<PublicacionDto> buscarPublicacionPorNombre(String nombre) {
+//        List<Publicacion> lista = publicacionRepository.findByCardName(nombre);
+//
+//        return lista.stream().map(
+//        publicacion -> new PublicacionDto(
+//            publicacion.getId(),
+//            publicacion.getFecha(),
+//            publicacion.getDescripcion(),
+//            publicacion.getDemanda(),
+//            publicacion.getOfertas(),
+//            publicacion.getPublicador(),
+//            publicacion.getEstado()
+//        )).collect(Collectors.toList());
+//    }
+//
+//    @Override
+//    public List<PublicacionDto> buscarPublicacionPorJuego(String juego) {
+//        List<Publicacion> lista = publicacionRepository.findByGameName(juego);
+//
+//        return lista.stream().map(
+//        publicacion -> new PublicacionDto(
+//            publicacion.getId(),
+//            publicacion.getFecha(),
+//            publicacion.getDescripcion(),
+//            publicacion.getDemanda(),
+//            publicacion.getOfertas(),
+//            publicacion.getPublicador(),
+//            publicacion.getEstado()
+//        )).collect(Collectors.toList());
+//    }
+//
+//    @Override
+//    public List<PublicacionDto> buscarPublicacionPorEstadoDeCarta(String estado) {
+//        List<Publicacion> lista = publicacionRepository.findByCardState(estado);
+//
+//        return lista.stream().map(
+//        publicacion -> new PublicacionDto(
+//            publicacion.getId(),
+//            publicacion.getFecha(),
+//            publicacion.getDescripcion(),
+//            publicacion.getDemanda(),
+//            publicacion.getOfertas(),
+//            publicacion.getPublicador(),
+//            publicacion.getEstado()
+//        )).collect(Collectors.toList());
+//    }
+//
+//    @Override
+//    public List<PublicacionDto> buscarPublicacionPorPrecio(BigDecimal precio) {
+//        List<Publicacion> lista = publicacionRepository.findByCost(precio);
+//
+//        return lista.stream().map(
+//        publicacion -> new PublicacionDto(
+//            publicacion.getId(),
+//            publicacion.getFecha(),
+//            publicacion.getDescripcion(),
+//            publicacion.getDemanda(),
+//            publicacion.getOfertas(),
+//            publicacion.getPublicador(),
+//            publicacion.getEstado()
+//        )).collect(Collectors.toList());
+//    }
+
+//    public List<OfertaDto> buscarOfertasPorPublicacion(Long idPublicacion, Long idUsuario) {
+//        Publicacion publicacion = buscarPublicacionPorId(idPublicacion);
+//
+//        if(!publicacion.getPublicador().getId().equals(idUsuario)) {
+//            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tiene permiso para ver esta publicación");
+//        }
+////TODO: Ofertas service getOfertas
+//        return publicacion.getOfertas().stream()
+//                .map(oferta -> new OfertaDto(
+//                        oferta.getFecha(),
+//                        oferta.getIdPublicacion(),
+//                        //ofertaDto.getPublicacion(),
+//                        oferta.getMonto(),
+//                        oferta.getCartasOfrecidas(),
+//                        oferta.getOfertante(),
+//                        oferta.getEstado()))
+//                .collect(Collectors.toList());
+//    }
+//
+//    public void actualizarOferta(OfertaDto ofertaDto) {
+//        Oferta ofertaActualizada = new Oferta(
+//                ofertaDto.getId(),
+//                ofertaDto.getFecha(),
+//                ofertaDto.getIdPublicacion(),
+//                //ofertaDto.getPublicacion(),
+//                ofertaDto.getMonto(),
+//                ofertaDto.getCartasOfrecidas(),
+//                ofertaDto.getOfertante(),
+//                "ACEPTADA" // TODO: Luego cambiar por Enum
+//        );
+//
+//        //TODO: Save referancias a la publicacion en crear y en actualizar
+//        ofertaRepository.save(ofertaActualizada); //TODO: Save deberia actualizar tambien
+//    }
+//    //TODO: DTOs?
+
+
+    public List<PublicacionDto> publicaionADto(List<Publicacion> publicaciones) {
+
         return publicaciones.stream().map(publicacion -> new PublicacionDto(
                 publicacion.getId(),
                 publicacion.getFecha(),
                 publicacion.getDescripcion(),
-                publicacion.getDemanda(),
-                publicacion.getOfertas(),
+                publicacion.getCartaOfrecida(),
+                publicacion.getPrecio(),
+                publicacion.getCartasInteres(),
                 publicacion.getPublicador(),
-                publicacion.getEstado()
+                publicacion.getEstado().toString()
         )).collect(Collectors.toList());
     }
-
-    public List<PublicacionDto> buscarPublicacionPorNombre(String nombre) {
-        List<Publicacion> lista = publicacionRepository.findByCardName(nombre);
-        
-        return lista.stream().map(
-        publicacion -> new PublicacionDto(
-            publicacion.getId(),
-            publicacion.getFecha(),
-            publicacion.getDescripcion(),
-            publicacion.getDemanda(),
-            publicacion.getOfertas(),
-            publicacion.getPublicador(),
-            publicacion.getEstado()
-        )).collect(Collectors.toList());
-    }
-
-    @Override
-    public List<PublicacionDto> buscarPublicacionPorJuego(String juego) {
-        List<Publicacion> lista = publicacionRepository.findByGameName(juego);
-        
-        return lista.stream().map(
-        publicacion -> new PublicacionDto(
-            publicacion.getId(),
-            publicacion.getFecha(),
-            publicacion.getDescripcion(),
-            publicacion.getDemanda(),
-            publicacion.getOfertas(),
-            publicacion.getPublicador(),
-            publicacion.getEstado()
-        )).collect(Collectors.toList());
-    }
-
-    @Override
-    public List<PublicacionDto> buscarPublicacionPorEstadoDeCarta(String estado) {
-        List<Publicacion> lista = publicacionRepository.findByCardState(estado);
-        
-        return lista.stream().map(
-        publicacion -> new PublicacionDto(
-            publicacion.getId(),
-            publicacion.getFecha(),
-            publicacion.getDescripcion(),
-            publicacion.getDemanda(),
-            publicacion.getOfertas(),
-            publicacion.getPublicador(),
-            publicacion.getEstado()
-        )).collect(Collectors.toList());
-    }
-
-    @Override
-    public List<PublicacionDto> buscarPublicacionPorPrecio(BigDecimal precio) {
-        List<Publicacion> lista = publicacionRepository.findByCost(precio);
-        
-        return lista.stream().map(
-        publicacion -> new PublicacionDto(
-            publicacion.getId(),
-            publicacion.getFecha(),
-            publicacion.getDescripcion(),
-            publicacion.getDemanda(),
-            publicacion.getOfertas(),
-            publicacion.getPublicador(),
-            publicacion.getEstado()
-        )).collect(Collectors.toList());
-    }
-
-    @Override
-    public void crearOferta(Long idPublicacion, OfertaDto ofertaDto) {
-        Oferta nuevaOferta = new Oferta(
-                ofertaDto.getFecha(),
-                ofertaDto.getIdPublicacion(),
-                //ofertaDto.getPublicacion(),
-                ofertaDto.getMonto(),
-                ofertaDto.getCartasOfrecidas(),
-                ofertaDto.getOfertante(),
-                "PENDIENTE" // TODO: Luego cambiar por Enum
-        );
-
-        this.buscarPublicacionPorId(idPublicacion).agregarOferta(nuevaOferta);
-        ofertaRepository.save(nuevaOferta);
-    }
-
-    public void actualizarOferta(OfertaDto ofertaDto) {
-        Oferta ofertaActualizada = new Oferta(
-                ofertaDto.getId(),
-                ofertaDto.getFecha(),
-                ofertaDto.getIdPublicacion(),
-                //ofertaDto.getPublicacion(),
-                ofertaDto.getMonto(),
-                ofertaDto.getCartasOfrecidas(),
-                ofertaDto.getOfertante(),
-                "ACEPTADA" // TODO: Luego cambiar por Enum
-        );
-
-        //TODO: Save referancias a la publicacion en crear y en actualizar
-        ofertaRepository.save(ofertaActualizada); //TODO: Save deberia actualizar tambien
-    }
-
-    //TODO: DTOs?
-    public List<OfertaDto> buscarOfertasPorPublicacion(Long idPublicacion, Long idUsuario) {
-        Publicacion publicacion = buscarPublicacionPorId(idPublicacion);
-
-        if(!publicacion.getPublicador().getId().equals(idUsuario)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tiene permiso para ver esta publicación");
-        }
-
-        return publicacion.getOfertas().stream()
-                .map(oferta -> new OfertaDto(
-                        oferta.getFecha(),
-                        oferta.getIdPublicacion(),
-                        //ofertaDto.getPublicacion(),
-                        oferta.getMonto(),
-                        oferta.getCartasOfrecidas(),
-                        oferta.getOfertante(),
-                        oferta.getEstado()))
-                .collect(Collectors.toList());
-    }
-
     // TODO: Filtrar ofertas hechas a publicaciones de otros usuarios (crear OfertaController y OfertaService)?
 
 }

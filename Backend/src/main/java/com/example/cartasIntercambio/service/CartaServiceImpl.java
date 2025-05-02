@@ -2,6 +2,8 @@ package com.example.cartasIntercambio.service;
 
 import com.example.cartasIntercambio.dto.CartaDto;
 import com.example.cartasIntercambio.model.Producto_Carta.Carta;
+import com.example.cartasIntercambio.model.Producto_Carta.EstadoCarta;
+import com.example.cartasIntercambio.model.Producto_Carta.Juego;
 import com.example.cartasIntercambio.repository.CartaRepositoryImpl;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,9 +24,9 @@ public class CartaServiceImpl implements ICartaService {
   @Override
   public void guardarCarta(CartaDto cartaDTO) {
     Carta carta = new Carta(
+        Juego.valueOf(cartaDTO.getJuego()),
         cartaDTO.getNombre(),
-        cartaDTO.getJuego(),
-        cartaDTO.getEstado(),
+        EstadoCarta.valueOf(cartaDTO.getEstado()),
         cartaDTO.getImagenes()
     );
     cartaRepositoryImpl.save(carta);
@@ -35,54 +37,54 @@ public class CartaServiceImpl implements ICartaService {
     List<Carta> cartas = cartaRepositoryImpl.findAll();
     return cartas.stream()
         .map(carta -> new CartaDto(
-            carta.getJuego(),
+            carta.getJuego().toString(),
             carta.getNombre(),
-            carta.getEstado(),
+            carta.getEstado().toString(),
             carta.getImagenes()
         ))
         .collect(Collectors.toList());
   }
 
-  @Override
-  public List<CartaDto> buscarCartaPorNombre(String nombre) {
-    List<Carta> cartas = cartaRepositoryImpl.findByNombre(nombre);
-    if(cartas.isEmpty()){
-      return new ArrayList<>();
-    }
-    return cartas.stream().map(carta -> new CartaDto(
-        carta.getJuego(),
-        carta.getNombre(),
-        carta.getEstado(),
-        carta.getImagenes()
-    )).collect(Collectors.toList());
-  }
-
-  @Override
-  public List<CartaDto> buscarCartaPorJuego(String juego) {
-    List<Carta> cartas = cartaRepositoryImpl.findByJuego(juego);
-    if(cartas.isEmpty()){
-      return new ArrayList<>();
-    }
-    return cartas.stream().map(carta -> new CartaDto(
-        carta.getJuego(),
-        carta.getNombre(),
-        carta.getEstado(),
-        carta.getImagenes()
-    )).collect(Collectors.toList());
-  }
-
-  @Override
-  public List<CartaDto> buscarCartaPorEstado(String estado) {
-    List<Carta> cartas = cartaRepositoryImpl.findByEstado(estado);
-    if(cartas.isEmpty()){
-      return new ArrayList<>();
-    }
-    return cartas.stream().map(carta -> new CartaDto(
-        carta.getJuego(),
-        carta.getNombre(),
-        carta.getEstado(),
-        carta.getImagenes()
-    )).collect(Collectors.toList());
-  }
+//  @Override
+//  public List<CartaDto> buscarCartaPorNombre(String nombre) {
+//    List<Carta> cartas = cartaRepositoryImpl.findByNombre(nombre);
+//    if(cartas.isEmpty()){
+//      return new ArrayList<>();
+//    }
+//    return cartas.stream().map(carta -> new CartaDto(
+//        carta.getJuego().toString(),
+//        carta.getNombre(),
+//        carta.getEstado().toString(),
+//        carta.getImagenes()
+//    )).collect(Collectors.toList());
+//  }
+//
+//  @Override
+//  public List<CartaDto> buscarCartaPorJuego(String juego) {
+//    List<Carta> cartas = cartaRepositoryImpl.findByJuego(juego);
+//    if(cartas.isEmpty()){
+//      return new ArrayList<>();
+//    }
+//    return cartas.stream().map(carta -> new CartaDto(
+//        carta.getJuego().toString(),
+//        carta.getNombre(),
+//        carta.getEstado().toString(),
+//        carta.getImagenes()
+//    )).collect(Collectors.toList());
+//  }
+//
+//  @Override
+//  public List<CartaDto> buscarCartaPorEstado(String estado) {
+//    List<Carta> cartas = cartaRepositoryImpl.findByEstado(estado);
+//    if(cartas.isEmpty()){
+//      return new ArrayList<>();
+//    }
+//    return cartas.stream().map(carta -> new CartaDto(
+//        carta.getJuego().toString(),
+//        carta.getNombre(),
+//        carta.getEstado().toString(),
+//        carta.getImagenes()
+//    )).collect(Collectors.toList());
+//  }
 
 }

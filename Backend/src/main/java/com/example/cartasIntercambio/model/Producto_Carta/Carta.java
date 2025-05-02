@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Carta {
+  private Juego juego;
   private String nombre;
-  private String juego;
-  private String estado;//TODO: pasarlo al enum EstadoCarta
+  private EstadoCarta estado;
   private List<String> imagenes;
 
 

@@ -22,18 +22,18 @@ public class CartaRepositoryImpl implements ICartaRepository {
     return cartas;
   }
 
-  @Override
-  public List<Carta> findByNombre(String nombre) {
-    return cartas.stream().filter(carta -> carta.getNombre().equalsIgnoreCase(nombre)).toList();
-  }
-
-  @Override
-  public List<Carta> findByJuego(String juego) {
-    return cartas.stream().filter(carta -> carta.getJuego().equalsIgnoreCase(juego)).toList();
-  }
-
-  @Override
-  public List<Carta> findByEstado(String estado) {
-    return cartas.stream().filter(carta -> carta.getEstado().equalsIgnoreCase(estado)).toList();
-  }
+//  @Override
+//  public List<Carta> findByNombre(String nombre) {
+//    return cartas.stream().filter(carta -> carta.getNombre().equalsIgnoreCase(nombre)).toList();
+//  }
+//
+//  @Override
+//  public List<Carta> findByJuego(String juego) {
+//    return cartas.stream().filter(carta -> carta.getJuego().equalsIgnoreCase(juego)).toList();
+//  }
+//
+//  @Override
+//  public List<Carta> findByEstado(String estado) {
+//    return cartas.stream().filter(carta -> carta.getEstado().equalsIgnoreCase(estado)).toList();
+//  }
 }

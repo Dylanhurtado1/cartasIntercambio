@@ -7,7 +7,7 @@ public interface ICartaService {
 
   void guardarCarta(CartaDto cartaDTO);
   List<CartaDto> listarCartas();
-  List<CartaDto> buscarCartaPorNombre(String nombre);
-  List<CartaDto> buscarCartaPorJuego(String juego);
-  List<CartaDto> buscarCartaPorEstado(String estado);
+//  List<CartaDto> buscarCartaPorNombre(String nombre);
+//  List<CartaDto> buscarCartaPorJuego(String juego);
+//  List<CartaDto> buscarCartaPorEstado(String estado);
 }

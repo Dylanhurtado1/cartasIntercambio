@@ -1,6 +1,6 @@
 package com.example.cartasIntercambio.model.Mercado;
 
-public enum EstadoPublicacion {
+public enum EstadoOferta {
     ACEPTADO,
     RECHAZADO,
     PENDIENTE

@@ -18,7 +18,7 @@ public class PublicacionRepositoryImpl implements IPublicacionRepository {
 
   @Override
   public void save(Publicacion NuevaPublicacion) {
-    NuevaPublicacion.setId((long) (publicaciones.size() + 1)); //al no tener ninguna DB, por ahora el ID será la posición del
+    NuevaPublicacion.setId((long) (publicaciones.size() + 1)); //TODO: al no tener ninguna DB, por ahora el ID será la posición del
     publicaciones.add(NuevaPublicacion);
   }
 
@@ -45,36 +45,36 @@ public class PublicacionRepositoryImpl implements IPublicacionRepository {
     ).findFirst();
   }
 
-  public List<Publicacion> findByCardName(String nombreDeCartaBuscado) {
-    return publicaciones.stream()
-    .filter(
-      publicacion -> publicacion.getDemanda().getCartaOfrecida().getNombre().contains(nombreDeCartaBuscado)
-    ).collect(Collectors.toList());
-  }
-
-  @Override
-  public List<Publicacion> findByGameName(String game) {
-    return publicaciones.stream()
-    .filter(
-      publicacion -> publicacion.getDemanda().getCartaOfrecida().getJuego().contains(game)
-    ).collect(Collectors.toList());
-  }
-
-  @Override
-  public List<Publicacion> findByCardState(String state) {
-    return publicaciones.stream()
-    .filter(
-      publicacion -> publicacion.getDemanda().getCartaOfrecida().getEstado().equals(state)
-    ).collect(Collectors.toList());
-  }
-
-  @Override
-  public List<Publicacion> findByCost(BigDecimal precio) {
-    return publicaciones.stream()
-    .filter(
-      publicacion -> publicacion.getDemanda().getPrecio().equals(precio)
-    ).collect(Collectors.toList());
-
-  }
+//  public List<Publicacion> findByCardName(String nombreDeCartaBuscado) {
+//    return publicaciones.stream()
+//    .filter(
+//      publicacion -> publicacion.getDemanda().getCartaOfrecida().getNombre().contains(nombreDeCartaBuscado)
+//    ).collect(Collectors.toList());
+//  }
+//
+//  @Override
+//  public List<Publicacion> findByGameName(String game) {
+//    return publicaciones.stream()
+//    .filter(
+//      publicacion -> publicacion.getDemanda().getCartaOfrecida().getJuego().contains(game)
+//    ).collect(Collectors.toList());
+//  }
+//
+//  @Override
+//  public List<Publicacion> findByCardState(String state) {
+//    return publicaciones.stream()
+//    .filter(
+//      publicacion -> publicacion.getDemanda().getCartaOfrecida().getEstado().equals(state)
+//    ).collect(Collectors.toList());
+//  }
+//
+//  @Override
+//  public List<Publicacion> findByCost(BigDecimal precio) {
+//    return publicaciones.stream()
+//    .filter(
+//      publicacion -> publicacion.getDemanda().getPrecio().equals(precio)
+//    ).collect(Collectors.toList());
+//
+//  }
 
 }
