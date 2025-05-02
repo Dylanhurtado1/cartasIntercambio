@@ -153,7 +153,20 @@ Esta es una aplicación para intercambiar cartas de juegos coleccionables como M
           "password": "Juampi!2024"
          }
 
-2. Listar usuarios
+2. **Registrar administrador**
+    - **Método**: `POST`
+    - **URL**: `/usuarios/admins`
+    - **Descripción**: Permite crear un nuevo usuario con rol de administrador.
+        - **Cuerpo de la Solicitud (JSON)**:
+           ```json
+          {
+           "user": "admin2",
+           "nombre": "Florencia",
+           "correo": "florencia.admin@cartas.com",
+           "password": "adminSegura2024",
+          }
+
+3. Listar usuarios
     - **Método**: `GET`
     - **URL**: `/usuarios`
     - **Descripción**: Devuelve la lista de todos los usuarios registrados.
@@ -171,7 +184,7 @@ Esta es una aplicación para intercambiar cartas de juegos coleccionables como M
      }
    ]
 
-3. Buscar usuario por ID
+4. Buscar usuario por ID
    - **Método**: `GET`
    - **URL**: `/usuarios/{id}`
    - **Descripción**: Devuelve el usuario con el ID solicitado.
@@ -182,7 +195,7 @@ Esta es una aplicación para intercambiar cartas de juegos coleccionables como M
     "correo": "juanpablo.alumno@cartas.com"
     }
 
-4. Actualizar usuario
+5. Actualizar usuario
 
 - **Método**: `PUT`
 - **URL**: `/usuarios/{id}`
