@@ -137,7 +137,85 @@ Esta es una aplicación para intercambiar cartas de juegos coleccionables como M
     - **Método**: `GET`
     - **URLs**: `publicaciones/estadisticas/juegos`     
     - **Descripción**: Permite obtener la cantidad de publicaciones creadas por los usuarios para cada juego.
-      
+
+## Gestión de Usuarios 
+
+1. **Registrar usuario**
+    - **Método**: `POST`
+    - **URL**: `/usuarios`
+    - **Descripción**: Permite crear un nuevo usuario.
+      - **Cuerpo de la Solicitud (JSON)**:
+         ```json
+         {
+          "user": "juampi",
+          "nombre": "Juan Pablo",
+          "correo": "juanpablo.alumno@cartas.com",
+          "password": "Juampi!2024"
+         }
+
+2. Listar usuarios
+    - **Método**: `GET`
+    - **URL**: `/usuarios`
+    - **Descripción**: Devuelve la lista de todos los usuarios registrados.
+    ```json
+   [
+      {
+       "user": "juampi",
+       "nombre": "Juan Pablo",
+       "correo": "juanpablo.alumno@cartas.com"
+     },
+     {
+       "user": "martina99",
+       "nombre": "Martina",
+       "correo": "marti99@email.com"
+     }
+   ]
+
+3. Buscar usuario por ID
+   - **Método**: `GET`
+   - **URL**: `/usuarios/{id}`
+   - **Descripción**: Devuelve el usuario con el ID solicitado.
+   ```json
+   {
+    "user": "juampi",
+    "nombre": "Juan Pablo",
+    "correo": "juanpablo.alumno@cartas.com"
+    }
+
+4. Actualizar usuario
+
+- **Método**: `PUT`
+- **URL**: `/usuarios/{id}`
+- **Descripción**: Actualiza los datos de un usuario.
+  ```json
+  {
+  "user": "nuevo_user",
+  "nombre": "Nombre Nuevo",
+  "correo": "nuevo@email.com",
+  "password": "passActualizada"
+  }
+
+Respuesta:
+
+    
+    {
+     "user": "nuevo_user",
+     "nombre": "Nombre Nuevo",
+     "correo": "nuevo@email.com"
+    }
+
+
+5. Borrar usuario
+- **Método**: `DELETE`
+- **URL**: `/usuarios/{id}`
+- **Descripción**: Elimina el usuario con el ID dado.
+- **Respuesta: 204 No Content**
+
+6. Buscar usuarios por filtro
+- **Método**: `DELETE`
+- **URL**: `/usuarios/search?nombre=Juan`
+- **Descripción**: Devuelve la lista de usuarios que coinciden con los parámetros enviados.
+
 ## Estructura del Proyecto
 
 La estructura del proyecto es la siguiente:
