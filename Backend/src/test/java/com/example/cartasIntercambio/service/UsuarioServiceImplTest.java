@@ -4,6 +4,7 @@ import com.example.cartasIntercambio.dto.UsuarioDto;
 import com.example.cartasIntercambio.dto.UsuarioResponseDto;
 import com.example.cartasIntercambio.exception.UsuarioNoEncontradoException;
 import com.example.cartasIntercambio.exception.UsuarioYaExisteException;
+import com.example.cartasIntercambio.model.Usuario.Admin;
 import com.example.cartasIntercambio.model.Usuario.Usuario;
 import com.example.cartasIntercambio.repository.UsuarioRepositoryImpl;
 import org.junit.jupiter.api.Test;
@@ -193,5 +194,137 @@ public class UsuarioServiceImplTest {
         assertEquals("sofi22", resultado.get(0).getUser());
     }
 
+    @Test
+    void crearAdmin_ok() {
+        // Arrange
+        UsuarioDto dto = new UsuarioDto("admin44", "Olga", "olga@admin.com", "securePass");
+        when(usuarioRepository.existsByUser("admin44")).thenReturn(false);
+        when(usuarioRepository.existsByCorreo("olga@admin.com")).thenReturn(false);
 
+        // Act
+        UsuarioResponseDto resp = usuarioService.crearAdmin(dto);
+
+        // Assert
+        assertEquals("admin44", resp.getUser());
+        assertEquals("Olga", resp.getNombre());
+        assertEquals("olga@admin.com", resp.getCorreo());
+        assertEquals("admin", resp.getTipo());
+        verify(usuarioRepository).save(any(Admin.class));
+    }
+
+    @Test
+    void crearAdmin_yaExiste_lanzaExcepcion() {
+        // Arrange
+        UsuarioDto dto = new UsuarioDto("admin44", "Olga", "olga@admin.com", "securePass");
+        when(usuarioRepository.existsByUser("admin44")).thenReturn(true);
+
+        // Act & Assert
+        assertThrows(UsuarioYaExisteException.class, () -> usuarioService.crearAdmin(dto));
+    }
+
+    @Test
+    void crearAdmin_yaExistePorCorreo_lanzaExcepcion() {
+        // Arrange
+        UsuarioDto dto = new UsuarioDto("admin44", "Olga", "olga@admin.com", "securePass");
+        when(usuarioRepository.existsByCorreo("olga@admin.com")).thenReturn(true);
+
+        // Act & Assert
+        assertThrows(UsuarioYaExisteException.class, () -> usuarioService.crearAdmin(dto));
+    }
+
+    @Test
+    void listarUsuarios_incluyeAdmin() {
+        // Arrange
+        Admin admin = new Admin();
+        admin.setId(1L);
+        admin.setUser("admin1");
+        admin.setNombre("SuperAdmin");
+        admin.setEmail("admin@mail.com");
+
+        when(usuarioRepository.findAll()).thenReturn(List.of(admin));
+
+        // Act
+        List<UsuarioResponseDto> resultado = usuarioService.listarUsuarios();
+
+        // Assert
+        assertEquals(1, resultado.size());
+        assertEquals("admin", resultado.get(0).getTipo());
+    }
+
+
+    @Test
+    void buscarUsuarioPorId_admin_devuelveTipoAdmin() {
+        // Arrange
+        Admin admin = new Admin();
+        admin.setId(1L);
+        admin.setUser("admin1");
+        admin.setNombre("SuperAdmin");
+        admin.setEmail("admin@mail.com");
+        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(admin));
+
+        // Act
+        UsuarioResponseDto resp = usuarioService.buscarUsuarioPorId(1L);
+
+        // Assert
+        assertEquals("admin", resp.getTipo());
+    }
+
+    @Test
+    void actualizarUsuario_adminActualizaTipoAdmin() {
+        // Arrange
+        Long id = 99L;
+        Admin admin = new Admin();
+        admin.setId(id);
+        admin.setUser("admin1");
+        admin.setNombre("SuperAdmin");
+        admin.setEmail("admin1@mail.com");
+        admin.setPassword("oldpass");
+
+        when(usuarioRepository.findById(id)).thenReturn(Optional.of(admin));
+
+        UsuarioDto dto = new UsuarioDto("adminNEW", "Admin Nuevo", "adminnuevo@mail.com", "newpass");
+
+        // Act
+        UsuarioResponseDto resp = usuarioService.actualizarUsuario(id, dto);
+
+        // Assert
+        assertEquals("admin", resp.getTipo());
+        assertEquals("adminNEW", resp.getUser());
+        assertEquals("Admin Nuevo", resp.getNombre());
+        assertEquals("adminnuevo@mail.com", resp.getCorreo());
+        verify(usuarioRepository).update(any(Admin.class));
+    }
+
+    @Test
+    void buscarUsuarios_incluyeAdminYRetornaTipoCorrecto() {
+        // Arrange
+        Admin admin = new Admin();
+        admin.setId(1L);
+        admin.setUser("admin1");
+        admin.setNombre("SuperAdmin");
+        admin.setEmail("admin@mail.com");
+
+        Usuario user = new Usuario();
+        user.setId(2L);
+        user.setUser("usuario1");
+        user.setNombre("Usuario");
+        user.setEmail("usuario@mail.com");
+
+        List<Usuario> lista = List.of(admin, user);
+
+        when(usuarioRepository.findAll()).thenReturn(lista);
+
+        // Act
+        List<UsuarioResponseDto> resultado = usuarioService.buscarUsuarios(null, null, null);
+
+        // Assert
+        assertEquals(2, resultado.size());
+
+        // Chequeo individual por tipo
+        UsuarioResponseDto respAdmin = resultado.stream().filter(r -> r.getUser().equals("admin1")).findFirst().get();
+        UsuarioResponseDto respUser = resultado.stream().filter(r -> r.getUser().equals("usuario1")).findFirst().get();
+
+        assertEquals("admin", respAdmin.getTipo());
+        assertEquals("usuario", respUser.getTipo());
+    }
 }

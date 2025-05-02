@@ -1,5 +1,6 @@
 package com.example.cartasIntercambio.repository;
 
+import com.example.cartasIntercambio.model.Usuario.Admin;
 import com.example.cartasIntercambio.model.Usuario.Usuario;
 import com.example.cartasIntercambio.repository.irepository.IUsuarioRepository;
 import org.springframework.stereotype.Repository;
@@ -12,6 +13,27 @@ import java.util.Optional;
 public class UsuarioRepositoryImpl implements IUsuarioRepository {
 
     private List<Usuario> usuarios = new ArrayList<>();
+
+    public UsuarioRepositoryImpl() {
+        Admin admin = new Admin();
+        admin.setId(1L);
+        admin.setUser("admin1");
+        admin.setNombre("Administrador");
+        admin.setApellido("DelSistema");
+        admin.setEmail("admin@cartas.com");
+        admin.setPassword("supersecreto");
+
+        usuarios.add(admin);
+
+        Usuario user = new Usuario();
+        user.setId(2L);
+        user.setUser("user1");
+        user.setNombre("Usuario");
+        user.setApellido("Normal");
+        user.setEmail("user@cartas.com");
+        user.setPassword("1234");
+        usuarios.add(user);
+    }
 
     @Override
     public void save(Usuario usuario) {
