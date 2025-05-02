@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Detalle de Publicación</title>
+  <link rel="stylesheet" href="/public/css/style.css">
+  <link rel="stylesheet" href="/public/css/publicacion.css">
+</head>
+<body>
+  <header id="menu-app"></header>
+
+  <main id="publicacion-app">
+    <section v-if="publicacion" class="detalle-publicacion">
+      <h2>{{ publicacion.cartaOfrecida.nombre }}</h2>
+      <p class="juego">{{ publicacion.cartaOfrecida.juego }} — Estado: {{ publicacion.cartaOfrecida.estado }}</p>
+      <p class="precio">Precio: ${{ publicacion.precio }}</p>
+      <p class="fecha">Publicada el {{ publicacion.fecha }}</p>
+
+      <div class="imagenes">
+        <img v-for="(img, index) in publicacion.cartaOfrecida.imagenes" :src="img" :alt="'Imagen ' + (index + 1)" />
+      </div>
+
+      <p class="descripcion">{{ publicacion.descripcion }}</p>
+
+      <section v-if="publicacion.cartasInteres.length" class="cartas-interes">
+        <h3>Cartas de Interés</h3>
+        <div class="carta" v-for="carta in publicacion.cartasInteres">
+          <h4>{{ carta.nombre }}</h4>
+          <p>{{ carta.juego }} — Estado: {{ carta.estado }}</p>
+          <div class="imagenes">
+            <img v-for="(img, i) in carta.imagenes" :src="img" :alt="'Imagen ' + (i + 1)" />
+          </div>
+        </div>
+      </section>
+
+      <section class="publicador">
+        <h3>Publicado por</h3>
+        <p>{{ publicacion.publicador.nombre }}</p>
+      </section>
+    </section>
+
+    <section class="formulario-oferta">
+      <h3>Realizar una oferta</h3>
+      <form @submit.prevent="enviarOferta">
+        <label>Precio propuesto:</label>
+        <input type="number" v-model="oferta.precio" min="0" step="0.01" placeholder="Ej: 50.00">
+
+        <label>Cartas para intercambiar:</label>
+        <div class="intercambio" v-for="(carta, index) in oferta.cartasIntercambio">
+          <input type="text" v-model="carta.nombre" placeholder="Nombre">
+          <input type="text" v-model="carta.juego" placeholder="Juego">
+          <input type="text" v-model="carta.estado" placeholder="Estado">
+          <input type="url" v-model="carta.imagen" placeholder="URL de imagen">
+        </div>
+        <button type="button" @click="agregarCarta">Agregar otra carta</button>
+        <button type="submit">Enviar oferta</button>
+      </form>
+    </section>
+  </main>
+
+  <script src="https://unpkg.com/vue@3"></script>
+  <script src="/public/js/menu.js"></script>
+  <script src="/public/js/publicacion.js"></script>
+</body>
+</html>

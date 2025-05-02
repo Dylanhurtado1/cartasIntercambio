@@ -1,23 +1,28 @@
 let { ref } = Vue;
 
-const backendURL = "localhost:8080"
+const backendURL = "http://localhost:8080"
 
 Vue.createApp({
   setup() {
     const listaDePublicaciones = ref([]);
+    const sinDatos = ref("");
 
     function getPublicaciones() {
       fetch(backendURL + "/publicaciones")
         .then(res => res.json())
         .then(json => {
           listaDePublicaciones.value = json;
-          console.log(listaDePublicaciones.value);
+          if(listaDePublicaciones.value.length == 0)
+            sinDatos.value = "No hay elementos cargados en el sistema :("
         })
-        .catch(err => console.error("Error al cargar publicaciones:", err));
+        .catch(err =>{
+          sinDatos.value = "Error al cargar publicaciones del servidor";
+          console.error(sinDatos.value)
+        });
     }
 
     getPublicaciones();
 
-    return { listaDePublicaciones };
+    return { listaDePublicaciones, sinDatos };
   }
 }).mount("#app");

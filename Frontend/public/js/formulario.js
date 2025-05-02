@@ -77,7 +77,7 @@ createApp({
                         imagenes: cartaInd.imagenes.map(file => file.name)
                     }))
                 },
-                publicador: {} // por ahora se quedará como un objetov vacío
+                publicador: {} // por ahora se quedará como un objeto vacío
                 
             };
             
