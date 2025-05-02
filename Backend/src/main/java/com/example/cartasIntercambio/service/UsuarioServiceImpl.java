@@ -4,6 +4,7 @@ import com.example.cartasIntercambio.dto.UsuarioDto;
 import com.example.cartasIntercambio.dto.UsuarioResponseDto;
 import com.example.cartasIntercambio.exception.UsuarioNoEncontradoException;
 import com.example.cartasIntercambio.exception.UsuarioYaExisteException;
+import com.example.cartasIntercambio.model.Usuario.Admin;
 import com.example.cartasIntercambio.model.Usuario.Usuario;
 import com.example.cartasIntercambio.repository.UsuarioRepositoryImpl;
 import org.springframework.stereotype.Service;
@@ -44,6 +45,7 @@ public class UsuarioServiceImpl implements IUsuarioService{
                         .user(usuario.getUser())
                         .nombre(usuario.getNombre())
                         .correo(usuario.getEmail())
+                        .tipo(usuario instanceof Admin ? "admin" : "usuario")
                         .build())
                 .toList();
     }
@@ -59,6 +61,7 @@ public class UsuarioServiceImpl implements IUsuarioService{
                 .user(usuario.getUser())
                 .nombre(usuario.getNombre())
                 .correo(usuario.getEmail())
+                .tipo(usuario instanceof Admin ? "admin" : "usuario")
                 .build();
     }
 
@@ -78,6 +81,7 @@ public class UsuarioServiceImpl implements IUsuarioService{
                 .user(usuario.getUser())
                 .nombre(usuario.getNombre())
                 .correo(usuario.getEmail())
+                .tipo(usuario instanceof Admin ? "admin" : "usuario")
                 .build();
     }
 
@@ -101,8 +105,27 @@ public class UsuarioServiceImpl implements IUsuarioService{
                         .user(u.getUser())
                         .nombre(u.getNombre())
                         .correo(u.getEmail())
+                        .tipo(u instanceof Admin ? "admin" : "usuario")
                         .build())
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public UsuarioResponseDto crearAdmin(UsuarioDto dto) {
+        if (usuarioRepository.existsByUser(dto.getUser()) || usuarioRepository.existsByCorreo(dto.getCorreo())) {
+            throw new UsuarioYaExisteException("Ya existe un usuario (o admin) con ese user y/o correo");
+        }
+        Admin admin = new Admin();
+        admin.setUser(dto.getUser());
+        admin.setNombre(dto.getNombre());
+        admin.setEmail(dto.getCorreo());
+        admin.setPassword(dto.getPassword());
+        usuarioRepository.save(admin);
+        return UsuarioResponseDto.builder()
+                .user(admin.getUser())
+                .nombre(admin.getNombre())
+                .correo(admin.getEmail())
+                .tipo("admin")
+                .build();
+    }
 }

@@ -58,4 +58,10 @@ public class UsuarioController {
         return ResponseEntity.ok(resultado);
     }
 
+    @PostMapping("/admins")
+    public ResponseEntity<UsuarioResponseDto> crearAdmin(@RequestBody UsuarioDto dto) {
+        UsuarioResponseDto resp = usuarioService.crearAdmin(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(resp);
+    }
+
 }

@@ -14,4 +14,5 @@ public interface IUsuarioService {
     UsuarioResponseDto actualizarUsuario(Long id, UsuarioDto usuarioDto);
     void borrarUsuario(Long id);
     List<UsuarioResponseDto> buscarUsuarios(String user, String nombre, String correo);
+    UsuarioResponseDto crearAdmin(UsuarioDto dto);
 }
