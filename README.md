@@ -263,7 +263,15 @@ La estructura del proyecto es la siguiente:
 
 5. Construye y ejecuta el contenedor:
 
-    ```docker compose up```
+Si hiciste cambios en el código, SIEMPRE usá
+
+```docker compose up --build```
+
+para asegurarte de que tu código actualizado esté corriendo en el contenedor Docker.
+
+Despúes de levantarlo la primera vez, si no tocás el código, podés usar solo
+
+```docker compose up```
 
 ### Accede a la API:
 
