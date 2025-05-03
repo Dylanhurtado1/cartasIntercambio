@@ -62,21 +62,21 @@ createApp({
             const data = {
                 fecha: new Date().toJSON(),
                 descripcion: this.form.descripcion,
-                demanda: {
-                    cartaOfrecida: {
-                        nombre: this.form.nombreCarta,
-                        juego: this.form.nombreJuego,
-                        estado: this.form.estado,
-                        imagenes: this.form.imagenesCarta.map(file => file.name)        
-                    },
-                    precio: parseFloat(this.form.precio) > 0 ? parseFloat(this.form.precio) : null,
-                    cartasInteres: this.form.cartasDeInteres.map(cartaInd => ({
+                cartaOfrecida: {
+                    nombre: this.form.nombreCarta,
+                    juego: this.form.nombreJuego,
+                    estado: this.form.estado,
+                    imagenes: this.form.imagenesCarta.map(file => file.name)        
+                },
+                precio: parseFloat(this.form.precio) > 0 ? parseFloat(this.form.precio) : null,
+                cartasInteres: this.form.cartasDeInteres.map(
+                    cartaInd => ({
                         nombre: cartaInd.nombre,
                         juego: cartaInd.juego,
                         estado: cartaInd.estado,
                         imagenes: cartaInd.imagenes.map(file => file.name)
                     }))
-                },
+                ,
                 publicador: {} // por ahora se quedará como un objeto vacío
                 
             };
