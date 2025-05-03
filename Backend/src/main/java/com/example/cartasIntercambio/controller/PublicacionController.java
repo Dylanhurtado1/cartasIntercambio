@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,11 +33,20 @@ public class PublicacionController{
         this.ofertaService = ofertaService;
     }
 
-    //TODO: Paginacion
     @GetMapping
-    public ResponseEntity<List<PublicacionDto>> listarPublicaciones() {
+    public ResponseEntity<List<PublicacionDto>> listarPublicaciones(
+        @RequestParam(required = false) String nombre,
+        @RequestParam(required = false) String juego,
+        @RequestParam(required = false) String estado,
+        @RequestParam(required = false) BigDecimal preciomin,
+        @RequestParam(required = false) BigDecimal preciomax
+    ) {
         List<PublicacionDto> publicaciones = publicacionService.listarPublicaciones();
-
+        if(nombre != null) publicaciones = publicaciones.stream().filter(p -> p.getCartaOfrecida().getNombre().toLowerCase().contains(nombre.toLowerCase())).toList();
+        if(juego != null) publicaciones = publicaciones.stream().filter(p -> p.getCartaOfrecida().getJuego().toString().toLowerCase().contains(juego.toLowerCase())).toList();
+        if(estado != null) publicaciones = publicaciones.stream().filter(p -> p.getCartaOfrecida().getEstado().toString().toLowerCase().contains(estado.toLowerCase())).toList();
+        if(preciomin != null) publicaciones = publicaciones.stream().filter(p -> p.getPrecio().compareTo(preciomin) > 0).toList();
+        if(preciomax != null) publicaciones = publicaciones.stream().filter(p -> p.getPrecio().compareTo(preciomax) < 0).toList();
         return new ResponseEntity<>(publicaciones, HttpStatus.OK);
     }
 
@@ -53,19 +63,6 @@ public class PublicacionController{
 
         return new ResponseEntity<>(publicacionDto, HttpStatus.CREATED);
     }
-
-    @PostMapping("/busqueda")
-    public ResponseEntity<List<PublicacionDto>> buscarPor(@RequestBody Filtros filtros) {
-        List<PublicacionDto> publicaciones = publicacionService.listarPublicaciones();
-        if(filtros.getNombreJuego() != null) publicaciones = publicaciones.stream().filter(p -> p.getCartaOfrecida().getJuego().toString().equalsIgnoreCase(filtros.getNombreJuego())).toList();
-        if(filtros.getNombreCarta() != null) publicaciones = publicaciones.stream().filter(p -> p.getCartaOfrecida().getNombre().equalsIgnoreCase(filtros.getNombreCarta())).toList();
-        if(filtros.getEstado() != null) publicaciones = publicaciones.stream().filter(p -> p.getCartaOfrecida().getEstado().toString().equalsIgnoreCase(filtros.getEstado())).toList();
-        if(filtros.getPrecioMin() != null) publicaciones = publicaciones.stream().filter(p -> p.getPrecio().compareTo(filtros.getPrecioMin()) > 0).toList();
-        if(filtros.getPrecioMax() != null) publicaciones = publicaciones.stream().filter(p -> p.getPrecio().compareTo(filtros.getPrecioMax()) < 0).toList();
-
-        return new ResponseEntity<>(publicaciones, HttpStatus.OK);
-    }
-
 
     @PostMapping("/{idPublicacion}/ofertas")
     public ResponseEntity<OfertaDto> crearOferta(@PathVariable("idPublicacion") Long idPublicacion, @RequestBody OfertaDto ofertaDto) {

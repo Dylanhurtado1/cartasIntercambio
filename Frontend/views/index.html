@@ -29,10 +29,10 @@
 
     <section class="productos">
       <a v-for="carta in listaDePublicaciones" class="producto" :href="`/publicacion/${carta.id}`">
-        <img src="img/carta1.jpg" alt="Carta 1" />
-        <h2>{{ carta.demanda.cartaOfrecida.nombre }}</h2>
-        <p>{{ carta.demanda.cartaOfrecida.juego }}</p>
-        <span>$ {{ carta.demanda.precio }}</span>
+        <img src="img/carta1.jpg" :alt="`Carta de ${carta.cartaOfrecida.nombre}`" />
+        <h2>{{ carta.cartaOfrecida.nombre }}</h2>
+        <p>{{ carta.cartaOfrecida.juego }}</p>
+        <span>$ {{ carta.precio }}</span>
       </a>
     </section>
 

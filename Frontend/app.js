@@ -24,4 +24,36 @@ app.get("/publicacion/:idPublicacion", (req, res) => {
     //res.send(req.params)
 })
 
+// Middleware para rutas no encontradas (error 404)
+app.use((req, res, next) => {
+    res.status(404).send(`
+      <!DOCTYPE html>
+      <html lang="es">
+      <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Error 404 - Página no encontrada</title>
+          <style>
+              body {
+                  font-family: Arial, sans-serif;
+                  text-align: center;
+                  margin-top: 50px;
+              }
+              h1 {
+                  color: #ff0000;
+              }
+              p {
+                  font-size: 1.2em;
+              }
+          </style>
+      </head>
+      <body>
+          <h1>Error 404</h1>
+          <p>Lo sentimos, la página que buscas no existe.</p>
+      </body>
+      </html>
+    `);
+  });
+  
+
 
