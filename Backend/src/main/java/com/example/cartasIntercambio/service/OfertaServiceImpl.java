@@ -65,8 +65,7 @@ public class OfertaServiceImpl implements IOfertaService{
         ofertaRepository.save(nuevaOferta);
     }
 
-    // TODO: Obtener ofertas hechas a publicaciones de otros usuarios
-
+    // Ofertas recibidas en una publicacion
     @Override
     public List<OfertaDto> buscarOfertasPorPublicacion(Publicacion publicacion, Long idUsuario) {
         if(!publicacion.getPublicador().getId().equals(idUsuario)) {
@@ -92,6 +91,22 @@ public class OfertaServiceImpl implements IOfertaService{
     @Override
     public void rechazarOtrasOfertas(Long idOferta, Long idPublicacion) {
         ofertaRepository.rechazarOtrasOfertas(idOferta, idPublicacion);
+    }
+
+    // Ofertas hechas por el usuario logueado a publicaciones de otros usuarios
+    @Override
+    public List<OfertaDto> buscarOfertasRealizadas(Long idUsuario) {
+        List<Oferta> ofertasRealizadas = ofertaRepository.findByOfertante(idUsuario);
+
+        return ofertasRealizadas.stream()
+                .map(oferta -> new OfertaDto(
+                        oferta.getFecha(),
+                        oferta.getIdPublicacion(),
+                        oferta.getMonto(),
+                        oferta.getCartasOfrecidas(),
+                        oferta.getOfertante(),
+                        oferta.getEstado().toString()))
+                .collect(Collectors.toList());
     }
 
 }

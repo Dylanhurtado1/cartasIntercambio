@@ -18,4 +18,6 @@ public interface IOfertaService {
 
     void rechazarOtrasOfertas(Long idOferta, Long idPublicacion);
 
+    List<OfertaDto> buscarOfertasRealizadas(Long idUsuario);
+
 }

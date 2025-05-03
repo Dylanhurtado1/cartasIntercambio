@@ -104,8 +104,7 @@ public class PublicacionController{
         return mapper.treeToValue(patched, Oferta.class);
     }
 
-
-    // Ofertas recibidas para una publicacion del usuario logueado
+    // Mis publicaciones (publicaciones del usuario logueado)
     @GetMapping("/usuarios/{idUsuario}") // TODO: El ID del usuario no lo vamos a pasar por URL
     public ResponseEntity<List<PublicacionDto>> listarPublicacionesPorUsuario(@PathVariable("idUsuario") Long idUsuario) {
         //  Queda pendiente resolver eso, paso provisoriamente el id por parametro para que no tire error.
@@ -114,12 +113,21 @@ public class PublicacionController{
         return new ResponseEntity<>(publicacionesDTO, HttpStatus.OK);
     }
 
+    // Ofertas recibidas para una publicacion del usuario logueado
     @GetMapping("/{idPublicacion}/ofertas/{idUsuario}") // TODO: El ID del usuario no lo vamos a pasar por URL
     public ResponseEntity<List<OfertaDto>> listarOfertasRecibidas(@PathVariable("idPublicacion") Long idPublicacion, @PathVariable("idUsuario") Long idUsuario) {
         Publicacion publicacion = publicacionService.buscarPublicacionPorId(idPublicacion);
         List<OfertaDto> ofertasRecibidas = ofertaService.buscarOfertasPorPublicacion(publicacion, idUsuario);
 
         return new ResponseEntity<>(ofertasRecibidas, HttpStatus.OK);
+    }
+
+    // Ofertas hechas por el usuario logueado a publicaciones de otros usuarios
+    @GetMapping("/usuarios/{idUsuario}/ofertas")
+    public ResponseEntity<List<OfertaDto>> listarOfertasRealizadas(@PathVariable("idUsuario") Long idUsuario) {
+        List<OfertaDto> ofertasRealizadas = ofertaService.buscarOfertasRealizadas(idUsuario);
+
+        return new ResponseEntity<>(ofertasRealizadas, HttpStatus.OK);
     }
 
 }

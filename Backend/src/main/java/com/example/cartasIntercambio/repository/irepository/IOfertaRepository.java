@@ -10,7 +10,7 @@ public interface IOfertaRepository {
   Optional<Oferta> findById(Long id);
   void save(Oferta oferta);
   List<Oferta> findAll();
-  List<Oferta> findByOferente(Usuario oferente);
+  List<Oferta> findByOfertante(Long idOfertante);
   List<Oferta> findByPublicacion(Long idPublicacion);
   void actualizarOferta(Oferta oferta);
   void rechazarOtrasOfertas(Long idOferta, Long idPublicacion);
