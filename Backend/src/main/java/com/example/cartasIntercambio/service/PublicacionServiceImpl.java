@@ -2,9 +2,7 @@ package com.example.cartasIntercambio.service;
 
 import com.example.cartasIntercambio.dto.OfertaDto;
 import com.example.cartasIntercambio.dto.PublicacionDto;
-import com.example.cartasIntercambio.model.Mercado.EstadoOferta;
 import com.example.cartasIntercambio.model.Mercado.EstadoPublicacion;
-import com.example.cartasIntercambio.model.Mercado.Oferta;
 import com.example.cartasIntercambio.model.Mercado.Publicacion;
 import com.example.cartasIntercambio.repository.OfertaRepositoryImpl;
 import com.example.cartasIntercambio.repository.PublicacionRepositoryImpl;
@@ -13,32 +11,44 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class PublicacionServiceImpl implements IPublicacionService {
     private final PublicacionRepositoryImpl publicacionRepository;
 
-
     @Autowired
     public PublicacionServiceImpl(PublicacionRepositoryImpl publicacionRepository) {
         this.publicacionRepository = publicacionRepository;
     }
 
-    @Override
-    public Optional<Publicacion> buscarPublicacionPorId(Long idPublicacion) {
+    public Publicacion buscarPublicacionPorId(Long idPublicacion) {
 
-        return publicacionRepository.findById(idPublicacion);
+        return publicacionRepository.findById(idPublicacion)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe la publicación con id: " + idPublicacion));
+    }
+
+    @Override
+    public PublicacionDto buscarPublicacionDTOPorId(Long idPublicacion) { // Este es el que llamamos desde el controller
+        Publicacion publicacion = buscarPublicacionPorId(idPublicacion);
+
+        return new PublicacionDto(
+                publicacion.getId(),
+                publicacion.getFecha(),
+                publicacion.getDescripcion(),
+                publicacion.getCartaOfrecida(),
+                publicacion.getPrecio(),
+                publicacion.getCartasInteres(),
+                publicacion.getPublicador(),
+                publicacion.getEstado().toString());
     }
 
     @Override
     public List<PublicacionDto> buscarPublicacionesPorUsuario(Long idUsuario) {
         List<Publicacion> publicaciones = publicacionRepository.findByPublicadorId(idUsuario); // TODO: Validar que exista el user
 
-        return publicaionADto(publicaciones);
+        return publicacionesADto(publicaciones);
     }
     
     @Override
@@ -51,16 +61,17 @@ public class PublicacionServiceImpl implements IPublicacionService {
             nuevaPublicacionDto.getPrecio(),
             nuevaPublicacionDto.getCartasInteres(),
             nuevaPublicacionDto.getPublicador(),
-            EstadoPublicacion.valueOf(nuevaPublicacionDto.getEstado())
+            EstadoPublicacion.valueOf("ACTIVA") //nuevaPublicacionDto.getEstado()
         );
+
         publicacionRepository.save(nuevaPublicacion);
     }
 
 
    public List<PublicacionDto> listarPublicaciones() {
         List<Publicacion> publicaciones = publicacionRepository.findAll();
-        
-        return publicaionADto(publicaciones);
+
+        return publicacionesADto(publicaciones);
     }
 
 //    public List<PublicacionDto> buscarPublicacionPorNombre(String nombre) {
@@ -126,25 +137,6 @@ public class PublicacionServiceImpl implements IPublicacionService {
 //        )).collect(Collectors.toList());
 //    }
 
-//    public List<OfertaDto> buscarOfertasPorPublicacion(Long idPublicacion, Long idUsuario) {
-//        Publicacion publicacion = buscarPublicacionPorId(idPublicacion);
-//
-//        if(!publicacion.getPublicador().getId().equals(idUsuario)) {
-//            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tiene permiso para ver esta publicación");
-//        }
-////TODO: Ofertas service getOfertas
-//        return publicacion.getOfertas().stream()
-//                .map(oferta -> new OfertaDto(
-//                        oferta.getFecha(),
-//                        oferta.getIdPublicacion(),
-//                        //ofertaDto.getPublicacion(),
-//                        oferta.getMonto(),
-//                        oferta.getCartasOfrecidas(),
-//                        oferta.getOfertante(),
-//                        oferta.getEstado()))
-//                .collect(Collectors.toList());
-//    }
-//
 //    public void actualizarOferta(OfertaDto ofertaDto) {
 //        Oferta ofertaActualizada = new Oferta(
 //                ofertaDto.getId(),
@@ -154,7 +146,7 @@ public class PublicacionServiceImpl implements IPublicacionService {
 //                ofertaDto.getMonto(),
 //                ofertaDto.getCartasOfrecidas(),
 //                ofertaDto.getOfertante(),
-//                "ACEPTADA" // TODO: Luego cambiar por Enum
+//                "ACEPTADA"
 //        );
 //
 //        //TODO: Save referancias a la publicacion en crear y en actualizar
@@ -162,8 +154,7 @@ public class PublicacionServiceImpl implements IPublicacionService {
 //    }
 //    //TODO: DTOs?
 
-
-    public List<PublicacionDto> publicaionADto(List<Publicacion> publicaciones) {
+    public List<PublicacionDto> publicacionesADto(List<Publicacion> publicaciones) {
 
         return publicaciones.stream().map(publicacion -> new PublicacionDto(
                 publicacion.getId(),
@@ -176,6 +167,5 @@ public class PublicacionServiceImpl implements IPublicacionService {
                 publicacion.getEstado().toString()
         )).collect(Collectors.toList());
     }
-    // TODO: Filtrar ofertas hechas a publicaciones de otros usuarios (crear OfertaController y OfertaService)?
 
 }

@@ -1,8 +1,6 @@
 package com.example.cartasIntercambio.dto;
 
-import com.example.cartasIntercambio.model.Mercado.EstadoOferta;
 import com.example.cartasIntercambio.model.Producto_Carta.Carta;
-import com.example.cartasIntercambio.model.Producto_Carta.EstadoCarta;
 import com.example.cartasIntercambio.model.Usuario.Usuario;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -38,4 +36,5 @@ public class OfertaDto {
     this.ofertante = ofertante;
     this.estado = estado;
   }
+
 }

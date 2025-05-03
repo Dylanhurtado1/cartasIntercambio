@@ -45,4 +45,5 @@ public class OfertaRepositoryImpl implements IOfertaRepository {
   public List<Oferta> findByPublicacion(Long idPublicacion) {
     return ofertas.stream().filter(o -> o.getIdPublicacion().equals(idPublicacion)).toList();
   }
+
 }

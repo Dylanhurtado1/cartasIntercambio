@@ -12,8 +12,6 @@ public interface IPublicacionService {
 
     List<PublicacionDto> listarPublicaciones();
 
-    Optional<Publicacion> buscarPublicacionPorId(Long idPublicacion);
-
     List<PublicacionDto> buscarPublicacionesPorUsuario(Long idUsuario);
 
     void guardarPublicacion(PublicacionDto nuevaPublicacionDto);
@@ -26,6 +24,8 @@ public interface IPublicacionService {
 //
 //    List<PublicacionDto> buscarPublicacionPorPrecio(BigDecimal precio);
 
-//    List<OfertaDto> buscarOfertasPorPublicacion(Long idPublicacion, Long idUsuario);
+    //List<OfertaDto> buscarOfertasPorPublicacion(Long idPublicacion, Long idUsuario);
+
+    PublicacionDto buscarPublicacionDTOPorId(Long idPublicacion);
 
 }

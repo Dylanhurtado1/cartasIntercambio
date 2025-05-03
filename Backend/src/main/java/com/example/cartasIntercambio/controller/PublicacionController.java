@@ -26,7 +26,6 @@ public class PublicacionController{
     private final OfertaServiceImpl ofertaService;
     private final ObjectMapper mapper = new ObjectMapper();
 
-
     @Autowired
     public PublicacionController(PublicacionServiceImpl publicacionService, OfertaServiceImpl ofertaService) {
         this.publicacionService = publicacionService;
@@ -42,11 +41,10 @@ public class PublicacionController{
     }
 
     @GetMapping("/{idPublicacion}")
-    public ResponseEntity<Publicacion> buscarPublicacion(@PathVariable("idPublicacion") Long idPublicacion) {
-        Optional<Publicacion> publicacion = publicacionService.buscarPublicacionPorId(idPublicacion);
+    public ResponseEntity<PublicacionDto> buscarPublicacion(@PathVariable("idPublicacion") Long idPublicacion) {
+        PublicacionDto publicacionDto = publicacionService.buscarPublicacionDTOPorId(idPublicacion);
 
-        return publicacion.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return new ResponseEntity<>(publicacionDto, HttpStatus.OK);
     }
 
     @PostMapping
@@ -71,7 +69,8 @@ public class PublicacionController{
 
     @PostMapping("/{idPublicacion}/ofertas")
     public ResponseEntity<OfertaDto> crearOferta(@PathVariable("idPublicacion") Long idPublicacion, @RequestBody OfertaDto ofertaDto) {
-        ofertaService.crearOferta(ofertaDto, idPublicacion);
+        Publicacion publicacion = publicacionService.buscarPublicacionPorId(idPublicacion);
+        ofertaService.crearOferta(ofertaDto, publicacion);
 
         return new ResponseEntity<>(ofertaDto, HttpStatus.CREATED);
     }
@@ -107,12 +106,13 @@ public class PublicacionController{
     }
 
     // Ofertas recibidas para una publicacion del usuario logueado
-//    @GetMapping("/{idPublicacion}/ofertas/{idUsuario}") // TODO: El ID del usuario no lo vamos a pasar por URL
-//    public ResponseEntity<List<OfertaDto>> listarOfertasRecibidas(@PathVariable("idPublicacion") Long idPublicacion, @PathVariable("idUsuario") Long idUsuario) {
-//        List<OfertaDto> ofertasRecibidas = publicacionService.buscarOfertasPorPublicacion(idPublicacion, idUsuario);
-//
-//        return new ResponseEntity<>(ofertasRecibidas, HttpStatus.OK);
-//    }
+    @GetMapping("/{idPublicacion}/ofertas/{idUsuario}") // TODO: El ID del usuario no lo vamos a pasar por URL
+    public ResponseEntity<List<OfertaDto>> listarOfertasRecibidas(@PathVariable("idPublicacion") Long idPublicacion, @PathVariable("idUsuario") Long idUsuario) {
+        Publicacion publicacion = publicacionService.buscarPublicacionPorId(idPublicacion);
+        List<OfertaDto> ofertasRecibidas = ofertaService.buscarOfertasPorPublicacion(publicacion, idUsuario);
+
+        return new ResponseEntity<>(ofertasRecibidas, HttpStatus.OK);
+    }
 
 //    Aceptar o rechazar una oferta
 //Si la url es directamente con el id de la oferta => Oferta oferta = findById(idOferta);
