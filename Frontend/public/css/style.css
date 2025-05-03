@@ -21,7 +21,8 @@ header {
     flex-wrap: wrap;
 }
 
-.top-header h1, p{
+.top-header h1, 
+.top-header p{
     margin: 0px;
     width: 100%;
     text-align: center;

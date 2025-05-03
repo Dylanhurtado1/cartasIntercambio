@@ -22,8 +22,8 @@ Vue.createApp({
       <div class="top-header">
         <h1>Cartas Online</h1>
         <button class="menu-toggle" @click="toggleMenu">&#9776;</button>
+        <p>Buscá y comprá cartas de Pokémon y Yu-Gi-Oh!</p>
       </div>
-      <p>Buscá y comprá cartas de Pokémon y Yu-Gi-Oh!</p>
       <nav class="menu">
         <ul :class="{ show: isMenuOpen }">
           <li v-for="(item, index) in menuItems" :key="index">

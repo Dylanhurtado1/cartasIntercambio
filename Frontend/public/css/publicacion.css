@@ -1,55 +1,113 @@
 .detalle-publicacion {
-    background: white;
-    padding: 2em;
-    margin-bottom: 2em;
-    border-radius: 8px;
-    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+  background: white;
+  padding: 1.5em;
+  border-radius: 10px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+  margin-top: 1em;
+  margin-left: auto;
+  margin-right: auto;
+  width: 800px;
+}
+
+.carta-ofrecida {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1em;
+  margin-bottom: 1em;
+}
+
+.info-principal {
+  flex: 1;
+  min-width: 250px;
+}
+
+.info-principal h2, 
+.info-principal h3, 
+.info-principal p{
+  margin-top: 0;
+  margin-bottom: 1ex;
+  text-align: left;
+}
+
+.info-secundaria {
+  text-align: left;
+  min-width: 180px;
+}
+
+.info-secundaria p {
+  margin-top: .5em;
+  margin-bottom: .5em;
+}
+
+.imagenes {
+  display: flex;
+  gap: 0.5em;
+  flex-wrap: wrap;
+  margin-top: 1em;
+}
+
+.imagenes img {
+  max-height: 120px;
+  border: 2px solid black;
+  object-fit: contain;
+}
+
+.estado {
+  font-weight: bold;
+  color: green;
+}
+
+.cartas-interes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1em;
+  margin-top: 1em;
+}
+
+.cartas-interes .carta {
+  background: #f9f9f9;
+  padding: 1em;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 250px;
+}
+
+.cartas-interes .imagenes {
+  margin-top: 0.5em;
+}
+
+.cartas-interes .imagenes img {
+  max-height: 100px;
+  border: 1px solid #666;
+}
+
+.interes-label {
+  margin-top: 0.5em;
+  font-style: italic;
+  color: #555;
+}
+
+.carta p{
+  margin-top: 0;
+  margin-bottom: 0.5em;
+}
+
+@media (max-width: 600px) {
+  .info-secundaria {
+    text-align: left;
   }
-  
-  .imagenes img {
-    width: 120px;
-    height: auto;
-    margin-right: 1em;
-    border-radius: 4px;
-  }
-  
-  .cartas-interes, .publicador, .formulario-oferta {
-    background: #fff;
-    padding: 1.5em;
-    margin-top: 1.5em;
-    border-radius: 6px;
-    box-shadow: 0 0 4px rgba(0,0,0,0.05);
-  }
-  
-  .formulario-oferta form {
-    display: flex;
+
+  .carta-ofrecida {
     flex-direction: column;
-    gap: 1em;
   }
-  
-  .formulario-oferta input {
-    padding: 0.5em;
-    font-size: 1em;
+
+  .cartas-interes .carta {
     width: 100%;
   }
-  
-  button {
-    padding: 0.6em 1.2em;
-    background: #333;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+
+  .detalle-publicacion{
+    width: 90%;
+    padding: .5em;
   }
-  
-  button:hover {
-    background: #555;
-  }
-  
-  .intercambio {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5em;
-    margin-bottom: 1em;
-  }
-  
+}
