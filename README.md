@@ -18,41 +18,37 @@ Esta es una aplicación para intercambiar cartas de juegos coleccionables como M
       {
         "fecha": "2025-04-13T10:00:00Z",
         "descripcion": "Publicación de prueba para intercambio de cartas",
-        "demanda": {
-            "cartasOfrecidas": [
+        "cartaOfrecida":
                 {
-                    "nombre": "Blastoise",
                     "juego": "Magic",
-                    "estado": "Maso",
+                    "nombre": "Blastoise",
+                    "estado": "BUENO",
                     "imagenes": [
                         "http://ejemplo.com/cartaA_imagen1.jpg",
                         "http://ejemplo.com/cartaA_imagen2.jpg"
                     ]
-                }
-            ],
-            "descripcion": "Estoy buscando cartas épicas a cambio de cartas raras.",
+                },
             "precio": 10000,
             "cartasInteres": [
                 {
                     "nombre": "Mago oscuro",
-                    "juego": "Yu-gi-oh!",
-                    "estado": "Nuevo",
+                    "juego": "Yugioh",
+                    "estado": "BUENO",
                     "imagenes": [
                         "http://ejemplo.com/cartaC_imagen1.jpg"
                     ]
                 }
-            ]
-        },
+            ],
         "publicador": {
             "id": 1,
             "user": "wololo",
             "nombre": "Juan",
             "apellido": "Perez",
             "email": "juan.perez@ejemplo.com",
-            "fechaNacimiento": "1850-04-13"
+            "fechaNacimiento": "2025-04-13T10:00:00Z"
         },
         "estado": "PENDIENTE"
-      }
+        }
 2. **Listar publicaciones**
     - **Método**: `GET`
     - **URL**: `/publicaciones`
@@ -72,44 +68,36 @@ Esta es una aplicación para intercambiar cartas de juegos coleccionables como M
     - **Cuerpo de la Solicitud (JSON)**:
       ```json
       {
-        "fecha": "2025-04-13T10:00:00Z",
-        "publicacion": {
-            "id": 123,
-            "titulo": "Oferta Especial de Cartas",
-            "descripcion": "Oferta en cartas raras de colección",
-            "precio": 150.00,
-            "fechaPublicacion": "2025-04-01T09:00:00Z"
-        },
-        "monto": 120.00,
-        "cartasOfrecidas": [
+      "fecha": "2025-04-13T10:00:00Z",
+      "monto": 120.00,
+      "cartasOfrecidas": [
         {
-          "nombre": "Carta Rara 1",
-          "juego": "Juego de Cartas A",
-          "estado": "Nuevo",
-          "imagenes": [
+            "juego": "Juego de Cartas A",
+            "nombre": "Carta Rara 1",
+            "estado": "NUEVO",
+            "imagenes": [
             "http://example.com/imagenes/carta1_1.jpg",
             "http://example.com/imagenes/carta1_2.jpg"
-          ]
+            ]
         },
         {
-          "nombre": "Carta Rara 2",
           "juego": "Juego de Cartas B",
-          "estado": "Usado",
+          "nombre": "Carta Rara 2",
+          "estado": "BUENO",
           "imagenes": [
             "http://example.com/imagenes/carta2_1.jpg"
           ]
         }
-        ],
-        "ofertante": {
-        "id": 789,
+      ],
+      "ofertante": {
+        "id": 1,
         "user": "ofertante123",
         "nombre": "Juan",
         "apellido": "Pérez",
         "email": "juan.perez@example.com",
         "fechaNacimiento": "1990-05-20T00:00:00Z"
-        },
-        "estado": "Pendiente"
       }
+    }
  5. **Buscar publicaciones por usuario**
     - **Método**: `GET`
     - **URLs**: `publicaciones/usuarios/{idUsuario}`     
@@ -121,22 +109,22 @@ Esta es una aplicación para intercambiar cartas de juegos coleccionables como M
     - **Descripción**: Permite obtener las ofertas realizadas por un usuario.
    
 7. **Responder a una oferta de una publicacion de un usuario**
-   - **Método**: `PUT`
-   - **URLs**: `publicaciones/{idPublicacion}/ofertas/{idUsuario}/{idOferta}`     
+   - **Método**: `PATCH`
+   - **URLs**: `publicaciones/ofertas/{idOferta}`     
    - **Descripción**: Permite aceptar o rechazar una oferta.
+   - **Header de la solicitud (JSON)**: `Content-Type: "application/json-patch+json"`
    - **Cuerpo de la Solicitud (JSON)**:
       ```json
-      Respuesta
+      [{
+        "op":"replace",
+        "path":"/estado",
+        "value":"ACEPTADO"
+        }]
  
- 8. **Buscar estadisticas sobre cantidad de publicaciones**
+ 8. **Buscar estadisticas sobre el uso de la aplicacion**
     - **Método**: `GET`
-    - **URLs**: `publicaciones/estadisticas/publicaciones`     
-    - **Descripción**: Permite obtener la cantidad de publicaciones creadas por los usuarios.
-   
- 9. **Buscar estadisticas sobre cantidad de publicaciones por juego**
-    - **Método**: `GET`
-    - **URLs**: `publicaciones/estadisticas/juegos`     
-    - **Descripción**: Permite obtener la cantidad de publicaciones creadas por los usuarios para cada juego.
+    - **URLs**: `/estadisticas`     
+    - **Descripción**: Permite obtener estadisticas sobre las publicaciones de la plataforma.
 
 ## Gestión de Usuarios 
 
