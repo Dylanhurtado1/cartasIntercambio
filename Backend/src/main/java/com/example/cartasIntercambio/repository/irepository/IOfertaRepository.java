@@ -12,4 +12,6 @@ public interface IOfertaRepository {
   List<Oferta> findAll();
   List<Oferta> findByOferente(Usuario oferente);
   List<Oferta> findByPublicacion(Long idPublicacion);
+  void actualizarOferta(Oferta oferta);
+  void rechazarOtrasOfertas(Long idOferta, Long idPublicacion);
 }

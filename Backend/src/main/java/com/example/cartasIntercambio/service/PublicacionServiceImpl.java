@@ -1,10 +1,8 @@
 package com.example.cartasIntercambio.service;
 
-import com.example.cartasIntercambio.dto.OfertaDto;
 import com.example.cartasIntercambio.dto.PublicacionDto;
 import com.example.cartasIntercambio.model.Mercado.EstadoPublicacion;
 import com.example.cartasIntercambio.model.Mercado.Publicacion;
-import com.example.cartasIntercambio.repository.OfertaRepositoryImpl;
 import com.example.cartasIntercambio.repository.PublicacionRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -45,6 +43,11 @@ public class PublicacionServiceImpl implements IPublicacionService {
     }
 
     @Override
+    public void finalizarPublicacion(Long idPublicacion) {
+        publicacionRepository.finalizarPublicacion(idPublicacion);
+    }
+
+    @Override
     public List<PublicacionDto> buscarPublicacionesPorUsuario(Long idUsuario) {
         List<Publicacion> publicaciones = publicacionRepository.findByPublicadorId(idUsuario); // TODO: Validar que exista el user
 
@@ -73,86 +76,6 @@ public class PublicacionServiceImpl implements IPublicacionService {
 
         return publicacionesADto(publicaciones);
     }
-
-//    public List<PublicacionDto> buscarPublicacionPorNombre(String nombre) {
-//        List<Publicacion> lista = publicacionRepository.findByCardName(nombre);
-//
-//        return lista.stream().map(
-//        publicacion -> new PublicacionDto(
-//            publicacion.getId(),
-//            publicacion.getFecha(),
-//            publicacion.getDescripcion(),
-//            publicacion.getDemanda(),
-//            publicacion.getOfertas(),
-//            publicacion.getPublicador(),
-//            publicacion.getEstado()
-//        )).collect(Collectors.toList());
-//    }
-//
-//    @Override
-//    public List<PublicacionDto> buscarPublicacionPorJuego(String juego) {
-//        List<Publicacion> lista = publicacionRepository.findByGameName(juego);
-//
-//        return lista.stream().map(
-//        publicacion -> new PublicacionDto(
-//            publicacion.getId(),
-//            publicacion.getFecha(),
-//            publicacion.getDescripcion(),
-//            publicacion.getDemanda(),
-//            publicacion.getOfertas(),
-//            publicacion.getPublicador(),
-//            publicacion.getEstado()
-//        )).collect(Collectors.toList());
-//    }
-//
-//    @Override
-//    public List<PublicacionDto> buscarPublicacionPorEstadoDeCarta(String estado) {
-//        List<Publicacion> lista = publicacionRepository.findByCardState(estado);
-//
-//        return lista.stream().map(
-//        publicacion -> new PublicacionDto(
-//            publicacion.getId(),
-//            publicacion.getFecha(),
-//            publicacion.getDescripcion(),
-//            publicacion.getDemanda(),
-//            publicacion.getOfertas(),
-//            publicacion.getPublicador(),
-//            publicacion.getEstado()
-//        )).collect(Collectors.toList());
-//    }
-//
-//    @Override
-//    public List<PublicacionDto> buscarPublicacionPorPrecio(BigDecimal precio) {
-//        List<Publicacion> lista = publicacionRepository.findByCost(precio);
-//
-//        return lista.stream().map(
-//        publicacion -> new PublicacionDto(
-//            publicacion.getId(),
-//            publicacion.getFecha(),
-//            publicacion.getDescripcion(),
-//            publicacion.getDemanda(),
-//            publicacion.getOfertas(),
-//            publicacion.getPublicador(),
-//            publicacion.getEstado()
-//        )).collect(Collectors.toList());
-//    }
-
-//    public void actualizarOferta(OfertaDto ofertaDto) {
-//        Oferta ofertaActualizada = new Oferta(
-//                ofertaDto.getId(),
-//                ofertaDto.getFecha(),
-//                ofertaDto.getIdPublicacion(),
-//                //ofertaDto.getPublicacion(),
-//                ofertaDto.getMonto(),
-//                ofertaDto.getCartasOfrecidas(),
-//                ofertaDto.getOfertante(),
-//                "ACEPTADA"
-//        );
-//
-//        //TODO: Save referancias a la publicacion en crear y en actualizar
-//        ofertaRepository.save(ofertaActualizada); //TODO: Save deberia actualizar tambien
-//    }
-//    //TODO: DTOs?
 
     public List<PublicacionDto> publicacionesADto(List<Publicacion> publicaciones) {
 

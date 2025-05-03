@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Carta {
-  private Juego juego;
+  private String juego;
   private String nombre;
   private EstadoCarta estado;
   private List<String> imagenes;

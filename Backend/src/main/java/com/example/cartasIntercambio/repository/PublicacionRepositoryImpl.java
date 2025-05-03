@@ -1,11 +1,10 @@
 package com.example.cartasIntercambio.repository;
 
+import com.example.cartasIntercambio.model.Mercado.EstadoPublicacion;
 import com.example.cartasIntercambio.model.Mercado.Publicacion;
-import com.example.cartasIntercambio.model.Usuario.Usuario;
 import com.example.cartasIntercambio.repository.irepository.IPublicacionRepository;
 import org.springframework.stereotype.Repository;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -35,6 +34,11 @@ public class PublicacionRepositoryImpl implements IPublicacionRepository {
   }
 
   @Override
+  public void finalizarPublicacion(Long idPublicacion) {
+    publicaciones.get(idPublicacion.intValue() - 1).setEstado(EstadoPublicacion.FINALIZADA);
+  }
+
+  @Override
   public Optional<Publicacion> findById(Long id) {
     if (id == null) {
       return Optional.empty();
@@ -44,37 +48,5 @@ public class PublicacionRepositoryImpl implements IPublicacionRepository {
             publicacion -> publicacion.getId().equals(id)
     ).findFirst();
   }
-
-//  public List<Publicacion> findByCardName(String nombreDeCartaBuscado) {
-//    return publicaciones.stream()
-//    .filter(
-//      publicacion -> publicacion.getDemanda().getCartaOfrecida().getNombre().contains(nombreDeCartaBuscado)
-//    ).collect(Collectors.toList());
-//  }
-//
-//  @Override
-//  public List<Publicacion> findByGameName(String game) {
-//    return publicaciones.stream()
-//    .filter(
-//      publicacion -> publicacion.getDemanda().getCartaOfrecida().getJuego().contains(game)
-//    ).collect(Collectors.toList());
-//  }
-//
-//  @Override
-//  public List<Publicacion> findByCardState(String state) {
-//    return publicaciones.stream()
-//    .filter(
-//      publicacion -> publicacion.getDemanda().getCartaOfrecida().getEstado().equals(state)
-//    ).collect(Collectors.toList());
-//  }
-//
-//  @Override
-//  public List<Publicacion> findByCost(BigDecimal precio) {
-//    return publicaciones.stream()
-//    .filter(
-//      publicacion -> publicacion.getDemanda().getPrecio().equals(precio)
-//    ).collect(Collectors.toList());
-//
-//  }
 
 }

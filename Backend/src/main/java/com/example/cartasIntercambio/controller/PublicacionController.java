@@ -2,7 +2,8 @@ package com.example.cartasIntercambio.controller;
 
 import com.example.cartasIntercambio.dto.OfertaDto;
 import com.example.cartasIntercambio.dto.PublicacionDto;
-import com.example.cartasIntercambio.model.Mercado.Filtros;
+import com.example.cartasIntercambio.model.Mercado.EstadoOferta;
+import com.example.cartasIntercambio.model.Mercado.Oferta;
 import com.example.cartasIntercambio.model.Mercado.Publicacion;
 import com.example.cartasIntercambio.service.OfertaServiceImpl;
 import com.example.cartasIntercambio.service.PublicacionServiceImpl;
@@ -18,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/publicaciones")
@@ -43,7 +43,7 @@ public class PublicacionController{
     ) {
         List<PublicacionDto> publicaciones = publicacionService.listarPublicaciones();
         if(nombre != null) publicaciones = publicaciones.stream().filter(p -> p.getCartaOfrecida().getNombre().toLowerCase().contains(nombre.toLowerCase())).toList();
-        if(juego != null) publicaciones = publicaciones.stream().filter(p -> p.getCartaOfrecida().getJuego().toString().toLowerCase().contains(juego.toLowerCase())).toList();
+        if(juego != null) publicaciones = publicaciones.stream().filter(p -> p.getCartaOfrecida().getJuego().toLowerCase().contains(juego.toLowerCase())).toList();
         if(estado != null) publicaciones = publicaciones.stream().filter(p -> p.getCartaOfrecida().getEstado().toString().toLowerCase().contains(estado.toLowerCase())).toList();
         if(preciomin != null) publicaciones = publicaciones.stream().filter(p -> p.getPrecio().compareTo(preciomin) > 0).toList();
         if(preciomax != null) publicaciones = publicaciones.stream().filter(p -> p.getPrecio().compareTo(preciomax) < 0).toList();
@@ -72,28 +72,40 @@ public class PublicacionController{
         return new ResponseEntity<>(ofertaDto, HttpStatus.CREATED);
     }
 
-//    @GetMapping("/nombre/{nombre}")
-//    public ResponseEntity<List<PublicacionDto>> buscarPublicacionPorNombreDeCarta(@PathVariable String nombre) {
-//        return new ResponseEntity<>(publicacionService.buscarPublicacionPorNombre(nombre), HttpStatus.OK);
-//    }
-//
-//    @GetMapping("/juego/{juego}")
-//    public ResponseEntity<List<PublicacionDto>> buscarPublicacionCartaPorNombreDeJuego(@PathVariable String juego) {
-//        return new ResponseEntity<>(publicacionService.buscarPublicacionPorJuego(juego), HttpStatus.OK);
-//    }
-//
-//    @GetMapping("/estado/{estado}")
-//    public ResponseEntity<List<PublicacionDto>> buscarPublicacionPorEstadoDeCarta(@PathVariable String estado) {
-//        return new ResponseEntity<>(publicacionService.buscarPublicacionPorEstadoDeCarta(estado), HttpStatus.OK);
-//    }
-//
-//    @GetMapping("/precio/{precio}")
-//    public ResponseEntity<List<PublicacionDto>> buscarPublicacionPorPrecioDeCarta(@PathVariable BigDecimal precio) {
+    //Es solo para chequear que se creen las ofertas
+    @GetMapping("/ofertas/{idOferta}")
+    public ResponseEntity<OfertaDto> buscarOferta(@PathVariable("idOferta") Long idOferta) {
+        OfertaDto oferta = ofertaService.buscarOfertaDto(idOferta);
 
-//        return new ResponseEntity<>(publicacionService.buscarPublicacionPorPrecio(precio), HttpStatus.OK);
+        return new ResponseEntity<>(oferta, HttpStatus.OK);
+    }
 
-//    }
 
+//    TODO: Chequear si una publicacion esta finalizada. Front??
+//    Aceptar o rechazar una oferta
+    @PatchMapping(path = "/ofertas/{idOferta}", consumes = "application/json-patch+json")
+    public ResponseEntity<Oferta> responderOferta(@PathVariable("idOferta") Long idOferta, @RequestBody JsonPatch patch) {
+        Oferta oferta = ofertaService.buscarOfertaPorId(idOferta);
+        try {
+            Oferta ofertaActualizada = patchOferta(patch, oferta);
+            ofertaService.guardarOferta(ofertaActualizada);
+            if(ofertaActualizada.getEstado().equals(EstadoOferta.ACEPTADO)){
+                ofertaService.rechazarOtrasOfertas(idOferta, ofertaActualizada.getIdPublicacion());
+                publicacionService.finalizarPublicacion(ofertaActualizada.getIdPublicacion());
+            }
+            return new ResponseEntity<>(ofertaActualizada, HttpStatus.OK);
+        } catch (JsonPatchException | JsonProcessingException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    private Oferta patchOferta (JsonPatch patch, Oferta oferta) throws JsonPatchException, JsonProcessingException {
+        JsonNode patched = patch.apply(mapper.convertValue(oferta, JsonNode.class));
+        return mapper.treeToValue(patched, Oferta.class);
+    }
+
+
+    // Ofertas recibidas para una publicacion del usuario logueado
     @GetMapping("/usuarios/{idUsuario}") // TODO: El ID del usuario no lo vamos a pasar por URL
     public ResponseEntity<List<PublicacionDto>> listarPublicacionesPorUsuario(@PathVariable("idUsuario") Long idUsuario) {
         //  Queda pendiente resolver eso, paso provisoriamente el id por parametro para que no tire error.
@@ -102,7 +114,6 @@ public class PublicacionController{
         return new ResponseEntity<>(publicacionesDTO, HttpStatus.OK);
     }
 
-    // Ofertas recibidas para una publicacion del usuario logueado
     @GetMapping("/{idPublicacion}/ofertas/{idUsuario}") // TODO: El ID del usuario no lo vamos a pasar por URL
     public ResponseEntity<List<OfertaDto>> listarOfertasRecibidas(@PathVariable("idPublicacion") Long idPublicacion, @PathVariable("idUsuario") Long idUsuario) {
         Publicacion publicacion = publicacionService.buscarPublicacionPorId(idPublicacion);
@@ -111,27 +122,4 @@ public class PublicacionController{
         return new ResponseEntity<>(ofertasRecibidas, HttpStatus.OK);
     }
 
-//    Aceptar o rechazar una oferta
-//Si la url es directamente con el id de la oferta => Oferta oferta = findById(idOferta);
-    //TODO: Logica en el service
-//    @PatchMapping(path = "/{idPublicacion}/ofertas/{idUsuario}/{idOferta}", consumes = "application/json-patch+json")
-//    public ResponseEntity<OfertaDto> responderOferta(@PathVariable("idPublicacion") Long idPublicacion, @PathVariable("idUsuario") Long idUsuario, @PathVariable("idOferta") Long idOferta, @RequestBody JsonPatch patch) {
-//        List<OfertaDto> ofertasRecibidas = publicacionService.buscarOfertasPorPublicacion(idPublicacion, idUsuario);
-//        //OfertaDto oferta = ofertasRecibidas.stream().filter(unaOferta -> unaOferta.getId().equals(idOferta)).findAny().orElse(null);
-//        OfertaDto oferta = ofertasRecibidas.stream().findAny().orElse(null);
-//        try {
-//            OfertaDto ofertaActualizada = patchOferta(patch, oferta);
-//            //TODO: Rechazar el resto de ofertas de esta publicacion
-//            publicacionService.actualizarOferta(ofertaActualizada);
-//            return new ResponseEntity<>(ofertaActualizada, HttpStatus.OK);
-//        } catch (JsonPatchException | JsonProcessingException e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-//        }
-//    }
-//
-//    private OfertaDto patchOferta (JsonPatch patch, OfertaDto oferta) throws JsonPatchException, JsonProcessingException {
-//        JsonNode patched = patch.apply(mapper.convertValue(oferta, JsonNode.class));
-//        return mapper.treeToValue(patched, OfertaDto.class);
-//    }
-//
-    }
+}

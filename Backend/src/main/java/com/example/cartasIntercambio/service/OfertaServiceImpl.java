@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,8 +24,23 @@ public class OfertaServiceImpl implements IOfertaService{
     }
 
     @Override
-    public Optional<Oferta> buscarOferta(Long idOferta) {
-        return ofertaRepository.findById(idOferta);
+    public OfertaDto buscarOfertaDto(Long idOferta) {
+        Oferta oferta = buscarOfertaPorId(idOferta);
+
+        return new OfertaDto(
+                oferta.getFecha(),
+                oferta.getIdPublicacion(),
+                oferta.getMonto(),
+                oferta.getCartasOfrecidas(),
+                oferta.getOfertante(),
+                oferta.getEstado().toString()
+        );
+    }
+
+    public Oferta buscarOfertaPorId(Long idOferta) {
+
+        return ofertaRepository.findById(idOferta)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe la oferta con id: " + idOferta));
     }
 
     @Override
@@ -68,6 +82,16 @@ public class OfertaServiceImpl implements IOfertaService{
                         oferta.getOfertante(),
                         oferta.getEstado().toString()))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void guardarOferta(Oferta oferta) {
+        ofertaRepository.actualizarOferta(oferta);
+    }
+
+    @Override
+    public void rechazarOtrasOfertas(Long idOferta, Long idPublicacion) {
+        ofertaRepository.rechazarOtrasOfertas(idOferta, idPublicacion);
     }
 
 }

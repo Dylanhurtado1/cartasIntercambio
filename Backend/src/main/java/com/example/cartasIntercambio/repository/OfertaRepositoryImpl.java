@@ -1,5 +1,6 @@
 package com.example.cartasIntercambio.repository;
 
+import com.example.cartasIntercambio.model.Mercado.EstadoOferta;
 import com.example.cartasIntercambio.model.Mercado.Oferta;
 import com.example.cartasIntercambio.model.Usuario.Usuario;
 import com.example.cartasIntercambio.repository.irepository.IOfertaRepository;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Repository
@@ -44,6 +46,20 @@ public class OfertaRepositoryImpl implements IOfertaRepository {
   @Override
   public List<Oferta> findByPublicacion(Long idPublicacion) {
     return ofertas.stream().filter(o -> o.getIdPublicacion().equals(idPublicacion)).toList();
+  }
+
+  @Override
+  public void actualizarOferta(Oferta oferta) {
+    ofertas.set(oferta.getId().intValue() - 1, oferta);
+  }
+
+  @Override
+  public void rechazarOtrasOfertas(Long idOferta, Long idPublicacion) {
+    for (Oferta oferta : ofertas) {
+      if(oferta.getIdPublicacion().equals(idPublicacion) && !Objects.equals(oferta.getId(), idOferta)){
+        oferta.setEstado(EstadoOferta.RECHAZADO);
+      }
+    }
   }
 
 }

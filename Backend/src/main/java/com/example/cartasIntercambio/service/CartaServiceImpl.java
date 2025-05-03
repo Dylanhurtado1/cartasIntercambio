@@ -3,9 +3,8 @@ package com.example.cartasIntercambio.service;
 import com.example.cartasIntercambio.dto.CartaDto;
 import com.example.cartasIntercambio.model.Producto_Carta.Carta;
 import com.example.cartasIntercambio.model.Producto_Carta.EstadoCarta;
-import com.example.cartasIntercambio.model.Producto_Carta.Juego;
 import com.example.cartasIntercambio.repository.CartaRepositoryImpl;
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,7 @@ public class CartaServiceImpl implements ICartaService {
   @Override
   public void guardarCarta(CartaDto cartaDTO) {
     Carta carta = new Carta(
-        Juego.valueOf(cartaDTO.getJuego()),
+        cartaDTO.getJuego(),
         cartaDTO.getNombre(),
         EstadoCarta.valueOf(cartaDTO.getEstado()),
         cartaDTO.getImagenes()
@@ -37,7 +36,7 @@ public class CartaServiceImpl implements ICartaService {
     List<Carta> cartas = cartaRepositoryImpl.findAll();
     return cartas.stream()
         .map(carta -> new CartaDto(
-            carta.getJuego().toString(),
+            carta.getJuego(),
             carta.getNombre(),
             carta.getEstado().toString(),
             carta.getImagenes()
