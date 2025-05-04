@@ -26,7 +26,8 @@
           <p><strong>Estado:</strong> {{ publicacion.cartaOfrecida.estado }}</p>
           <p><strong>Fecha:</strong> {{ formatearFecha(publicacion.fecha) }}</p>
           <p v-if="publicacion.precio"><strong>Precio:</strong> ${{ publicacion.precio }}</p>
-          <p><strong>Estado:</strong> <span class="estado">{{ publicacion.estado }}</span></p>
+          <p><strong>Estado:</strong> <span :class="publicacion.estado == 'ACTIVA' ? 'activo' : 'finalizado'">{{ publicacion.estado }}</span></p>
+          <a class="btn-principal" :href="'/publicacion/' + publicacion.id + '/ofertas'" >Ver ofertas</a>
         </div>
       </div>
     
@@ -49,8 +50,7 @@
     
     <!-- VISTA DE UNA OFERTA -->
 
-    <hr>
-    <form @submit.prevent="submitForm" class="formulario-oferta">
+    <form v-if="formVisible" @submit.prevent="submitForm" class="formulario-oferta">
       <div class="grupo-form">
         <label for="price"><strong>Precio a ofertar: ($)</strong></label>
         <input
