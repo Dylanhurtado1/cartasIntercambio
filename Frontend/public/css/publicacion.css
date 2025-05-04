@@ -40,6 +40,13 @@
   margin-bottom: .5em;
 }
 
+.info-secundaria a {
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+  width: 70%;
+}
+
 .imagenes {
   display: flex;
   gap: 0.5em;
@@ -53,9 +60,14 @@
   object-fit: contain;
 }
 
-.estado {
+.activo {
   font-weight: bold;
   color: green;
+}
+
+.finalizado {
+  font-weight: bold;
+  color: red;
 }
 
 .cartas-interes {
@@ -149,6 +161,7 @@ form h3{
   padding: 0.5em;
 }
 
+
 .btn-principal,
 .btn-secundario {
   width: 100%;
@@ -176,6 +189,11 @@ form h3{
     text-align: left;
   }
 
+  
+  .info-secundaria a {
+    text-align: center;
+    width: 25%;
+  }
   .carta-ofrecida {
     flex-direction: column;
   }
