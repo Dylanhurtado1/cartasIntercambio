@@ -9,7 +9,9 @@
 <body>
   <header id="menu-app"></header>
 
-  <div id="app">
+  <div id="app"> 
+    <!-- VISTA DE LA PUBLICACIÓN -->
+  
     <main v-if="publicacion" class="detalle-publicacion">
       <div class="carta-ofrecida">
         <div class="info-principal">
@@ -43,7 +45,62 @@
       </div>
     </main>
 
-    <div v-else class="cargando">Cargando publicación...</div>
+    <div v-else class="cargando">Cargando publicación...</div> 
+    
+    <!-- VISTA DE UNA OFERTA -->
+
+    <hr>
+    <form @submit.prevent="submitForm" class="formulario-oferta">
+      <div class="grupo-form">
+        <label for="price"><strong>Precio a ofertar: ($)</strong></label>
+        <input
+          type="number"
+          v-model="price"
+          id="price"
+          placeholder="Ej: 100"
+          class="input-text"
+        />
+      </div>
+    
+      <div v-for="(card, index) in cards" :key="index" class="carta-ofrecida">
+        <h3>Carta {{ index + 1 }}</h3>
+        <div class="grupo-form">
+          <label for="name"><strong>Nombre:</strong></label>
+          <input type="text" v-model="card.nombre" id="name" placeholder="Nombre" class="input-text" />
+        </div>
+    
+        <div class="grupo-form">
+          <label for="game"><strong>Juego:</strong></label>
+          <input type="text" v-model="card.juego" id="game" placeholder="Juego" class="input-text"/>
+        </div>
+    
+        <div class="grupo-form">
+          <label for="estado"><strong>Estado:</strong></label>
+          <select v-model="card.estado" id="state" class="input-text">
+            <option value="NUEVO">NUEVO</option>
+            <option value="MUY_BUENO">MUY BUENO</option>
+            <option value="BUENO">BUENO</option>
+            <option value="MALO">MALO</option>
+            <option value="MUY_MALO">MUY MALO</option>
+          </select>
+        </div>
+    
+        <div class="grupo-form">
+          <label for="image"><strong>Imagen:</strong></label>
+          <input type="file" @change="handleFileChange(index, $event)" id="image" multiple accept="image/*" required />
+        </div>
+    
+        <!-- <div v-if="card.image" class="vista-previa">
+          <img :src="card.image" alt="Imagen de la carta" />
+        </div> -->
+
+        <button type="button" class="btn-secundario" @click="deleteCard(index)">Eliminar</button>
+      </div>
+    
+      <button type="button" @click="addCard" class="btn-secundario">Añadir una carta</button>
+      <button type="submit" class="btn-principal">Enviar Oferta</button>
+    </form>
+  </div>
   </div>
 
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
