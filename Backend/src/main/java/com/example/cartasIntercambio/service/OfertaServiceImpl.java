@@ -84,6 +84,19 @@ public class OfertaServiceImpl implements IOfertaService{
     }
 
     @Override
+    public List<OfertaDto> buscarOfertasPorPublicacion(Long idPublicacion) {
+        return ofertaRepository.findByPublicacion(idPublicacion).stream()
+                .map(oferta -> new OfertaDto(
+                        oferta.getFecha(),
+                        oferta.getIdPublicacion(),
+                        oferta.getMonto(),
+                        oferta.getCartasOfrecidas(),
+                        oferta.getOfertante(),
+                        oferta.getEstado().toString()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public void guardarOferta(Oferta oferta) {
         ofertaRepository.actualizarOferta(oferta);
     }
