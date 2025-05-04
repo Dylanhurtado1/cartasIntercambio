@@ -1,5 +1,6 @@
 package com.example.cartasIntercambio.model.Mercado;
 
+import com.example.cartasIntercambio.dto.OfertaDto;
 import com.example.cartasIntercambio.model.Producto_Carta.Carta;
 import com.example.cartasIntercambio.model.Producto_Carta.EstadoCarta;
 import com.example.cartasIntercambio.model.Usuario.Usuario;

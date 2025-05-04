@@ -31,15 +31,7 @@ public class PublicacionServiceImpl implements IPublicacionService {
     public PublicacionDto buscarPublicacionDTOPorId(Long idPublicacion) { // Este es el que llamamos desde el controller
         Publicacion publicacion = buscarPublicacionPorId(idPublicacion);
 
-        return new PublicacionDto(
-                publicacion.getId(),
-                publicacion.getFecha(),
-                publicacion.getDescripcion(),
-                publicacion.getCartaOfrecida(),
-                publicacion.getPrecio(),
-                publicacion.getCartasInteres(),
-                publicacion.getPublicador(),
-                publicacion.getEstado().toString());
+        return new PublicacionDto(publicacion);
     }
 
     @Override
@@ -47,11 +39,14 @@ public class PublicacionServiceImpl implements IPublicacionService {
         publicacionRepository.finalizarPublicacion(idPublicacion);
     }
 
+    // TODO: Validar que exista el user
     @Override
     public List<PublicacionDto> buscarPublicacionesPorUsuario(Long idUsuario) {
-        List<Publicacion> publicaciones = publicacionRepository.findByPublicadorId(idUsuario); // TODO: Validar que exista el user
 
-        return publicacionesADto(publicaciones);
+        return publicacionRepository.findByPublicadorId(idUsuario).stream()
+                .map(PublicacionDto::new)
+                .collect(Collectors.toList());
+
     }
     
     @Override
@@ -64,7 +59,7 @@ public class PublicacionServiceImpl implements IPublicacionService {
             nuevaPublicacionDto.getPrecio(),
             nuevaPublicacionDto.getCartasInteres(),
             nuevaPublicacionDto.getPublicador(),
-            EstadoPublicacion.valueOf("ACTIVA") //nuevaPublicacionDto.getEstado()
+            EstadoPublicacion.valueOf("ACTIVA")
         );
 
         publicacionRepository.save(nuevaPublicacion);
@@ -72,23 +67,9 @@ public class PublicacionServiceImpl implements IPublicacionService {
 
 
    public List<PublicacionDto> listarPublicaciones() {
-        List<Publicacion> publicaciones = publicacionRepository.findAll();
 
-        return publicacionesADto(publicaciones);
+        return publicacionRepository.findAll().stream()
+                .map(PublicacionDto::new)
+                .collect(Collectors.toList());
     }
-
-    public List<PublicacionDto> publicacionesADto(List<Publicacion> publicaciones) {
-
-        return publicaciones.stream().map(publicacion -> new PublicacionDto(
-                publicacion.getId(),
-                publicacion.getFecha(),
-                publicacion.getDescripcion(),
-                publicacion.getCartaOfrecida(),
-                publicacion.getPrecio(),
-                publicacion.getCartasInteres(),
-                publicacion.getPublicador(),
-                publicacion.getEstado().toString()
-        )).collect(Collectors.toList());
-    }
-
 }

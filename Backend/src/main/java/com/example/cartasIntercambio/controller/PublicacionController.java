@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -33,6 +34,7 @@ public class PublicacionController{
         this.ofertaService = ofertaService;
     }
 
+    // Buscar todas las publicaciones con o sin filtros
     @GetMapping
     public ResponseEntity<List<PublicacionDto>> listarPublicaciones(
         @RequestParam(required = false) String nombre,
@@ -50,6 +52,7 @@ public class PublicacionController{
         return new ResponseEntity<>(publicaciones, HttpStatus.OK);
     }
 
+    // Buscar una publicacion por id
     @GetMapping("/{idPublicacion}")
     public ResponseEntity<PublicacionDto> buscarPublicacion(@PathVariable("idPublicacion") Long idPublicacion) {
         PublicacionDto publicacionDto = publicacionService.buscarPublicacionDTOPorId(idPublicacion);
@@ -57,6 +60,7 @@ public class PublicacionController{
         return new ResponseEntity<>(publicacionDto, HttpStatus.OK);
     }
 
+    // Crear una publicacion
     @PostMapping
     public ResponseEntity<PublicacionDto> crearPublicacion(@RequestBody PublicacionDto publicacionDto) {
         publicacionService.guardarPublicacion(publicacionDto);
@@ -64,6 +68,7 @@ public class PublicacionController{
         return new ResponseEntity<>(publicacionDto, HttpStatus.CREATED);
     }
 
+    // Crear una oferta para una publicacion
     @PostMapping("/{idPublicacion}/ofertas")
     public ResponseEntity<OfertaDto> crearOferta(@PathVariable("idPublicacion") Long idPublicacion, @RequestBody OfertaDto ofertaDto) {
         Publicacion publicacion = publicacionService.buscarPublicacionPorId(idPublicacion);
@@ -72,15 +77,16 @@ public class PublicacionController{
         return new ResponseEntity<>(ofertaDto, HttpStatus.CREATED);
     }
 
+    //Buscar todas las ofertas de una publicacion
     @GetMapping("/{idPublicacion}/ofertas")
     public ResponseEntity<List<OfertaDto>> buscarOfertasDeUnaPublicacion(@PathVariable("idPublicacion") Long idPublicacion) {
         List<OfertaDto> ofertas = ofertaService.buscarOfertasPorPublicacion(idPublicacion);
 
-        if(ofertas == null) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        if(ofertas.isEmpty()) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(ofertas, HttpStatus.OK);
     }
 
-    //Es solo para chequear que se creen las ofertas
+    // Buscar una oferta de una publicacion
     @GetMapping("/ofertas/{idOferta}")
     public ResponseEntity<OfertaDto> buscarOferta(@PathVariable("idOferta") Long idOferta) {
         OfertaDto oferta = ofertaService.buscarOfertaDto(idOferta);
@@ -89,8 +95,8 @@ public class PublicacionController{
     }
 
 
-//    TODO: Chequear si una publicacion esta finalizada. Front??
-//    Aceptar o rechazar una oferta
+    // TODO: Chequear si una publicacion esta finalizada. Front??
+    // Aceptar o rechazar una oferta
     @PatchMapping(path = "/ofertas/{idOferta}", consumes = "application/json-patch+json")
     public ResponseEntity<Oferta> responderOferta(@PathVariable("idOferta") Long idOferta, @RequestBody JsonPatch patch) {
         Oferta oferta = ofertaService.buscarOfertaPorId(idOferta);
@@ -112,28 +118,33 @@ public class PublicacionController{
         return mapper.treeToValue(patched, Oferta.class);
     }
 
-    // Mis publicaciones (publicaciones del usuario logueado)
-    @GetMapping("/usuarios/{idUsuario}") // TODO: El ID del usuario no lo vamos a pasar por URL
+    // Mis publicaciones
+    @GetMapping("/usuario/{idUsuario}") // TODO: El ID del usuario no lo vamos a pasar por URL
     public ResponseEntity<List<PublicacionDto>> listarPublicacionesPorUsuario(@PathVariable("idUsuario") Long idUsuario) {
-        //  Queda pendiente resolver eso, paso provisoriamente el id por parametro para que no tire error.
         List<PublicacionDto> publicacionesDTO = publicacionService.buscarPublicacionesPorUsuario(idUsuario);
+        if(publicacionesDTO.isEmpty()) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 
         return new ResponseEntity<>(publicacionesDTO, HttpStatus.OK);
     }
 
-    // Ofertas recibidas para una publicacion del usuario logueado
-    @GetMapping("/{idPublicacion}/ofertas/{idUsuario}") // TODO: El ID del usuario no lo vamos a pasar por URL
-    public ResponseEntity<List<OfertaDto>> listarOfertasRecibidas(@PathVariable("idPublicacion") Long idPublicacion, @PathVariable("idUsuario") Long idUsuario) {
-        Publicacion publicacion = publicacionService.buscarPublicacionPorId(idPublicacion);
-        List<OfertaDto> ofertasRecibidas = ofertaService.buscarOfertasPorPublicacion(publicacion, idUsuario);
+    // Mis ofertas recibidas
+    @GetMapping("/usuario/{idUsuario}/ofertas/recibidas") // TODO: El ID del usuario no lo vamos a pasar por URL
+    public ResponseEntity<List<OfertaDto>> listarOfertasRecibidas(@PathVariable("idUsuario") Long idUsuario) {
+        List<PublicacionDto> publicacionesUsuario = publicacionService.buscarPublicacionesPorUsuario(idUsuario);
+        List<OfertaDto> ofertasRecibidas = new ArrayList<>();
+        for(PublicacionDto publicacion : publicacionesUsuario){
+            ofertasRecibidas.addAll(ofertaService.buscarOfertasPorPublicacion(publicacion.getId()));
+        }
+        if(ofertasRecibidas.isEmpty()) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 
         return new ResponseEntity<>(ofertasRecibidas, HttpStatus.OK);
     }
 
-    // Ofertas hechas por el usuario logueado a publicaciones de otros usuarios
-    @GetMapping("/usuarios/{idUsuario}/ofertas")
+    // Mis ofertas realizadas
+    @GetMapping("/usuario/{idUsuario}/ofertas/realizadas")
     public ResponseEntity<List<OfertaDto>> listarOfertasRealizadas(@PathVariable("idUsuario") Long idUsuario) {
         List<OfertaDto> ofertasRealizadas = ofertaService.buscarOfertasRealizadas(idUsuario);
+        if(ofertasRealizadas.isEmpty()) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 
         return new ResponseEntity<>(ofertasRealizadas, HttpStatus.OK);
     }

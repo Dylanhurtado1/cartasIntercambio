@@ -1,7 +1,6 @@
 package com.example.cartasIntercambio.repository.irepository;
 
 import com.example.cartasIntercambio.model.Mercado.Oferta;
-import com.example.cartasIntercambio.model.Usuario.Usuario;
 
 import java.util.List;
 import java.util.Optional;

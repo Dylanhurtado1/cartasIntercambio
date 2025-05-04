@@ -24,8 +24,6 @@ public class EstadisticasController {
         this.publicacionService = publicacionService;
     }
 
-    //No se si hacia falta un controller, fue mas que nada por la URL. Podria agregarse a
-    // al controller de publicaciones "publicaciones/estadisticas" y lesto.
     //TODO: Chequear que sea un usuario admin
     @GetMapping
     public ResponseEntity<Map<String, Integer>> estadisticas() {
@@ -42,7 +40,7 @@ public class EstadisticasController {
     public Integer contarPublicacionesPorJuego(List<PublicacionDto> publicaciones, String juego) {
         Integer count = 0;
         for (PublicacionDto publicacion : publicaciones) {
-                if(publicacion.getCartaOfrecida().getJuego().toString().equalsIgnoreCase(juego)) count++;
+                if(publicacion.getCartaOfrecida().getJuego().equalsIgnoreCase(juego)) count++;
         }
         return count;
     }
