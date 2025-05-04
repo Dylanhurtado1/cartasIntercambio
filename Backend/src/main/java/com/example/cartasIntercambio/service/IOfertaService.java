@@ -14,6 +14,8 @@ public interface IOfertaService {
 
     List<OfertaDto> buscarOfertasPorPublicacion(Publicacion publicacion, Long idUsuario);
 
+    List<OfertaDto> buscarOfertasPorPublicacion(Long idPublicacion);
+
     void guardarOferta(Oferta oferta);
 
     void rechazarOtrasOfertas(Long idOferta, Long idPublicacion);

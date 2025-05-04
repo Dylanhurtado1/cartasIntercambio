@@ -72,6 +72,14 @@ public class PublicacionController{
         return new ResponseEntity<>(ofertaDto, HttpStatus.CREATED);
     }
 
+    @GetMapping("/{idPublicacion}/ofertas")
+    public ResponseEntity<List<OfertaDto>> buscarOfertasDeUnaPublicacion(@PathVariable("idPublicacion") Long idPublicacion) {
+        List<OfertaDto> ofertas = ofertaService.buscarOfertasPorPublicacion(idPublicacion);
+
+        if(ofertas == null) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(ofertas, HttpStatus.OK);
+    }
+
 //    @GetMapping("/nombre/{nombre}")
 //    public ResponseEntity<List<PublicacionDto>> buscarPublicacionPorNombreDeCarta(@PathVariable String nombre) {
 //        return new ResponseEntity<>(publicacionService.buscarPublicacionPorNombre(nombre), HttpStatus.OK);
