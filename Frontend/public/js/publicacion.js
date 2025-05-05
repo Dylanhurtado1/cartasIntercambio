@@ -2,6 +2,7 @@ const { onMounted } = Vue;
 Vue.createApp({
   setup() {
     const publicacion = Vue.ref(null);
+    const formVisible = Vue.ref(false)
     const backendURL = "http://localhost:8080"
 
 
@@ -18,6 +19,7 @@ Vue.createApp({
 
         const data = await res.json();
         publicacion.value = data;
+        formVisible.value = (publicacion.value.estado != "FINALIZADA")
       } catch (error) {
         alert("La publicación no existe o el servidor no responde.");
         window.location.href = "/";
@@ -77,7 +79,7 @@ Vue.createApp({
         cartasOfrecidas: JSON.parse(JSON.stringify(cartasOfrecidas.value)), //hermosura, el objeto es hermoso
         ofertante: {
           id: 1,
-          user: "minombre" //por ahora hardcodeado
+          user: "soyUnOfertanteMisterioso>:)" //por ahora hardcodeado
         }
       }
       console.log(oferta)
@@ -99,17 +101,18 @@ Vue.createApp({
           alert('Error con el servidor')
       })
 
-    };
-
-    
+    };    
 
     onMounted(() => {
       cargarPublicacion();
     });
 
     return {
+      //VISUALIZACIÓN DE LA PUBLICACIÓN
       publicacion,
       formatearFecha,
+      // FORMULARIO OFERTAS
+      formVisible,
       price,
       cards: cartasOfrecidas,
       formSubmitted,

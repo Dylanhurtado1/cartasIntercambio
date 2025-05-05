@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Ofertas de la Publicación</title>
+  <link rel="stylesheet" href="/public/css/style.css" />
+  <link rel="stylesheet" href="/public/css/ofertas.css" />
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+    <header id="menu-app"></header>
+
+  <main id="app">
+    <section v-if="ofertas.length === 0">
+      <p> No hay ofertas aún para esta publicación.</p>
+    </section>
+
+    <section v-else class="ofertas">
+      <div class="oferta" v-for="oferta in ofertas" :key="oferta.id">
+        <h2>Oferta #{{ oferta.id }} - {{ formatearFecha(oferta.fecha) }}</h2>
+        <p><strong>Ofertante:</strong> {{ oferta.ofertante.user }} </p>
+        <p><strong>Monto:</strong> {{ oferta.monto ? '$' + oferta.monto : 'Sin monto' }}</p>
+        <p><strong>Estado:</strong> <span :class="oferta.estado !== 'RECHAZADO' ? 'pendiente' : 'finalizado'"> {{ oferta.estado }}</span></p>
+
+        <div class="cartas">
+          <div class="carta" v-for="carta in oferta.cartasOfrecidas">
+            <h3>Carta: {{ carta.nombre }}</h3>
+            <p><strong>Juego:</strong> {{ carta.juego }}</p>
+            <p><strong>Estado:</strong> {{ carta.estado }}</p>
+            <div class="imagenes">
+              <img v-for="img in carta.imagenes" :src="img" alt="Imagen carta" />
+            </div>
+          </div>
+        </div>
+
+        <div class="acciones" v-if="oferta.estado === 'PENDIENTE'">
+          <button @click="aceptarOferta(oferta.id)">Aceptar</button>
+          <button @click="rechazarOferta(oferta.id)">Rechazar</button>
+        </div>
+      </div>
+    </section>
+  </main>
+  
+  <script src="/public/js/menu.js"></script>
+  <script src="/public/js/ofertas.js"></script>
+</body>
+</html>

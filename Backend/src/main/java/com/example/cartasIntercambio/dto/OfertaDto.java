@@ -1,5 +1,6 @@
 package com.example.cartasIntercambio.dto;
 
+import com.example.cartasIntercambio.model.Mercado.Oferta;
 import com.example.cartasIntercambio.model.Producto_Carta.Carta;
 import com.example.cartasIntercambio.model.Usuario.Usuario;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -35,6 +36,16 @@ public class OfertaDto {
     this.cartasOfrecidas = cartasOfrecidas;
     this.ofertante = ofertante;
     this.estado = estado;
+  }
+
+  public OfertaDto(Oferta oferta) {
+      this.id = oferta.getId();
+      this.fecha = oferta.getFecha();
+      this.idPublicacion = oferta.getIdPublicacion();
+      this.monto = oferta.getMonto();
+      this.cartasOfrecidas = oferta.getCartasOfrecidas();
+      this.ofertante = oferta.getOfertante();
+      this.estado = oferta.getEstado().toString();
   }
 
 }

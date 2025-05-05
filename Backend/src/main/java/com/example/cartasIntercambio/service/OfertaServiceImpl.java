@@ -27,14 +27,7 @@ public class OfertaServiceImpl implements IOfertaService{
     public OfertaDto buscarOfertaDto(Long idOferta) {
         Oferta oferta = buscarOfertaPorId(idOferta);
 
-        return new OfertaDto(
-                oferta.getFecha(),
-                oferta.getIdPublicacion(),
-                oferta.getMonto(),
-                oferta.getCartasOfrecidas(),
-                oferta.getOfertante(),
-                oferta.getEstado().toString()
-        );
+        return new OfertaDto(oferta);
     }
 
     public Oferta buscarOfertaPorId(Long idOferta) {
@@ -73,26 +66,14 @@ public class OfertaServiceImpl implements IOfertaService{
         }
 
         return ofertaRepository.findByPublicacion(publicacion.getId()).stream()
-                .map(oferta -> new OfertaDto(
-                        oferta.getFecha(),
-                        oferta.getIdPublicacion(),
-                        oferta.getMonto(),
-                        oferta.getCartasOfrecidas(),
-                        oferta.getOfertante(),
-                        oferta.getEstado().toString()))
+                .map(OfertaDto::new)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<OfertaDto> buscarOfertasPorPublicacion(Long idPublicacion) {
         return ofertaRepository.findByPublicacion(idPublicacion).stream()
-                .map(oferta -> new OfertaDto(
-                        oferta.getFecha(),
-                        oferta.getIdPublicacion(),
-                        oferta.getMonto(),
-                        oferta.getCartasOfrecidas(),
-                        oferta.getOfertante(),
-                        oferta.getEstado().toString()))
+                .map(OfertaDto::new)
                 .collect(Collectors.toList());
     }
 
@@ -112,13 +93,7 @@ public class OfertaServiceImpl implements IOfertaService{
         List<Oferta> ofertasRealizadas = ofertaRepository.findByOfertante(idUsuario);
 
         return ofertasRealizadas.stream()
-                .map(oferta -> new OfertaDto(
-                        oferta.getFecha(),
-                        oferta.getIdPublicacion(),
-                        oferta.getMonto(),
-                        oferta.getCartasOfrecidas(),
-                        oferta.getOfertante(),
-                        oferta.getEstado().toString()))
+                .map(OfertaDto::new)
                 .collect(Collectors.toList());
     }
 
