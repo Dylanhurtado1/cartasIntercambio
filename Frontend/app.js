@@ -30,6 +30,12 @@ app.get("/publicacion/:idPublicacion/ofertas", (req, res) => {
     //res.send(req.params)
 })
 
+app.get("/estadisticas", (req, res) => {
+    res.sendFile(pathHTML + '/estadistica.html');
+    //res.send(req.params)
+})
+
+
 // Middleware para rutas no encontradas (error 404)
 app.use((req, res, next) => {
     res.status(404).send(`

@@ -7,7 +7,8 @@ Vue.createApp({
       menuItems: [
         { label: "Inicio", href: "/" },
         { label: "Publicar Carta", href: "/publicar" },
-        { label: "Usuario", href: "/usuario" }
+        { label: "Usuario", href: "/usuario" },
+        { label: "Estadísticas", href: "/estadisticas" }
       ]
     };
   },

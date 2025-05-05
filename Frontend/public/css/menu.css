@@ -71,7 +71,8 @@ nav.menu li a:hover {
 }
 
 @media (max-width: 600px) {
-    .top-header h1, p{
+    .top-header h1, 
+    .top-header p{
         margin: 0px;
         width: auto;
         text-align: left;
