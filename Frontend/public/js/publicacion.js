@@ -79,7 +79,7 @@ Vue.createApp({
         cartasOfrecidas: JSON.parse(JSON.stringify(cartasOfrecidas.value)), //hermosura, el objeto es hermoso
         ofertante: {
           id: 1,
-          user: "minombre" //por ahora hardcodeado
+          user: "soyUnOfertanteMisterioso>:)" //por ahora hardcodeado
         }
       }
       console.log(oferta)

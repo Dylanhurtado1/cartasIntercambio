@@ -12,21 +12,21 @@
 
   <main id="app">
     <section v-if="ofertas.length === 0">
-      <p>No hay ofertas aún para esta publicación.</p>
+      <p> No hay ofertas aún para esta publicación.</p>
     </section>
 
     <section v-else class="ofertas">
       <div class="oferta" v-for="oferta in ofertas" :key="oferta.id">
         <h2>Oferta #{{ oferta.id }} - {{ formatearFecha(oferta.fecha) }}</h2>
-        <p><strong>Ofertante:</strong> {{ oferta.ofertante.user }} ({{ oferta.ofertante.email }})</p>
+        <p><strong>Ofertante:</strong> {{ oferta.ofertante.user }} </p>
         <p><strong>Monto:</strong> {{ oferta.monto ? '$' + oferta.monto : 'Sin monto' }}</p>
-        <p><strong>Estado:</strong> {{ oferta.estado }}</p>
+        <p><strong>Estado:</strong> <span :class="oferta.estado !== 'RECHAZADO' ? 'pendiente' : 'finalizado'"> {{ oferta.estado }}</span></p>
 
         <div class="cartas">
           <div class="carta" v-for="carta in oferta.cartasOfrecidas">
-            <h3>{{ carta.nombre }}</h3>
-            <p>Juego: {{ carta.juego }}</p>
-            <p>Estado: {{ carta.estado }}</p>
+            <h3>Carta: {{ carta.nombre }}</h3>
+            <p><strong>Juego:</strong> {{ carta.juego }}</p>
+            <p><strong>Estado:</strong> {{ carta.estado }}</p>
             <div class="imagenes">
               <img v-for="img in carta.imagenes" :src="img" alt="Imagen carta" />
             </div>

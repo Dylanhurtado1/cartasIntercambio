@@ -184,7 +184,7 @@ form h3{
 
 /* FIN DE OFERTAS */
 
-@media (max-width: 800px) {
+@media (max-width: 850px) {
   .info-secundaria {
     text-align: left;
   }

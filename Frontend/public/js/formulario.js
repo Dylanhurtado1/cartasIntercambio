@@ -77,7 +77,10 @@ createApp({
                         imagenes: cartaInd.imagenes.map(file => file.name)
                     }))
                 ,
-                publicador: {} // por ahora se quedará como un objeto vacío
+                publicador: {
+                    id: 2,
+                    user: "soyUnPublicadorMisterioso>:)"
+                } // por ahora se quedará como un objeto vacío
                 
             };
             

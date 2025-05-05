@@ -13,6 +13,7 @@ Vue.createApp({
 
     async function cargarOfertas() {
       const publicacionId = obtenerIdDesdeURL();
+      console.log(`${backendURL}/publicaciones/${publicacionId}/ofertas`)
       try {
         const res = await fetch(`${backendURL}/publicaciones/${publicacionId}/ofertas`);
         if (!res.ok) throw new Error("Error en la carga");
@@ -24,12 +25,13 @@ Vue.createApp({
       }
     }
 
-    async function aceptarOferta(idOferta = 5) {
+    async function aceptarOferta(idOferta) {
+        console.log(`${backendURL}/ofertas/${idOferta}`)
         try {
-          const res = await fetch(`${backendURL}/ofertas/${idOferta}`, {
+          const res = await fetch(`${backendURL}/publicaciones/ofertas/${idOferta}`, {
             method: "PATCH",
             headers: {
-              "Content-Type": "application/json"
+              "Content-Type": "application/json-patch+json"
             },
             body: JSON.stringify([
               {
@@ -42,7 +44,7 @@ Vue.createApp({
       
           if (res.ok) {
             alert("Oferta aceptada correctamente");
-            getOfertas(); // recargar la lista
+            cargarOfertas(); // recargar la lista
           } else {
             alert("Error al aceptar la oferta");
           }
@@ -54,10 +56,10 @@ Vue.createApp({
       
       async function rechazarOferta(idOferta) {
         try {
-          const res = await fetch(`${backendURL}/ofertas/${idOferta}`, {
+          const res = await fetch(`${backendURL}/publicaciones/ofertas/${idOferta}`, {
             method: "PATCH",
             headers: {
-              "Content-Type": "application/json"
+              "Content-Type": "application/json-patch+json"
             },
             body: JSON.stringify([
               {
@@ -70,7 +72,7 @@ Vue.createApp({
       
           if (res.ok) {
             alert("Oferta rechazada");
-            getOfertas(); // recargar la lista
+            cargarOfertas(); // recargar la lista
           } else {
             alert("Error al rechazar la oferta");
           }
