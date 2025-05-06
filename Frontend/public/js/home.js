@@ -15,24 +15,25 @@ Vue.createApp({
     }
 
     const listaDePublicaciones = ref([]);
-    const sinDatos = ref("");
+    const estadoDeLaCarga = ref("Cargando publicaciones...");
 
     function getPublicaciones() {
       fetch(backendURL + "/publicaciones" + queryString)
         .then(res => res.json())
         .then(json => {
           listaDePublicaciones.value = json;
+          estadoDeLaCarga.value = ""
           if(listaDePublicaciones.value.length == 0)
-            sinDatos.value = "No se han encontrado elementos en el sistema :("
+            estadoDeLaCarga.value = "No se han encontrado elementos en el sistema :("
         })
         .catch(err =>{
-          sinDatos.value = "Error al cargar publicaciones del servidor";
-          console.error(sinDatos.value)
+          estadoDeLaCarga.value = "Error al cargar publicaciones del servidor";
+          console.error(estadoDeLaCarga.value)
         });
     }
 
     getPublicaciones();
 
-    return { listaDePublicaciones, sinDatos, datosBuscador};
+    return { listaDePublicaciones, estadoDeLaCarga, datosBuscador};
   }
 }).mount("#app");

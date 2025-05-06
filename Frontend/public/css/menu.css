@@ -70,6 +70,10 @@ nav.menu li a:hover {
     background-color: #777;
 }
 
+[v-cloak] {
+    display: none;
+  }
+
 @media (max-width: 600px) {
     .top-header h1, 
     .top-header p{
