@@ -68,17 +68,17 @@
         <h3>Carta {{ index + 1 }}</h3>
         <div class="grupo-form">
           <label for="name"><strong>Nombre:</strong></label>
-          <input type="text" v-model="card.nombre" id="name" placeholder="Nombre" class="input-text" />
+          <input type="text" v-model="card.nombre" id="name" placeholder="Nombre" class="input-text" required/>
         </div>
     
         <div class="grupo-form">
           <label for="game"><strong>Juego:</strong></label>
-          <input type="text" v-model="card.juego" id="game" placeholder="Juego" class="input-text"/>
+          <input type="text" v-model="card.juego" id="game" placeholder="Juego" class="input-text" required/>
         </div>
     
         <div class="grupo-form">
           <label for="estado"><strong>Estado:</strong></label>
-          <select v-model="card.estado" id="state" class="input-text">
+          <select v-model="card.estado" id="state" class="input-text" required>
             <option value="NUEVO">NUEVO</option>
             <option value="MUY_BUENO">MUY BUENO</option>
             <option value="BUENO">BUENO</option>

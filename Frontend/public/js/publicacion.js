@@ -72,34 +72,39 @@ Vue.createApp({
 
     // Función para enviar el formulario
     const submitForm = () => {
-      const oferta = {
-        fecha: new Date().toJSON(), 
-        idPublicacion: obtenerIdDesdeURL(),
-        monto: (price.value == null) ? 0 : price.value,
-        cartasOfrecidas: JSON.parse(JSON.stringify(cartasOfrecidas.value)), //hermosura, el objeto es hermoso
-        ofertante: {
-          id: 1,
-          user: "soyUnOfertanteMisterioso>:)" //por ahora hardcodeado
+      if(isValid()){
+        const oferta = {
+          fecha: new Date().toJSON(), 
+          idPublicacion: obtenerIdDesdeURL(),
+          monto: (price.value == null) ? 0 : price.value,
+          cartasOfrecidas: JSON.parse(JSON.stringify(cartasOfrecidas.value)), //hermosura, el objeto es hermoso
+          ofertante: {
+            id: 1,
+            user: "soyUnOfertanteMisterioso>:)" //por ahora hardcodeado
+          }
         }
-      }
-      console.log(oferta)
-      formSubmitted.value = true; // Mostrar el mensaje después de enviar
-      console.log(JSON.stringify(oferta))
-
-      fetch(backendURL + "/publicaciones/" + oferta.idPublicacion + "/ofertas", {
-        method: "POST",
-        body: JSON.stringify(oferta),
-        headers: {"Content-type": "application/json; charset=UTF-8"}
-      })
-      .then(response => response.json()) 
-      .then(json => {
-          console.log(json)
-          //window.location.href = '../'
-      })
-      .catch(err => {
-          console.log(err)
-          alert('Error con el servidor')
-      })
+        console.log(oferta)
+        formSubmitted.value = true; // Mostrar el mensaje después de enviar
+        console.log(JSON.stringify(oferta))
+  
+        fetch(backendURL + "/publicaciones/" + oferta.idPublicacion + "/ofertas", {
+          method: "POST",
+          body: JSON.stringify(oferta),
+          headers: {"Content-type": "application/json; charset=UTF-8"}
+        })
+        .then(response => response.json()) 
+        .then(json => {
+            console.log(json)
+            window.location.href = '../'
+        })
+        .catch(err => {
+            console.log(err)
+            alert('Error con el servidor')
+            return;
+        })
+      } 
+      else
+        alert("Hay campos invàlidos")
 
     };    
 
