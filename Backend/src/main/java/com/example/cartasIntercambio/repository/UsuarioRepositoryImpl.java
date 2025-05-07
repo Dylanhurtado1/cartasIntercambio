@@ -9,12 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
-public class UsuarioRepositoryImpl implements IUsuarioRepository {
+//@Repository
+public class UsuarioRepositoryImpl  {
 
     private List<Usuario> usuarios = new ArrayList<>();
 
-    public UsuarioRepositoryImpl() {
+    /*public UsuarioRepositoryImpl() {
         Admin admin = new Admin();
         admin.setId(1L);
         admin.setUser("admin1");
@@ -33,9 +33,9 @@ public class UsuarioRepositoryImpl implements IUsuarioRepository {
         user.setEmail("user@cartas.com");
         user.setPassword("1234");
         usuarios.add(user);
-    }
+    }*/
 
-    @Override
+    /*@Override
     public void save(Usuario usuario) {
         usuario.setId((long) (usuarios.size() + 1));
         usuarios.add(usuario);
@@ -75,6 +75,6 @@ public class UsuarioRepositoryImpl implements IUsuarioRepository {
     public void deleteById(Long id) {
         usuarios.removeIf(u -> u.getId().equals(id));
     }
-
+*/
 
 }

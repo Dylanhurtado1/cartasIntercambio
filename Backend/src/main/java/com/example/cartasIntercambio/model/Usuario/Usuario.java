@@ -7,12 +7,16 @@ import lombok.NoArgsConstructor;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Document(collection = "usuarios")
 public class Usuario {
-    private Long id;
+    @Id
+    private String id;
     private String user;
     private String nombre;
     private String apellido;

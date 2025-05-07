@@ -7,6 +7,7 @@ import com.example.cartasIntercambio.exception.UsuarioYaExisteException;
 import com.example.cartasIntercambio.model.Usuario.Admin;
 import com.example.cartasIntercambio.model.Usuario.Usuario;
 import com.example.cartasIntercambio.repository.UsuarioRepositoryImpl;
+import com.example.cartasIntercambio.repository.irepository.IUsuarioRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -25,7 +26,7 @@ import static org.mockito.Mockito.when;
 public class UsuarioServiceImplTest {
 
     @Mock
-    UsuarioRepositoryImpl usuarioRepository;
+    IUsuarioRepository usuarioRepository;
 
     @InjectMocks
     UsuarioServiceImpl usuarioService;
@@ -68,7 +69,7 @@ public class UsuarioServiceImplTest {
     void listarUsuarios_devuelveDtosCorrectos() {
         // Arrange
         Usuario u = new Usuario();
-        u.setId(1L); u.setUser("ana23"); u.setNombre("Ana"); u.setEmail("ana@mail.com");
+        u.setId("1"); u.setUser("ana23"); u.setNombre("Ana"); u.setCorreo("ana@mail.com");
         when(usuarioRepository.findAll()).thenReturn(List.of(u));
 
         // Act
@@ -83,11 +84,11 @@ public class UsuarioServiceImplTest {
     void obtenerUsuarioPorId(){
         //Arrange
         Usuario u = new Usuario();
-        u.setId(1L); u.setUser("ana23"); u.setNombre("Ana");
-        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(u));
+        u.setId("1"); u.setUser("ana23"); u.setNombre("Ana");
+        when(usuarioRepository.findById("1")).thenReturn(Optional.of(u));
 
         //Act
-        UsuarioResponseDto usuarioResponse = usuarioService.buscarUsuarioPorId(1L);
+        UsuarioResponseDto usuarioResponse = usuarioService.buscarUsuarioPorId("1");
 
         //Assert
         assertEquals("ana23", usuarioResponse.getUser());
@@ -97,15 +98,15 @@ public class UsuarioServiceImplTest {
     @Test
     void buscarUsuarioPorId_inexistente_lanzaExcepcion() {
         //Arrange
-        when(usuarioRepository.findById(1L)).thenReturn(Optional.empty());
+        when(usuarioRepository.findById("1")).thenReturn(Optional.empty());
         //Act y assert
-        assertThrows(UsuarioNoEncontradoException.class, () -> usuarioService.buscarUsuarioPorId(1L));
+        assertThrows(UsuarioNoEncontradoException.class, () -> usuarioService.buscarUsuarioPorId("1"));
     }
 
     @Test
     void actualizarUsuario_ok() {
         // Arrange
-        Long id = 7L;
+        String id = "7";
         UsuarioDto dto = new UsuarioDto("lina", "Lina", "lina@mail.com", "xyz");
         Usuario usuarioOriginal = new Usuario();
         usuarioOriginal.setId(id); usuarioOriginal.setUser("viejo"); usuarioOriginal.setNombre("Viejo"); usuarioOriginal.setEmail("viejo@mail.com"); usuarioOriginal.setPassword("abc");
@@ -118,42 +119,42 @@ public class UsuarioServiceImplTest {
         assertEquals("lina", actualizado.getUser());
         assertEquals("Lina", actualizado.getNombre());
         assertEquals("lina@mail.com", actualizado.getCorreo());
-        verify(usuarioRepository).update(any(Usuario.class));
+        verify(usuarioRepository).save(any(Usuario.class));
     }
 
     @Test
     void actualizarUsuario_inexistente_lanzaExcepcion() {
-        when(usuarioRepository.findById(1L)).thenReturn(Optional.empty());
-        assertThrows(UsuarioNoEncontradoException.class, () -> usuarioService.actualizarUsuario(1L, new UsuarioDto()));
+        when(usuarioRepository.findById("1")).thenReturn(Optional.empty());
+        assertThrows(UsuarioNoEncontradoException.class, () -> usuarioService.actualizarUsuario("1", new UsuarioDto()));
     }
 
     @Test
     void borrarUsuario_ok() {
         // Arrange
         Usuario u = new Usuario();
-        u.setId(3L); u.setUser("paraBorrar");
-        when(usuarioRepository.findById(3L)).thenReturn(Optional.of(u));
+        u.setId("3"); u.setUser("paraBorrar");
+        when(usuarioRepository.findById("3")).thenReturn(Optional.of(u));
 
         // Act
-        usuarioService.borrarUsuario(3L);
+        usuarioService.borrarUsuario("3");
 
         // Assert
-        verify(usuarioRepository).deleteById(3L);
+        verify(usuarioRepository).deleteById("3");
     }
 
     @Test
     void borrarUsuario_inexistente_lanzaExcepcion() {
-        when(usuarioRepository.findById(3L)).thenReturn(Optional.empty());
-        assertThrows(UsuarioNoEncontradoException.class, () -> usuarioService.borrarUsuario(3L));
+        when(usuarioRepository.findById("3")).thenReturn(Optional.empty());
+        assertThrows(UsuarioNoEncontradoException.class, () -> usuarioService.borrarUsuario("3"));
     }
 
     @Test
     void buscarUsuarios_filtraPorUser() {
         // Arrange
         Usuario u1 = new Usuario();
-        u1.setId(5L); u1.setUser("nico88"); u1.setNombre("Nicolas"); u1.setEmail("nico@mail.com");
+        u1.setId("5"); u1.setUser("nico88"); u1.setNombre("Nicolas"); u1.setCorreo("nico@mail.com");
         Usuario u2 = new Usuario();
-        u2.setId(6L); u2.setUser("juancho"); u2.setNombre("Juan"); u2.setEmail("juan@mail.com");
+        u2.setId("6"); u2.setUser("juancho"); u2.setNombre("Juan"); u2.setCorreo("juan@mail.com");
         when(usuarioRepository.findAll()).thenReturn(List.of(u1, u2));
 
         // Act
@@ -167,8 +168,8 @@ public class UsuarioServiceImplTest {
     @Test
     void buscarUsuarios_filtraPorNombre() {
         // Arrange
-        Usuario u1 = new Usuario(); u1.setUser("nico88"); u1.setNombre("Nicolas"); u1.setEmail("nico@mail.com");
-        Usuario u2 = new Usuario(); u2.setUser("juancho"); u2.setNombre("Juan"); u2.setEmail("juan@mail.com");
+        Usuario u1 = new Usuario(); u1.setUser("nico88"); u1.setNombre("Nicolas"); u1.setCorreo("nico@mail.com");
+        Usuario u2 = new Usuario(); u2.setUser("juancho"); u2.setNombre("Juan"); u2.setCorreo("juan@mail.com");
         when(usuarioRepository.findAll()).thenReturn(List.of(u1, u2));
 
         // Act
@@ -182,8 +183,8 @@ public class UsuarioServiceImplTest {
     @Test
     void buscarUsuarios_filtraPorCorreo() {
         // Arrange
-        Usuario u1 = new Usuario(); u1.setUser("luli11"); u1.setNombre("Luli"); u1.setEmail("luli@abc.com");
-        Usuario u2 = new Usuario(); u2.setUser("sofi22"); u2.setNombre("Sofi"); u2.setEmail("sofi@email.com");
+        Usuario u1 = new Usuario(); u1.setUser("luli11"); u1.setNombre("Luli"); u1.setCorreo("luli@abc.com");
+        Usuario u2 = new Usuario(); u2.setUser("sofi22"); u2.setNombre("Sofi"); u2.setCorreo("sofi@email.com");
         when(usuarioRepository.findAll()).thenReturn(List.of(u1, u2));
 
         // Act
@@ -236,10 +237,10 @@ public class UsuarioServiceImplTest {
     void listarUsuarios_incluyeAdmin() {
         // Arrange
         Admin admin = new Admin();
-        admin.setId(1L);
+        admin.setId("1");
         admin.setUser("admin1");
         admin.setNombre("SuperAdmin");
-        admin.setEmail("admin@mail.com");
+        admin.setCorreo("admin@mail.com");
 
         when(usuarioRepository.findAll()).thenReturn(List.of(admin));
 
@@ -256,14 +257,14 @@ public class UsuarioServiceImplTest {
     void buscarUsuarioPorId_admin_devuelveTipoAdmin() {
         // Arrange
         Admin admin = new Admin();
-        admin.setId(1L);
+        admin.setId("1");
         admin.setUser("admin1");
         admin.setNombre("SuperAdmin");
-        admin.setEmail("admin@mail.com");
-        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(admin));
+        admin.setCorreo("admin@mail.com");
+        when(usuarioRepository.findById("1")).thenReturn(Optional.of(admin));
 
         // Act
-        UsuarioResponseDto resp = usuarioService.buscarUsuarioPorId(1L);
+        UsuarioResponseDto resp = usuarioService.buscarUsuarioPorId("1");
 
         // Assert
         assertEquals("admin", resp.getTipo());
@@ -272,12 +273,12 @@ public class UsuarioServiceImplTest {
     @Test
     void actualizarUsuario_adminActualizaTipoAdmin() {
         // Arrange
-        Long id = 99L;
+        String id = "99";
         Admin admin = new Admin();
         admin.setId(id);
         admin.setUser("admin1");
         admin.setNombre("SuperAdmin");
-        admin.setEmail("admin1@mail.com");
+        admin.setCorreo("admin1@mail.com");
         admin.setPassword("oldpass");
 
         when(usuarioRepository.findById(id)).thenReturn(Optional.of(admin));
@@ -292,23 +293,23 @@ public class UsuarioServiceImplTest {
         assertEquals("adminNEW", resp.getUser());
         assertEquals("Admin Nuevo", resp.getNombre());
         assertEquals("adminnuevo@mail.com", resp.getCorreo());
-        verify(usuarioRepository).update(any(Admin.class));
+        verify(usuarioRepository).save(any(Admin.class));
     }
 
     @Test
     void buscarUsuarios_incluyeAdminYRetornaTipoCorrecto() {
         // Arrange
         Admin admin = new Admin();
-        admin.setId(1L);
+        admin.setId("1");
         admin.setUser("admin1");
         admin.setNombre("SuperAdmin");
-        admin.setEmail("admin@mail.com");
+        admin.setCorreo("admin@mail.com");
 
         Usuario user = new Usuario();
-        user.setId(2L);
+        user.setId("2");
         user.setUser("usuario1");
         user.setNombre("Usuario");
-        user.setEmail("usuario@mail.com");
+        user.setCorreo("usuario@mail.com");
 
         List<Usuario> lista = List.of(admin, user);
 
