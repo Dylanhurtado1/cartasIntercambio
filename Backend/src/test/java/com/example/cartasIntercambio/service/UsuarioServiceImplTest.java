@@ -36,7 +36,7 @@ public class UsuarioServiceImplTest {
         // Arrange
         UsuarioDto dto = new UsuarioDto("lucas20", "Lucas", "lucas@email.com", "123");
         when(usuarioRepository.existsByUser("lucas20")).thenReturn(false);
-        when(usuarioRepository.existsByCorreo("lucas@email.com")).thenReturn(false);
+        when(usuarioRepository.existsByEmail("lucas@email.com")).thenReturn(false);
 
         // Act
         usuarioService.registrarUsuario(dto);
@@ -59,7 +59,7 @@ public class UsuarioServiceImplTest {
     void registrarUsuario_yaExisteCorreo_lanzaExcepcion() {
         // Arrange
         UsuarioDto dto = new UsuarioDto("pepe88", "Pepe", "pepe88@gmail.com", "clave");
-        when(usuarioRepository.existsByCorreo("pepe88@gmail.com")).thenReturn(true);
+        when(usuarioRepository.existsByEmail("pepe88@gmail.com")).thenReturn(true);
 
         // Act & Assert
         assertThrows(UsuarioYaExisteException.class, () -> usuarioService.registrarUsuario(dto));
@@ -131,20 +131,20 @@ public class UsuarioServiceImplTest {
     @Test
     void borrarUsuario_ok() {
         // Arrange
-        Usuario u = new Usuario();
-        u.setId("3"); u.setUser("paraBorrar");
-        when(usuarioRepository.findById("3")).thenReturn(Optional.of(u));
+        String id = "3";
+        when(usuarioRepository.existsById(id)).thenReturn(true);
 
         // Act
-        usuarioService.borrarUsuario("3");
+        usuarioService.borrarUsuario(id);
 
         // Assert
-        verify(usuarioRepository).deleteById("3");
+        verify(usuarioRepository).deleteById(id);
     }
+
 
     @Test
     void borrarUsuario_inexistente_lanzaExcepcion() {
-        when(usuarioRepository.findById("3")).thenReturn(Optional.empty());
+        when(usuarioRepository.existsById("3")).thenReturn(false);
         assertThrows(UsuarioNoEncontradoException.class, () -> usuarioService.borrarUsuario("3"));
     }
 
@@ -200,7 +200,7 @@ public class UsuarioServiceImplTest {
         // Arrange
         UsuarioDto dto = new UsuarioDto("admin44", "Olga", "olga@admin.com", "securePass");
         when(usuarioRepository.existsByUser("admin44")).thenReturn(false);
-        when(usuarioRepository.existsByCorreo("olga@admin.com")).thenReturn(false);
+        when(usuarioRepository.existsByEmail("olga@admin.com")).thenReturn(false);
 
         // Act
         UsuarioResponseDto resp = usuarioService.crearAdmin(dto);
@@ -227,7 +227,7 @@ public class UsuarioServiceImplTest {
     void crearAdmin_yaExistePorCorreo_lanzaExcepcion() {
         // Arrange
         UsuarioDto dto = new UsuarioDto("admin44", "Olga", "olga@admin.com", "securePass");
-        when(usuarioRepository.existsByCorreo("olga@admin.com")).thenReturn(true);
+        when(usuarioRepository.existsByEmail("olga@admin.com")).thenReturn(true);
 
         // Act & Assert
         assertThrows(UsuarioYaExisteException.class, () -> usuarioService.crearAdmin(dto));

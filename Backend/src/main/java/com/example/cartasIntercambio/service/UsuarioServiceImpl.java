@@ -27,7 +27,7 @@ public class UsuarioServiceImpl implements IUsuarioService{
 
     @Override
     public void registrarUsuario(UsuarioDto usuarioDto) {
-        if (usuarioRepository.existsByUser(usuarioDto.getUser()) || usuarioRepository.existsByCorreo(usuarioDto.getCorreo())) {
+        if (usuarioRepository.existsByUser(usuarioDto.getUser()) || usuarioRepository.existsByEmail(usuarioDto.getCorreo())) {
             throw new UsuarioYaExisteException("Ya existe un usuario con ese user y/o correo");
         }
         Usuario usuario = new Usuario();
@@ -113,7 +113,7 @@ public class UsuarioServiceImpl implements IUsuarioService{
 
     @Override
     public UsuarioResponseDto crearAdmin(UsuarioDto dto) {
-        if (usuarioRepository.existsByUser(dto.getUser()) || usuarioRepository.existsByCorreo(dto.getCorreo())) {
+        if (usuarioRepository.existsByUser(dto.getUser()) || usuarioRepository.existsByEmail(dto.getCorreo())) {
             throw new UsuarioYaExisteException("Ya existe un usuario (o admin) con ese user y/o correo");
         }
         Admin admin = new Admin();
