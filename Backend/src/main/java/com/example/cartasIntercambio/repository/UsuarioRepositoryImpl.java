@@ -12,7 +12,7 @@ import java.util.Optional;
 //@Repository
 public class UsuarioRepositoryImpl  {
 
-    private List<Usuario> usuarios = new ArrayList<>();
+    //private List<Usuario> usuarios = new ArrayList<>();
 
     /*public UsuarioRepositoryImpl() {
         Admin admin = new Admin();
