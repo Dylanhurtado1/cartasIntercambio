@@ -3,6 +3,7 @@ package com.example.cartasIntercambio.service;
 import com.example.cartasIntercambio.dto.UsuarioDto;
 import com.example.cartasIntercambio.dto.UsuarioResponseDto;
 import com.example.cartasIntercambio.model.Usuario.Usuario;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -15,4 +16,5 @@ public interface IUsuarioService {
     void borrarUsuario(String id);
     List<UsuarioResponseDto> buscarUsuarios(String user, String nombre, String correo);
     UsuarioResponseDto crearAdmin(UsuarioDto dto);
+    String subirFoto(String id, MultipartFile foto);
 }

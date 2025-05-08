@@ -9,13 +9,16 @@ import com.example.cartasIntercambio.model.Usuario.Usuario;
 import com.example.cartasIntercambio.repository.irepository.IUsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class UsuarioServiceImpl implements IUsuarioService{
+public class UsuarioServiceImpl implements IUsuarioService {
 
     private final IUsuarioRepository usuarioRepository;
 
@@ -98,9 +101,9 @@ public class UsuarioServiceImpl implements IUsuarioService{
     public List<UsuarioResponseDto> buscarUsuarios(String user, String nombre, String correo) {
         List<Usuario> todos = usuarioRepository.findAll();
         return todos.stream()
-                .filter(u -> user == null    || u.getUser().toLowerCase().contains(user.toLowerCase()))
-                .filter(u -> nombre == null  || u.getNombre().toLowerCase().contains(nombre.toLowerCase()))
-                .filter(u -> correo == null  || u.getEmail().toLowerCase().contains(correo.toLowerCase()))
+                .filter(u -> user == null || u.getUser().toLowerCase().contains(user.toLowerCase()))
+                .filter(u -> nombre == null || u.getNombre().toLowerCase().contains(nombre.toLowerCase()))
+                .filter(u -> correo == null || u.getEmail().toLowerCase().contains(correo.toLowerCase()))
                 .map(u -> UsuarioResponseDto.builder()
                         .user(u.getUser())
                         .nombre(u.getNombre())
@@ -128,4 +131,38 @@ public class UsuarioServiceImpl implements IUsuarioService{
                 .tipo("admin")
                 .build();
     }
+
+    @Override
+    public String subirFoto(String id, MultipartFile foto) {
+        if (foto.isEmpty()) {
+            throw new IllegalArgumentException("No se envió ninguna imagen");
+        }
+        if (!usuarioRepository.existsById(id)) {
+            throw new UsuarioNoEncontradoException("Usuario con id " + id + " no existe");
+        }
+        String basePath = System.getProperty("user.dir") + File.separator + "uploads";
+
+        File carpetaUploads = new File(basePath);
+
+        if (!carpetaUploads.exists()) carpetaUploads.mkdirs();
+
+        String nombreArchivo = id + "_" + foto.getOriginalFilename();
+        File archivo = new File(carpetaUploads, nombreArchivo);
+
+        try {
+            foto.transferTo(archivo);
+        } catch (IOException e) {
+            throw new RuntimeException("No se pudo guardar la foto", e);
+        }
+
+        String urlFoto = "http://localhost:8080/uploads/" + nombreArchivo;
+
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new UsuarioNoEncontradoException("Usuario no encontrado"));
+        usuario.setFoto(urlFoto);
+        usuarioRepository.save(usuario);
+
+        return urlFoto;
+    }
+
 }

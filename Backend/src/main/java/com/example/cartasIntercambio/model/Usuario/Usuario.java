@@ -22,6 +22,8 @@ public class Usuario {
     private String apellido;
     private String email;
     private String password;
+    private String foto;
+
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date fechaNacimiento;

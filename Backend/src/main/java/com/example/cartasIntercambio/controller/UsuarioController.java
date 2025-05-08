@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -62,6 +63,12 @@ public class UsuarioController {
     public ResponseEntity<UsuarioResponseDto> crearAdmin(@RequestBody UsuarioDto dto) {
         UsuarioResponseDto resp = usuarioService.crearAdmin(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(resp);
+    }
+
+    @PostMapping("/{id}/foto")
+    public ResponseEntity<String> subirFoto(@PathVariable String id, @RequestParam("foto") MultipartFile foto) {
+        String urlFoto = usuarioService.subirFoto(id, foto);
+        return ResponseEntity.ok(urlFoto);
     }
 
 }
