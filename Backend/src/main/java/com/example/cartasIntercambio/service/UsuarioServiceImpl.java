@@ -33,7 +33,7 @@ public class UsuarioServiceImpl implements IUsuarioService{
         Usuario usuario = new Usuario();
         usuario.setUser(usuarioDto.getUser());
         usuario.setNombre(usuarioDto.getNombre());
-        usuario.setCorreo(usuarioDto.getCorreo());
+        usuario.setEmail(usuarioDto.getCorreo());
         usuario.setPassword(usuarioDto.getPassword());
         usuarioRepository.save(usuario);
     }
@@ -46,7 +46,7 @@ public class UsuarioServiceImpl implements IUsuarioService{
                 .map(usuario -> UsuarioResponseDto.builder()
                         .user(usuario.getUser())
                         .nombre(usuario.getNombre())
-                        .correo(usuario.getCorreo())
+                        .correo(usuario.getEmail())
                         .tipo(usuario instanceof Admin ? "admin" : "usuario")
                         .build())
                 .toList();
@@ -62,7 +62,7 @@ public class UsuarioServiceImpl implements IUsuarioService{
         return UsuarioResponseDto.builder()
                 .user(usuario.getUser())
                 .nombre(usuario.getNombre())
-                .correo(usuario.getCorreo())
+                .correo(usuario.getEmail())
                 .tipo(usuario instanceof Admin ? "admin" : "usuario")
                 .build();
     }
@@ -76,13 +76,13 @@ public class UsuarioServiceImpl implements IUsuarioService{
         Usuario usuario = usuarioOpcional.get();
         usuario.setUser(usuarioDto.getUser());
         usuario.setNombre(usuarioDto.getNombre());
-        usuario.setCorreo(usuarioDto.getCorreo());
+        usuario.setEmail(usuarioDto.getCorreo());
         usuario.setPassword(usuarioDto.getPassword());
         usuarioRepository.save(usuario); // save para update en Mongo
         return UsuarioResponseDto.builder()
                 .user(usuario.getUser())
                 .nombre(usuario.getNombre())
-                .correo(usuario.getCorreo())
+                .correo(usuario.getEmail())
                 .tipo(usuario instanceof Admin ? "admin" : "usuario")
                 .build();
     }
@@ -101,11 +101,11 @@ public class UsuarioServiceImpl implements IUsuarioService{
         return todos.stream()
                 .filter(u -> user == null    || u.getUser().toLowerCase().contains(user.toLowerCase()))
                 .filter(u -> nombre == null  || u.getNombre().toLowerCase().contains(nombre.toLowerCase()))
-                .filter(u -> correo == null  || u.getCorreo().toLowerCase().contains(correo.toLowerCase()))
+                .filter(u -> correo == null  || u.getEmail().toLowerCase().contains(correo.toLowerCase()))
                 .map(u -> UsuarioResponseDto.builder()
                         .user(u.getUser())
                         .nombre(u.getNombre())
-                        .correo(u.getCorreo())
+                        .correo(u.getEmail())
                         .tipo(u instanceof Admin ? "admin" : "usuario")
                         .build())
                 .collect(Collectors.toList());
@@ -119,13 +119,13 @@ public class UsuarioServiceImpl implements IUsuarioService{
         Admin admin = new Admin();
         admin.setUser(dto.getUser());
         admin.setNombre(dto.getNombre());
-        admin.setCorreo(dto.getCorreo());
+        admin.setEmail(dto.getCorreo());
         admin.setPassword(dto.getPassword());
         usuarioRepository.save(admin);
         return UsuarioResponseDto.builder()
                 .user(admin.getUser())
                 .nombre(admin.getNombre())
-                .correo(admin.getCorreo())
+                .correo(admin.getEmail())
                 .tipo("admin")
                 .build();
     }

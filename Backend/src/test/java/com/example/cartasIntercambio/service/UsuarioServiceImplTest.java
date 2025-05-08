@@ -69,7 +69,7 @@ public class UsuarioServiceImplTest {
     void listarUsuarios_devuelveDtosCorrectos() {
         // Arrange
         Usuario u = new Usuario();
-        u.setId("1"); u.setUser("ana23"); u.setNombre("Ana"); u.setCorreo("ana@mail.com");
+        u.setId("1"); u.setUser("ana23"); u.setNombre("Ana"); u.setEmail("ana@mail.com");
         when(usuarioRepository.findAll()).thenReturn(List.of(u));
 
         // Act
@@ -152,9 +152,9 @@ public class UsuarioServiceImplTest {
     void buscarUsuarios_filtraPorUser() {
         // Arrange
         Usuario u1 = new Usuario();
-        u1.setId("5"); u1.setUser("nico88"); u1.setNombre("Nicolas"); u1.setCorreo("nico@mail.com");
+        u1.setId("5"); u1.setUser("nico88"); u1.setNombre("Nicolas"); u1.setEmail("nico@mail.com");
         Usuario u2 = new Usuario();
-        u2.setId("6"); u2.setUser("juancho"); u2.setNombre("Juan"); u2.setCorreo("juan@mail.com");
+        u2.setId("6"); u2.setUser("juancho"); u2.setNombre("Juan"); u2.setEmail("juan@mail.com");
         when(usuarioRepository.findAll()).thenReturn(List.of(u1, u2));
 
         // Act
@@ -168,8 +168,8 @@ public class UsuarioServiceImplTest {
     @Test
     void buscarUsuarios_filtraPorNombre() {
         // Arrange
-        Usuario u1 = new Usuario(); u1.setUser("nico88"); u1.setNombre("Nicolas"); u1.setCorreo("nico@mail.com");
-        Usuario u2 = new Usuario(); u2.setUser("juancho"); u2.setNombre("Juan"); u2.setCorreo("juan@mail.com");
+        Usuario u1 = new Usuario(); u1.setUser("nico88"); u1.setNombre("Nicolas"); u1.setEmail("nico@mail.com");
+        Usuario u2 = new Usuario(); u2.setUser("juancho"); u2.setNombre("Juan"); u2.setEmail("juan@mail.com");
         when(usuarioRepository.findAll()).thenReturn(List.of(u1, u2));
 
         // Act
@@ -183,8 +183,8 @@ public class UsuarioServiceImplTest {
     @Test
     void buscarUsuarios_filtraPorCorreo() {
         // Arrange
-        Usuario u1 = new Usuario(); u1.setUser("luli11"); u1.setNombre("Luli"); u1.setCorreo("luli@abc.com");
-        Usuario u2 = new Usuario(); u2.setUser("sofi22"); u2.setNombre("Sofi"); u2.setCorreo("sofi@email.com");
+        Usuario u1 = new Usuario(); u1.setUser("luli11"); u1.setNombre("Luli"); u1.setEmail("luli@abc.com");
+        Usuario u2 = new Usuario(); u2.setUser("sofi22"); u2.setNombre("Sofi"); u2.setEmail("sofi@email.com");
         when(usuarioRepository.findAll()).thenReturn(List.of(u1, u2));
 
         // Act
@@ -240,7 +240,7 @@ public class UsuarioServiceImplTest {
         admin.setId("1");
         admin.setUser("admin1");
         admin.setNombre("SuperAdmin");
-        admin.setCorreo("admin@mail.com");
+        admin.setEmail("admin@mail.com");
 
         when(usuarioRepository.findAll()).thenReturn(List.of(admin));
 
@@ -260,7 +260,7 @@ public class UsuarioServiceImplTest {
         admin.setId("1");
         admin.setUser("admin1");
         admin.setNombre("SuperAdmin");
-        admin.setCorreo("admin@mail.com");
+        admin.setEmail("admin@mail.com");
         when(usuarioRepository.findById("1")).thenReturn(Optional.of(admin));
 
         // Act
@@ -278,7 +278,7 @@ public class UsuarioServiceImplTest {
         admin.setId(id);
         admin.setUser("admin1");
         admin.setNombre("SuperAdmin");
-        admin.setCorreo("admin1@mail.com");
+        admin.setEmail("admin1@mail.com");
         admin.setPassword("oldpass");
 
         when(usuarioRepository.findById(id)).thenReturn(Optional.of(admin));
@@ -303,13 +303,13 @@ public class UsuarioServiceImplTest {
         admin.setId("1");
         admin.setUser("admin1");
         admin.setNombre("SuperAdmin");
-        admin.setCorreo("admin@mail.com");
+        admin.setEmail("admin@mail.com");
 
         Usuario user = new Usuario();
         user.setId("2");
         user.setUser("usuario1");
         user.setNombre("Usuario");
-        user.setCorreo("usuario@mail.com");
+        user.setEmail("usuario@mail.com");
 
         List<Usuario> lista = List.of(admin, user);
 
