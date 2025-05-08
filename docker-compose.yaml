@@ -6,6 +6,8 @@ services:
     container_name: back
     depends_on:
       - mongodb   # << le decís a Docker que espere a Mongo antes de levantar backend
+    volumes:
+      - ./uploads:/app/uploads
 
   frontend:
     build: Frontend/.
