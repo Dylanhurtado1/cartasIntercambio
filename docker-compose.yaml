@@ -4,8 +4,23 @@ services:
     ports:
       - "8080:8080"
     container_name: back
+    depends_on:
+      - mongodb   # << le decís a Docker que espere a Mongo antes de levantar backend
+
   frontend:
-      build: Frontend/.
-      ports:
-        - "9090:9090"
-      container_name: front
+    build: Frontend/.
+    ports:
+      - "9090:9090"
+    container_name: front
+
+  mongodb:
+    image: mongo:7   # o la versión que prefieras
+    restart: always
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:
