@@ -9,3 +9,14 @@ services:
       ports:
         - "9090:9090"
       container_name: front
+  mongodb:
+    hostname: mongodb
+    image: mongodb/mongodb-atlas-local
+    environment:
+      - MONGODB_INITDB_ROOT_USERNAME=jpolito
+      - MONGODB_INITDB_ROOT_PASSWORD=ca6RYKD535v6ruHM
+    ports:
+      - 27018:27017
+    volumes:
+      - data:/data/db
+      - config:/data/configdb

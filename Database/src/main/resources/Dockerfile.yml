@@ -1,0 +1,22 @@
+server:
+  error:
+    include-massage: always
+
+spring:
+  data:
+    mongodb:
+      auto-index-creation: true
+      authentication-database: admin
+      username: jpolito
+      password: ca6RYKD535v6ruHM
+      database: TACS_DB
+      port: 27017
+      host: localhost
+logging:
+  level:
+    org:
+      springframework:
+        data:
+          mongodb:
+            core:
+              MongoTemplate: DEBUG
