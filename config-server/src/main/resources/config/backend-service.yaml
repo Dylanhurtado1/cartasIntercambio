@@ -6,6 +6,6 @@ spring:
     mongodb:
       host: localhost
       port: 27017
-      database: tacsdb
+      database: TACS_DB
       username: admin
       password: password

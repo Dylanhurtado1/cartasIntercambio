@@ -10,16 +10,12 @@ import java.util.Optional;
 
 public interface IPublicacionRepository extends MongoRepository<Publicacion, Long> {
 
-  @Override
-  Publicacion save(Publicacion publicacion);
-//  Object save(Publicacion publicacion);
-
   List<Publicacion> findAll();
 
   Optional<Publicacion> findById(Long id);
 
   List<Publicacion> findByPublicadorId(Long idUser);
 
-  void finalizarPublicacion(Long idPublicacion);
+//  void finalizarPublicacion(Long idPublicacion);
 
 }
