@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "express": "^5.1.0",
+    "startbootstrap-shop-homepage": "^5.0.6",
+    "startbootstrap-shop-item": "^5.0.6"
+  }
+}

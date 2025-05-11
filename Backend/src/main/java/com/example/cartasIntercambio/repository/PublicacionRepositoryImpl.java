@@ -11,14 +11,15 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Repository
-public class PublicacionRepositoryImpl implements IPublicacionRepository {
+public abstract class PublicacionRepositoryImpl implements IPublicacionRepository {
 
   private List<Publicacion> publicaciones = new ArrayList<>();
 
   @Override
-  public void save(Publicacion NuevaPublicacion) {
+  public Publicacion save(Publicacion NuevaPublicacion) {
     NuevaPublicacion.setId((long) (publicaciones.size() + 1)); //TODO: al no tener ninguna DB, por ahora el ID será la posición del
     publicaciones.add(NuevaPublicacion);
+    return null;
   }
 
   @Override

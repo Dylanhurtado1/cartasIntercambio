@@ -6,6 +6,8 @@ import com.example.cartasIntercambio.model.Usuario.Usuario;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -15,7 +17,9 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Document
 public class Publicacion {
+    @Id
     private Long id;
     private Date fecha;
     private String descripcion;

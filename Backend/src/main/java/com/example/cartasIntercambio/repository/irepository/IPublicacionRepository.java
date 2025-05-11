@@ -1,13 +1,18 @@
 package com.example.cartasIntercambio.repository.irepository;
 
 import com.example.cartasIntercambio.model.Mercado.Publicacion;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface IPublicacionRepository{
 
-  void save(Publicacion publicacion);
+public interface IPublicacionRepository extends MongoRepository<Publicacion, Long> {
+
+  @Override
+  Publicacion save(Publicacion publicacion);
+//  Object save(Publicacion publicacion);
 
   List<Publicacion> findAll();
 
