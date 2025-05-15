@@ -52,7 +52,6 @@ public class PublicacionController{
         return new ResponseEntity<>(publicaciones, HttpStatus.OK);
     }
 
-    // Buscar una publicacion por id
     @GetMapping("/{idPublicacion}")
     public ResponseEntity<PublicacionDto> buscarPublicacion(@PathVariable("idPublicacion") String idPublicacion) {
         PublicacionDto publicacionDto = publicacionService.buscarPublicacionDTOPorId(idPublicacion);

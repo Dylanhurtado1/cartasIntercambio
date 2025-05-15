@@ -13,10 +13,10 @@ services:
   mongodb:
     image: mongo:8.0
     container_name: mongodb
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: a2JFEEL6hGww0dcI
-      MONGO_INITDB_DATABASE: TACS_DB
+    #environment:
+    #  MONGO_INITDB_ROOT_USERNAME: root
+    #  MONGO_INITDB_ROOT_PASSWORD: a2JFEEL6hGww0dcI
+    #  MONGO_INITDB_DATABASE: TACS_DB
     ports:
       - "27017:27017"
     volumes:

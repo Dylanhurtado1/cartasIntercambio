@@ -34,11 +34,6 @@ public class PublicacionServiceImpl implements IPublicacionService {
         return new PublicacionDto(publicacion);
     }
 
-    /*@Override
-    public void finalizarPublicacion(String idPublicacion) {
-        publicacionRepository.finalizarPublicacion(idPublicacion);
-    }*/
-
     @Override
     public void finalizarPublicacion(String idPublicacion) {
         Publicacion publicacion = publicacionRepository.findById(idPublicacion)
