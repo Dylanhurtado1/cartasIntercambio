@@ -8,14 +8,12 @@ import java.util.List;
 import java.util.Optional;
 
 
-public interface IPublicacionRepository extends MongoRepository<Publicacion, Long> {
+public interface IPublicacionRepository extends MongoRepository<Publicacion, String> {
 
-  List<Publicacion> findAll();
+  //List<Publicacion> findAll();
 
-  Optional<Publicacion> findById(Long id);
+  //Optional<Publicacion> findById(Long id);
 
-  List<Publicacion> findByPublicadorId(Long idUser);
-
-//  void finalizarPublicacion(Long idPublicacion);
+  List<Publicacion> findByPublicadorId(String idUser);
 
 }

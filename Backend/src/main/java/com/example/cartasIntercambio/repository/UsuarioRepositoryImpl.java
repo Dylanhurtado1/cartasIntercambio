@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
-public class UsuarioRepositoryImpl implements IUsuarioRepository {
+//@Repository
+/*public class UsuarioRepositoryImpl implements IUsuarioRepository {
 
     private List<Usuario> usuarios = new ArrayList<>();
 
@@ -77,4 +77,4 @@ public class UsuarioRepositoryImpl implements IUsuarioRepository {
     }
 
 
-}
+}*/

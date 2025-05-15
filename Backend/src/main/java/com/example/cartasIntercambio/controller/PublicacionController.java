@@ -54,7 +54,7 @@ public class PublicacionController{
 
     // Buscar una publicacion por id
     @GetMapping("/{idPublicacion}")
-    public ResponseEntity<PublicacionDto> buscarPublicacion(@PathVariable("idPublicacion") Long idPublicacion) {
+    public ResponseEntity<PublicacionDto> buscarPublicacion(@PathVariable("idPublicacion") String idPublicacion) {
         PublicacionDto publicacionDto = publicacionService.buscarPublicacionDTOPorId(idPublicacion);
 
         return new ResponseEntity<>(publicacionDto, HttpStatus.OK);
@@ -70,7 +70,7 @@ public class PublicacionController{
 
     // Crear una oferta para una publicacion
     @PostMapping("/{idPublicacion}/ofertas")
-    public ResponseEntity<OfertaDto> crearOferta(@PathVariable("idPublicacion") Long idPublicacion, @RequestBody OfertaDto ofertaDto) {
+    public ResponseEntity<OfertaDto> crearOferta(@PathVariable("idPublicacion") String idPublicacion, @RequestBody OfertaDto ofertaDto) {
         Publicacion publicacion = publicacionService.buscarPublicacionPorId(idPublicacion);
         ofertaService.crearOferta(ofertaDto, publicacion);
 
@@ -79,7 +79,7 @@ public class PublicacionController{
 
     //Buscar todas las ofertas de una publicacion
     @GetMapping("/{idPublicacion}/ofertas")
-    public ResponseEntity<List<OfertaDto>> buscarOfertasDeUnaPublicacion(@PathVariable("idPublicacion") Long idPublicacion) {
+    public ResponseEntity<List<OfertaDto>> buscarOfertasDeUnaPublicacion(@PathVariable("idPublicacion") String idPublicacion) {
         List<OfertaDto> ofertas = ofertaService.buscarOfertasPorPublicacion(idPublicacion);
 
         if(ofertas.isEmpty()) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
@@ -88,7 +88,7 @@ public class PublicacionController{
 
     // Buscar una oferta de una publicacion
     @GetMapping("/ofertas/{idOferta}")
-    public ResponseEntity<OfertaDto> buscarOferta(@PathVariable("idOferta") Long idOferta) {
+    public ResponseEntity<OfertaDto> buscarOferta(@PathVariable("idOferta") String idOferta) {
         OfertaDto oferta = ofertaService.buscarOfertaDto(idOferta);
 
         return new ResponseEntity<>(oferta, HttpStatus.OK);
@@ -98,7 +98,7 @@ public class PublicacionController{
     // TODO: Chequear si una publicacion esta finalizada. Front??
     // Aceptar o rechazar una oferta
     @PatchMapping(path = "/ofertas/{idOferta}", consumes = "application/json-patch+json")
-    public ResponseEntity<Oferta> responderOferta(@PathVariable("idOferta") Long idOferta, @RequestBody JsonPatch patch) {
+    public ResponseEntity<Oferta> responderOferta(@PathVariable("idOferta") String idOferta, @RequestBody JsonPatch patch) {
         Oferta oferta = ofertaService.buscarOfertaPorId(idOferta);
         try {
             Oferta ofertaActualizada = patchOferta(patch, oferta);
@@ -120,7 +120,7 @@ public class PublicacionController{
 
     // Mis publicaciones
     @GetMapping("/usuario/{idUsuario}") // TODO: El ID del usuario no lo vamos a pasar por URL
-    public ResponseEntity<List<PublicacionDto>> listarPublicacionesPorUsuario(@PathVariable("idUsuario") Long idUsuario) {
+    public ResponseEntity<List<PublicacionDto>> listarPublicacionesPorUsuario(@PathVariable("idUsuario") String idUsuario) {
         List<PublicacionDto> publicacionesDTO = publicacionService.buscarPublicacionesPorUsuario(idUsuario);
         if(publicacionesDTO.isEmpty()) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 
@@ -129,7 +129,7 @@ public class PublicacionController{
 
     // Mis ofertas recibidas
     @GetMapping("/usuario/{idUsuario}/ofertas/recibidas") // TODO: El ID del usuario no lo vamos a pasar por URL
-    public ResponseEntity<List<OfertaDto>> listarOfertasRecibidas(@PathVariable("idUsuario") Long idUsuario) {
+    public ResponseEntity<List<OfertaDto>> listarOfertasRecibidas(@PathVariable("idUsuario") String idUsuario) {
         List<PublicacionDto> publicacionesUsuario = publicacionService.buscarPublicacionesPorUsuario(idUsuario);
         List<OfertaDto> ofertasRecibidas = new ArrayList<>();
         for(PublicacionDto publicacion : publicacionesUsuario){
@@ -142,7 +142,7 @@ public class PublicacionController{
 
     // Mis ofertas realizadas
     @GetMapping("/usuario/{idUsuario}/ofertas/realizadas")
-    public ResponseEntity<List<OfertaDto>> listarOfertasRealizadas(@PathVariable("idUsuario") Long idUsuario) {
+    public ResponseEntity<List<OfertaDto>> listarOfertasRealizadas(@PathVariable("idUsuario") String idUsuario) {
         List<OfertaDto> ofertasRealizadas = ofertaService.buscarOfertasRealizadas(idUsuario);
         if(ofertasRealizadas.isEmpty()) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 

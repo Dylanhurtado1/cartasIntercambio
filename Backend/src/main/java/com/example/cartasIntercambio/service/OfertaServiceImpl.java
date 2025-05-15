@@ -5,7 +5,7 @@ import com.example.cartasIntercambio.model.Mercado.EstadoOferta;
 import com.example.cartasIntercambio.model.Mercado.EstadoPublicacion;
 import com.example.cartasIntercambio.model.Mercado.Oferta;
 import com.example.cartasIntercambio.model.Mercado.Publicacion;
-import com.example.cartasIntercambio.repository.OfertaRepositoryImpl;
+import com.example.cartasIntercambio.repository.irepository.IOfertaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -16,21 +16,21 @@ import java.util.stream.Collectors;
 
 @Service
 public class OfertaServiceImpl implements IOfertaService{
-    private final OfertaRepositoryImpl ofertaRepository;
+    private final IOfertaRepository ofertaRepository;
 
     @Autowired
-    public OfertaServiceImpl(OfertaRepositoryImpl ofertaRepository) {
+    public OfertaServiceImpl(IOfertaRepository ofertaRepository) {
         this.ofertaRepository = ofertaRepository;
     }
 
     @Override
-    public OfertaDto buscarOfertaDto(Long idOferta) {
+    public OfertaDto buscarOfertaDto(String idOferta) {
         Oferta oferta = buscarOfertaPorId(idOferta);
 
         return new OfertaDto(oferta);
     }
 
-    public Oferta buscarOfertaPorId(Long idOferta) {
+    public Oferta buscarOfertaPorId(String idOferta) {
 
         return ofertaRepository.findById(idOferta)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe la oferta con id: " + idOferta));
@@ -60,36 +60,46 @@ public class OfertaServiceImpl implements IOfertaService{
 
     // Ofertas recibidas en una publicacion
     @Override
-    public List<OfertaDto> buscarOfertasPorPublicacion(Publicacion publicacion, Long idUsuario) {
+    public List<OfertaDto> buscarOfertasPorPublicacion(Publicacion publicacion, String idUsuario) {
         if(!publicacion.getPublicador().getId().equals(idUsuario)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tiene permiso para ver esta publicación");
         }
 
-        return ofertaRepository.findByPublicacion(publicacion.getId()).stream()
+        return ofertaRepository.findByIdPublicacion(publicacion.getId()).stream()
                 .map(OfertaDto::new)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<OfertaDto> buscarOfertasPorPublicacion(Long idPublicacion) {
-        return ofertaRepository.findByPublicacion(idPublicacion).stream()
+    public List<OfertaDto> buscarOfertasPorPublicacion(String idPublicacion) {
+        return ofertaRepository.findByIdPublicacion(idPublicacion).stream()
                 .map(OfertaDto::new)
                 .collect(Collectors.toList());
     }
 
     @Override
     public void guardarOferta(Oferta oferta) {
-        ofertaRepository.actualizarOferta(oferta);
+        ofertaRepository.save(oferta);
     }
 
-    @Override
-    public void rechazarOtrasOfertas(Long idOferta, Long idPublicacion) {
+    /*@Override
+    public void rechazarOtrasOfertas(String idOferta, String idPublicacion) {
         ofertaRepository.rechazarOtrasOfertas(idOferta, idPublicacion);
+    }*/
+    @Override
+    public void rechazarOtrasOfertas(String idOferta, String idPublicacion) {
+        List<Oferta> ofertas = ofertaRepository.findByIdPublicacion(idPublicacion);
+        for (Oferta oferta : ofertas) {
+            if (!oferta.getId().equals(idOferta)) {
+                oferta.setEstado(EstadoOferta.RECHAZADO);
+                ofertaRepository.save(oferta);
+            }
+        }
     }
 
     // Ofertas hechas por el usuario logueado a publicaciones de otros usuarios
     @Override
-    public List<OfertaDto> buscarOfertasRealizadas(Long idUsuario) {
+    public List<OfertaDto> buscarOfertasRealizadas(String idUsuario) {
         List<Oferta> ofertasRealizadas = ofertaRepository.findByOfertante(idUsuario);
 
         return ofertasRealizadas.stream()

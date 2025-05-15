@@ -16,17 +16,17 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@Repository
-public class PublicacionRepositoryImpl implements IPublicacionRepository {
+//@Repository
+//public class PublicacionRepositoryImpl implements IPublicacionRepository {
 
-  private List<Publicacion> publicaciones = new ArrayList<>();
+  /*private List<Publicacion> publicaciones = new ArrayList<>();
 
   //@Override
 /*  public void save(Publicacion nuevaPublicacion) {
     nuevaPublicacion.setId((long) (publicaciones.size() + 1)); //TODO: al no tener ninguna DB, por ahora el ID será la posición del
     publicaciones.add(nuevaPublicacion);
   }*/
-
+/*
   @Override
   public <S extends Publicacion> S save(S entity) {
     return null;
@@ -159,4 +159,5 @@ public class PublicacionRepositoryImpl implements IPublicacionRepository {
   public Page<Publicacion> findAll(Pageable pageable) {
     return null;
   }
-}
+
+}*/

@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-@Repository
-public class OfertaRepositoryImpl implements IOfertaRepository {
+//@Repository
+/*public class OfertaRepositoryImpl implements IOfertaRepository {
 
   private List<Oferta> ofertas = new ArrayList<>();
 
@@ -43,7 +43,7 @@ public class OfertaRepositoryImpl implements IOfertaRepository {
   }
 
   @Override
-  public List<Oferta> findByPublicacion(Long idPublicacion) {
+  public List<Oferta> findByPublicacion(String idPublicacion) {
     return ofertas.stream().filter(oferta -> oferta.getIdPublicacion().equals(idPublicacion)).toList();
   }
 
@@ -53,7 +53,7 @@ public class OfertaRepositoryImpl implements IOfertaRepository {
   }
 
   @Override
-  public void rechazarOtrasOfertas(Long idOferta, Long idPublicacion) {
+  public void rechazarOtrasOfertas(Long idOferta, String idPublicacion) {
     for (Oferta oferta : ofertas) {
       if(oferta.getIdPublicacion().equals(idPublicacion) && !Objects.equals(oferta.getId(), idOferta)){
         oferta.setEstado(EstadoOferta.RECHAZADO);
@@ -61,4 +61,4 @@ public class OfertaRepositoryImpl implements IOfertaRepository {
     }
   }
 
-}
+}*/

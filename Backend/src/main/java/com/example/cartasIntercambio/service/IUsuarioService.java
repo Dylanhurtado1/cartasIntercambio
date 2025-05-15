@@ -10,9 +10,9 @@ public interface IUsuarioService {
 
     void registrarUsuario(UsuarioDto usuarioDto);
     List<UsuarioResponseDto> listarUsuarios();
-    UsuarioResponseDto buscarUsuarioPorId(Long id);
-    UsuarioResponseDto actualizarUsuario(Long id, UsuarioDto usuarioDto);
-    void borrarUsuario(Long id);
+    UsuarioResponseDto buscarUsuarioPorId(String id);
+    UsuarioResponseDto actualizarUsuario(String id, UsuarioDto usuarioDto);
+    void borrarUsuario(String id);
     List<UsuarioResponseDto> buscarUsuarios(String user, String nombre, String correo);
     UsuarioResponseDto crearAdmin(UsuarioDto dto);
 }

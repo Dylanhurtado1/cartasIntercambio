@@ -17,19 +17,19 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OfertaDto {
-    private Long id;
+    private String id;
     
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private Date fecha;
 
-    private Long idPublicacion;
+    private String idPublicacion;
     private BigDecimal monto;
     private List<Carta> cartasOfrecidas;
     private Usuario ofertante;
     //private Long idOfertante;
     private String estado;
 
-  public OfertaDto(Date fecha, Long idPublicacion, BigDecimal monto, List<Carta> cartasOfrecidas, Usuario ofertante, String estado) {
+  public OfertaDto(Date fecha, String idPublicacion, BigDecimal monto, List<Carta> cartasOfrecidas, Usuario ofertante, String estado) {
     this.fecha = fecha;
     this.idPublicacion = idPublicacion;
     this.monto = monto;
