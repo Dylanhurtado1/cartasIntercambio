@@ -1,14 +1,14 @@
 package com.example.cartasIntercambio.service;
 
 import com.example.cartasIntercambio.dto.PublicacionDto;
+import com.example.cartasIntercambio.exception.PublicacionNoEncontradaException;
 import com.example.cartasIntercambio.model.Mercado.EstadoPublicacion;
 import com.example.cartasIntercambio.model.Mercado.Publicacion;
 import com.example.cartasIntercambio.repository.irepository.IPublicacionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,23 +22,32 @@ public class PublicacionServiceImpl implements IPublicacionService {
     }
 
     public Publicacion buscarPublicacionPorId(String idPublicacion) {
-
         return publicacionRepository.findById(idPublicacion)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe la publicación con id: " + idPublicacion));
+                .orElseThrow(() -> new PublicacionNoEncontradaException("No existe la publicación con id: " + idPublicacion));
+    }
+
+    public List<PublicacionDto> buscarPublicacionesFiltradas(String nombre, String juego, String estado,
+                                                             BigDecimal preciomin, BigDecimal preciomax) {
+        return publicacionRepository.findAll().stream()
+                .filter(p -> nombre == null || p.getCartaOfrecida().getNombre().toLowerCase().contains(nombre.toLowerCase()))
+                .filter(p -> juego == null || p.getCartaOfrecida().getJuego().toLowerCase().contains(juego.toLowerCase()))
+                .filter(p -> estado == null || p.getCartaOfrecida().getEstado().toString().toLowerCase().contains(estado.toLowerCase()))
+                .filter(p -> preciomin == null || p.getPrecio().compareTo(preciomin) >= 0)
+                .filter(p -> preciomax == null || p.getPrecio().compareTo(preciomax) <= 0)
+                .map(PublicacionDto::new)
+                .toList();
     }
 
     @Override
-    public PublicacionDto buscarPublicacionDTOPorId(String idPublicacion) { // Este es el que llamamos desde el controller
+    public PublicacionDto buscarPublicacionDTOPorId(String idPublicacion) {
         Publicacion publicacion = buscarPublicacionPorId(idPublicacion);
-
         return new PublicacionDto(publicacion);
     }
 
     @Override
     public void finalizarPublicacion(String idPublicacion) {
         Publicacion publicacion = publicacionRepository.findById(idPublicacion)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "No existe la publicación con id: " + idPublicacion));
+                .orElseThrow(() -> new PublicacionNoEncontradaException("No existe la publicación con id: " + idPublicacion));
         publicacion.setEstado(EstadoPublicacion.FINALIZADA);
         publicacionRepository.save(publicacion);
     }
@@ -54,9 +63,9 @@ public class PublicacionServiceImpl implements IPublicacionService {
     }
     
     @Override
-    public void guardarPublicacion(PublicacionDto nuevaPublicacionDto) {
+    public PublicacionDto guardarPublicacion(PublicacionDto nuevaPublicacionDto) {
         Publicacion nuevaPublicacion = new Publicacion(
-            null, //se sube sin ningun ID
+            null,
             nuevaPublicacionDto.getFecha(),
             nuevaPublicacionDto.getDescripcion(),
             nuevaPublicacionDto.getCartaOfrecida(),
@@ -65,8 +74,8 @@ public class PublicacionServiceImpl implements IPublicacionService {
             nuevaPublicacionDto.getPublicador(),
             EstadoPublicacion.valueOf("ACTIVA")
         );
-
-        publicacionRepository.save(nuevaPublicacion);
+        Publicacion guardada = publicacionRepository.save(nuevaPublicacion);
+        return new PublicacionDto(guardada);
     }
 
 

@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface IUsuarioService {
 
-    void registrarUsuario(UsuarioDto usuarioDto);
+    UsuarioResponseDto registrarUsuario(UsuarioDto usuarioDto);
     List<UsuarioResponseDto> listarUsuarios();
     UsuarioResponseDto buscarUsuarioPorId(String id);
     UsuarioResponseDto actualizarUsuario(String id, UsuarioDto usuarioDto);

@@ -22,9 +22,9 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public ResponseEntity<UsuarioDto> registrarUsuario(@RequestBody UsuarioDto usuarioDto) {
-        usuarioService.registrarUsuario(usuarioDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(usuarioDto);
+    public ResponseEntity<UsuarioResponseDto> registrarUsuario(@RequestBody UsuarioDto usuarioDto) {
+        UsuarioResponseDto creado = usuarioService.registrarUsuario(usuarioDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(creado);
     }
 
     @GetMapping
@@ -39,7 +39,8 @@ public class UsuarioController {
 
     @PutMapping("/{id}")
     public ResponseEntity<UsuarioResponseDto> actualizarUsuario(@PathVariable String id, @RequestBody UsuarioDto usuarioDto) {
-        return ResponseEntity.ok(usuarioService.actualizarUsuario(id, usuarioDto));
+        UsuarioResponseDto actualizado = usuarioService.actualizarUsuario(id, usuarioDto);
+        return ResponseEntity.ok(actualizado);
     }
 
     @DeleteMapping("/{id}")

@@ -10,10 +10,6 @@ import java.util.Optional;
 
 public interface IPublicacionRepository extends MongoRepository<Publicacion, String> {
 
-  //List<Publicacion> findAll();
-
-  //Optional<Publicacion> findById(Long id);
-
   List<Publicacion> findByPublicadorId(String idUser);
 
 }

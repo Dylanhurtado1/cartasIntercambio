@@ -37,6 +37,13 @@ public class UsuarioServiceImplTest {
         when(usuarioRepository.existsByUser("lucas20")).thenReturn(false);
         when(usuarioRepository.existsByEmail("lucas@email.com")).thenReturn(false);
 
+        Usuario usuarioMock = new Usuario();
+        usuarioMock.setId("algunaId");
+        usuarioMock.setUser("lucas20");
+        usuarioMock.setNombre("Lucas");
+        usuarioMock.setEmail("lucas@email.com");
+        usuarioMock.setPassword("123");
+        when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuarioMock);
         // Act
         usuarioService.registrarUsuario(dto);
 
@@ -110,7 +117,7 @@ public class UsuarioServiceImplTest {
         Usuario usuarioOriginal = new Usuario();
         usuarioOriginal.setId(id); usuarioOriginal.setUser("viejo"); usuarioOriginal.setNombre("Viejo"); usuarioOriginal.setEmail("viejo@mail.com"); usuarioOriginal.setPassword("abc");
         when(usuarioRepository.findById(id)).thenReturn(Optional.of(usuarioOriginal));
-
+        when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuarioOriginal);
         // Act
         UsuarioResponseDto actualizado = usuarioService.actualizarUsuario(id, dto);
 
@@ -281,6 +288,7 @@ public class UsuarioServiceImplTest {
         admin.setPassword("oldpass");
 
         when(usuarioRepository.findById(id)).thenReturn(Optional.of(admin));
+        when(usuarioRepository.save(any(Admin.class))).thenReturn(admin);
 
         UsuarioDto dto = new UsuarioDto("adminNEW", "Admin Nuevo", "adminnuevo@mail.com", "newpass");
 

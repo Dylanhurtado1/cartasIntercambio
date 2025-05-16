@@ -1,6 +1,7 @@
 package com.example.cartasIntercambio.service;
 
 import com.example.cartasIntercambio.dto.PublicacionDto;
+import com.example.cartasIntercambio.exception.PublicacionNoEncontradaException;
 import com.example.cartasIntercambio.model.Mercado.EstadoPublicacion;
 import com.example.cartasIntercambio.model.Mercado.Publicacion;
 import com.example.cartasIntercambio.model.Producto_Carta.Carta;
@@ -13,8 +14,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -106,6 +105,13 @@ public class PublicacionServiceImplTest {
         publicacionDto.setPublicador(publicador1);
         publicacionDto.setEstado(EstadoPublicacion.ACTIVA.toString());
 
+        Publicacion publicacionMock = new Publicacion(
+                null, fechaHoy, "Intercambio de cartas Pokemon", cartaPokemon1, precio,
+                cartasDeInteres, publicador1, EstadoPublicacion.ACTIVA
+        );
+        when(publicacionRepository.save(any(Publicacion.class))).thenReturn(publicacionMock);
+
+
         // Guardar publicacion, verificar que el metodo save haya sido llamado y la publicacion a guardar esta ok
         publicacionService.guardarPublicacion(publicacionDto);
 
@@ -152,12 +158,11 @@ public class PublicacionServiceImplTest {
         when(publicacionRepository.findById("1")).thenReturn(Optional.empty());
 
         // Ejecutar y verificar que lanza la excepción esperada
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
+        PublicacionNoEncontradaException exception = assertThrows(PublicacionNoEncontradaException.class, () -> {
             publicacionService.buscarPublicacionDTOPorId("1");
         });
 
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
-        assertTrue(exception.getReason().contains("No existe la publicación con id: 1"));
+        assertTrue(exception.getMessage().contains("No existe la publicación con id: 1"));
     }
 
     @Test
@@ -233,14 +238,6 @@ public class PublicacionServiceImplTest {
         //
     }
     */
-
-    /*@Test
-    void testFinalizarPublicacion() {
-        // Finalizar publicacion + verificar que se haya llamado al metodo finalizarPublicacion en el repo una vez
-        publicacionService.finalizarPublicacion("1");
-
-        verify(publicacionRepository, times(1)).finalizarPublicacion("1");
-    }*/
 
     // ---------------------------------------- Metodos Aux ---------------------------------------- //
     private Usuario crearUsuarioEjemplo(String id, String nombre, String apellido, String user, String email, String password, String fecha) throws ParseException {

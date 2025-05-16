@@ -13,10 +13,6 @@ services:
   mongodb:
     image: mongo:8.0
     container_name: mongodb
-    #environment:
-    #  MONGO_INITDB_ROOT_USERNAME: root
-    #  MONGO_INITDB_ROOT_PASSWORD: a2JFEEL6hGww0dcI
-    #  MONGO_INITDB_DATABASE: TACS_DB
     ports:
       - "27017:27017"
     volumes:
@@ -43,19 +39,3 @@ services:
         interval: 10s
         timeout: 10s
         retries: 3
-
-#  volumes:
-#    mongo_data:
-#      driver: local
-
-#  mongodb:
-#    hostname: mongodb
-#    image: mongodb/mongodb-atlas-local
-#    environment:
-#      - MONGODB_INITDB_ROOT_USERNAME=jpolito
-#      - MONGODB_INITDB_ROOT_PASSWORD=ca6RYKD535v6ruHM
-#    ports:
-#      - 27018:27017
-#    volumes:
-#      - data:/data/db
-#      - config:/data/configdb

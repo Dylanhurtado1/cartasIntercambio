@@ -1,11 +1,13 @@
 package com.example.cartasIntercambio.service;
 
 import com.example.cartasIntercambio.dto.OfertaDto;
+import com.example.cartasIntercambio.exception.PublicacionNoEncontradaException;
 import com.example.cartasIntercambio.model.Mercado.EstadoOferta;
 import com.example.cartasIntercambio.model.Mercado.EstadoPublicacion;
 import com.example.cartasIntercambio.model.Mercado.Oferta;
 import com.example.cartasIntercambio.model.Mercado.Publicacion;
 import com.example.cartasIntercambio.repository.irepository.IOfertaRepository;
+import com.example.cartasIntercambio.repository.irepository.IPublicacionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -17,10 +19,12 @@ import java.util.stream.Collectors;
 @Service
 public class OfertaServiceImpl implements IOfertaService{
     private final IOfertaRepository ofertaRepository;
+    private final IPublicacionRepository publicacionRepository;
 
     @Autowired
-    public OfertaServiceImpl(IOfertaRepository ofertaRepository) {
+    public OfertaServiceImpl(IOfertaRepository ofertaRepository, IPublicacionRepository publicacionRepository) {
         this.ofertaRepository = ofertaRepository;
+        this.publicacionRepository = publicacionRepository;
     }
 
     @Override
@@ -72,6 +76,9 @@ public class OfertaServiceImpl implements IOfertaService{
 
     @Override
     public List<OfertaDto> buscarOfertasPorPublicacion(String idPublicacion) {
+        if (!publicacionRepository.existsById(idPublicacion)) {
+            throw new PublicacionNoEncontradaException("No existe la publicación con id: " + idPublicacion);
+        }
         return ofertaRepository.findByIdPublicacion(idPublicacion).stream()
                 .map(OfertaDto::new)
                 .collect(Collectors.toList());
@@ -82,10 +89,6 @@ public class OfertaServiceImpl implements IOfertaService{
         ofertaRepository.save(oferta);
     }
 
-    /*@Override
-    public void rechazarOtrasOfertas(String idOferta, String idPublicacion) {
-        ofertaRepository.rechazarOtrasOfertas(idOferta, idPublicacion);
-    }*/
     @Override
     public void rechazarOtrasOfertas(String idOferta, String idPublicacion) {
         List<Oferta> ofertas = ofertaRepository.findByIdPublicacion(idPublicacion);

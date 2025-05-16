@@ -25,7 +25,7 @@ public class UsuarioServiceImpl implements IUsuarioService{
     }
 
     @Override
-    public void registrarUsuario(UsuarioDto usuarioDto) {
+    public UsuarioResponseDto registrarUsuario(UsuarioDto usuarioDto) {
         if (usuarioRepository.existsByUser(usuarioDto.getUser()) || usuarioRepository.existsByEmail(usuarioDto.getCorreo())) {
             throw new UsuarioYaExisteException("Ya existe un usuario con ese user y/o correo");
         }
@@ -34,7 +34,14 @@ public class UsuarioServiceImpl implements IUsuarioService{
         usuario.setNombre(usuarioDto.getNombre());
         usuario.setEmail(usuarioDto.getCorreo());
         usuario.setPassword(usuarioDto.getPassword());
-        usuarioRepository.save(usuario);
+        Usuario saved = usuarioRepository.save(usuario);
+        return UsuarioResponseDto.builder()
+                .user(saved.getUser())
+                .nombre(saved.getNombre())
+                .correo(saved.getEmail())
+                .tipo("usuario")
+                .id(saved.getId())
+                .build();
     }
 
     @Override
@@ -43,6 +50,7 @@ public class UsuarioServiceImpl implements IUsuarioService{
 
         return usuarios.stream()
                 .map(usuario -> UsuarioResponseDto.builder()
+                        .id(usuario.getId())
                         .user(usuario.getUser())
                         .nombre(usuario.getNombre())
                         .correo(usuario.getEmail())
@@ -59,6 +67,7 @@ public class UsuarioServiceImpl implements IUsuarioService{
         }
         Usuario usuario = usuarioOpcional.get();
         return UsuarioResponseDto.builder()
+                .id(usuario.getId())
                 .user(usuario.getUser())
                 .nombre(usuario.getNombre())
                 .correo(usuario.getEmail())
@@ -77,11 +86,12 @@ public class UsuarioServiceImpl implements IUsuarioService{
         usuario.setNombre(usuarioDto.getNombre());
         usuario.setEmail(usuarioDto.getCorreo());
         usuario.setPassword(usuarioDto.getPassword());
-        usuarioRepository.save(usuario); // save para update en Mongo
+        Usuario updated = usuarioRepository.save(usuario);
         return UsuarioResponseDto.builder()
-                .user(usuario.getUser())
-                .nombre(usuario.getNombre())
-                .correo(usuario.getEmail())
+                .id(updated.getId())
+                .user(updated.getUser())
+                .nombre(updated.getNombre())
+                .correo(updated.getEmail())
                 .tipo(usuario instanceof Admin ? "admin" : "usuario")
                 .build();
     }
@@ -102,6 +112,7 @@ public class UsuarioServiceImpl implements IUsuarioService{
                 .filter(u -> nombre == null  || u.getNombre().toLowerCase().contains(nombre.toLowerCase()))
                 .filter(u -> correo == null  || u.getEmail().toLowerCase().contains(correo.toLowerCase()))
                 .map(u -> UsuarioResponseDto.builder()
+                        .id(u.getId())
                         .user(u.getUser())
                         .nombre(u.getNombre())
                         .correo(u.getEmail())
@@ -126,6 +137,7 @@ public class UsuarioServiceImpl implements IUsuarioService{
                 .nombre(admin.getNombre())
                 .correo(admin.getEmail())
                 .tipo("admin")
+                .id(admin.getId())
                 .build();
     }
 }

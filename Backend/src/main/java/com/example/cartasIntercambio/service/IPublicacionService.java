@@ -9,7 +9,7 @@ public interface IPublicacionService {
 
     List<PublicacionDto> buscarPublicacionesPorUsuario(String idUsuario);
 
-    void guardarPublicacion(PublicacionDto nuevaPublicacionDto);
+    PublicacionDto guardarPublicacion(PublicacionDto nuevaPublicacionDto);
 
     //List<OfertaDto> buscarOfertasPorPublicacion(Long idPublicacion, Long idUsuario);
 
