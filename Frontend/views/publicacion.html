@@ -51,55 +51,41 @@
     </div> 
     
     <!-- VISTA DE UNA OFERTA -->
-
     <form v-if="formVisible" @submit.prevent="submitForm" class="formulario-oferta">
+      <h3>OFERTA</h3>
       <div class="grupo-form">
         <label for="price"><strong>Precio a ofertar: ($)</strong></label>
         <input
+          min="0"
           type="number"
-          v-model="price"
+          v-model="nuevaOferta.precio"
           id="price"
           placeholder="Ej: 100"
           class="input-text"
         />
       </div>
-    
-      <div v-for="(card, index) in cards" :key="index" class="carta-ofrecida">
-        <h3>Carta {{ index + 1 }}</h3>
-        <div class="grupo-form">
-          <label for="name"><strong>Nombre:</strong></label>
-          <input type="text" v-model="card.nombre" id="name" placeholder="Nombre" class="input-text" required/>
-        </div>
-    
-        <div class="grupo-form">
-          <label for="game"><strong>Juego:</strong></label>
-          <input type="text" v-model="card.juego" id="game" placeholder="Juego" class="input-text" required/>
-        </div>
-    
-        <div class="grupo-form">
-          <label for="estado"><strong>Estado:</strong></label>
-          <select v-model="card.estado" id="state" class="input-text" required>
-            <option value="NUEVO">NUEVO</option>
-            <option value="MUY_BUENO">MUY BUENO</option>
-            <option value="BUENO">BUENO</option>
-            <option value="MALO">MALO</option>
-            <option value="MUY_MALO">MUY MALO</option>
-          </select>
-        </div>
-    
-        <div class="grupo-form">
-          <label for="image"><strong>Imagen:</strong></label>
-          <input type="file" @change="handleFileChange(index, $event)" id="image" multiple accept="image/*" required />
-        </div>
-    
-        <!-- <div v-if="card.image" class="vista-previa">
-          <img :src="card.image" alt="Imagen de la carta" />
-        </div> -->
+      
+      <label for="nuevaOferta.cartasSeleccionadas"><strong>Carta ofrecida (de las cartas de interés)</strong></label>
 
-        <button type="button" class="btn-secundario" @click="deleteCard(index)">Eliminar</button>
+      <div id="cartasSeleccionadas">
+        <div>
+          <div class="checkbox-wrapper" v-for="(carta, index) in publicacion.cartasInteres" style="width: auto;">
+            <input type="checkbox" :id="index" :value="index" v-model="nuevaOferta.cartasSeleccionadas"/>
+            <label :for="index">{{ carta.nombre }}</label>
+          </div>
+        </div>
+
+        
+        <div id="listaDeSeleccionadas">
+          <label>Cartas seleccionadas: </label>
+          <label v-for="(cartaSeleccionada, index) in nuevaOferta.cartasSeleccionadas"> 
+            {{publicacion.cartasInteres[index].nombre}}
+          </label>
+        </div>
+
+
       </div>
-    
-      <button type="button" @click="addCard" class="btn-secundario">Añadir una carta</button>
+      
       <button type="submit" class="btn-principal">Enviar Oferta</button>
     </form>
   </div>
@@ -108,6 +94,5 @@
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   <script src="/public/js/publicacion.js"></script>
   <script src="/public/js/menu.js"></script>
-
 </body>
 </html>

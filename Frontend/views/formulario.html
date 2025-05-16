@@ -22,7 +22,12 @@
                 <input type="text" id="nombreCarta" v-model="form.nombreCarta" required>
 
                 <label for="juego">Nombre del juego</label>
-                <input type="text" id="nombreJuego" v-model="form.nombreJuego" required>
+                <select id="nombreJuego" v-model="form.nombreJuego" required>
+                    <option value="">Seleccionar juego</option>
+                    <option value="Yu-Gi-Oh!">Yu-Gi-Oh!</option>
+                    <option value="Magic">Magic</option>
+                    <option value="Pokémon">Pokémon</option>
+                </select>
 
                 <label for="descripcion">Descripción de la carta</label>
                 <textarea id="descripcion" v-model="form.descripcion" rows="4" required></textarea>
