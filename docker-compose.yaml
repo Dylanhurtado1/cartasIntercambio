@@ -1,14 +1,16 @@
+version: '3.8'
 services:
   backend:
     build: Backend/.
     ports:
       - "8080:8080"
     container_name: back
+
   frontend:
-      build: Frontend/.
-      ports:
-        - "9090:9090"
-      container_name: front
+    build: Frontend/.
+    ports:
+      - "9090:9090"
+    container_name: front
 
   mongodb:
     image: mongo:8.0
@@ -17,7 +19,7 @@ services:
       - "27017:27017"
     volumes:
       - ./docker-config/mongodb/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
-#      - mongo_data:/data/db
+    # - mongo_data:/data/db      # uncomment if you want persistent DB
     healthcheck:
       test: [ "CMD", "mongo", "--eval", "db.runCommand('ping').ok == 1" ]
       interval: 10s
@@ -25,17 +27,22 @@ services:
       retries: 3
 
   mongo-express:
-      image: mongodb/mongodb-atlas-local
-      container_name: mongo-express
-      environment:
-        ME_CONFIG_MONGODB_URL: "mongodb://root:a2JFEEL6hGww0dcI@mongodb:27017/TACS_DB"
-        ME_CONFIG_BASICAUTH: "false"
-      ports:
-        - "8081:8081"
-      depends_on:
-        - mongodb
-      healthcheck:
-        test: [ "CMD", "curl", "--silent", "--fail", "http://localhost:8081" ]
-        interval: 10s
-        timeout: 10s
-        retries: 3
+    image: mongo-express:latest
+    container_name: mongo-express
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongodb    # name of your mongo service!
+      ME_CONFIG_MONGODB_PORT: 27017
+      ME_CONFIG_BASICAUTH: "false"         # disables login for mongo-express UI
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mongodb
+    healthcheck:
+      test: [ "CMD", "curl", "--silent", "--fail", "http://localhost:8081" ]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+
+# (Opcional) Volumen persistente
+#volumes:
+#  mongo_data:
