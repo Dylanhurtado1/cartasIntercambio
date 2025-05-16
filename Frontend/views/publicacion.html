@@ -65,25 +65,24 @@
         />
       </div>
       
-      <label for="nuevaOferta.cartasSeleccionadas"><strong>Carta ofrecida (de las cartas de interés)</strong></label>
+      <div v-if="publicacion.cartasInteres.length">
+        <label for="nuevaOferta.cartasSeleccionadas"><strong>Carta ofrecida (de las cartas de interés)</strong></label>
+        <div id="cartasSeleccionadas">
+          <div>
+            <div class="checkbox-wrapper" v-for="(carta, index) in publicacion.cartasInteres" style="width: auto;">
+              <input type="checkbox" :id="index" :value="index" v-model="nuevaOferta.cartasSeleccionadas"/>
+              <label :for="index">{{ carta.nombre }}</label>
+            </div>
+          </div>
 
-      <div id="cartasSeleccionadas">
-        <div>
-          <div class="checkbox-wrapper" v-for="(carta, index) in publicacion.cartasInteres" style="width: auto;">
-            <input type="checkbox" :id="index" :value="index" v-model="nuevaOferta.cartasSeleccionadas"/>
-            <label :for="index">{{ carta.nombre }}</label>
+          
+          <div id="listaDeSeleccionadas">
+            <label>Cartas seleccionadas: </label>
+            <label v-for="(cartaSeleccionada, index) in nuevaOferta.cartasSeleccionadas"> 
+              {{publicacion.cartasInteres[index].nombre}}
+            </label>
           </div>
         </div>
-
-        
-        <div id="listaDeSeleccionadas">
-          <label>Cartas seleccionadas: </label>
-          <label v-for="(cartaSeleccionada, index) in nuevaOferta.cartasSeleccionadas"> 
-            {{publicacion.cartasInteres[index].nombre}}
-          </label>
-        </div>
-
-
       </div>
       
       <button type="submit" class="btn-principal">Enviar Oferta</button>
