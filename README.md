@@ -67,6 +67,11 @@ La estructura del proyecto es la siguiente:
    **Despúes de levantarlo la primera vez, si no tocás el código, podés usar:**
     
     ```docker compose up```
+
+### 📋 Acceso rápido a la base de datos por navegador
+
+- Podés entrar a [http://localhost:8081](http://localhost:8081) y ver/modificar los datos de MongoDB usando el cliente web **mongo-express**.
+- No requiere usuario ni clave (solo para desarrollo).
     
     ### Para acceder a la API:
     

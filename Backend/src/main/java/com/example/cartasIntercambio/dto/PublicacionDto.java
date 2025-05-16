@@ -17,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PublicacionDto {
-    private Long id; //TODO: Creo que no van los id en los DTOs, por ahi me equivoco
+    private String id; //TODO: Creo que no van los id en los DTOs, por ahi me equivoco
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private Date fecha;
     private String descripcion;

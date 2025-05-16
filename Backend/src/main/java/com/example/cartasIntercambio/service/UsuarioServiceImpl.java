@@ -6,7 +6,8 @@ import com.example.cartasIntercambio.exception.UsuarioNoEncontradoException;
 import com.example.cartasIntercambio.exception.UsuarioYaExisteException;
 import com.example.cartasIntercambio.model.Usuario.Admin;
 import com.example.cartasIntercambio.model.Usuario.Usuario;
-import com.example.cartasIntercambio.repository.UsuarioRepositoryImpl;
+import com.example.cartasIntercambio.repository.irepository.IUsuarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,24 +17,31 @@ import java.util.stream.Collectors;
 @Service
 public class UsuarioServiceImpl implements IUsuarioService{
 
-    private final UsuarioRepositoryImpl usuarioRepository;
+    private final IUsuarioRepository usuarioRepository;
 
-    public UsuarioServiceImpl(UsuarioRepositoryImpl usuarioRepository) {
+    @Autowired
+    public UsuarioServiceImpl(IUsuarioRepository usuarioRepository) {
         this.usuarioRepository = usuarioRepository;
     }
 
     @Override
-    public void registrarUsuario(UsuarioDto usuarioDto) {
-        if (usuarioRepository.existsByUser(usuarioDto.getUser()) || usuarioRepository.existsByCorreo(usuarioDto.getCorreo())) {
+    public UsuarioResponseDto registrarUsuario(UsuarioDto usuarioDto) {
+        if (usuarioRepository.existsByUser(usuarioDto.getUser()) || usuarioRepository.existsByEmail(usuarioDto.getCorreo())) {
             throw new UsuarioYaExisteException("Ya existe un usuario con ese user y/o correo");
         }
         Usuario usuario = new Usuario();
         usuario.setUser(usuarioDto.getUser());
         usuario.setNombre(usuarioDto.getNombre());
-        usuario.setApellido(usuario.getApellido());
         usuario.setEmail(usuarioDto.getCorreo());
         usuario.setPassword(usuarioDto.getPassword());
-        usuarioRepository.save(usuario);
+        Usuario saved = usuarioRepository.save(usuario);
+        return UsuarioResponseDto.builder()
+                .user(saved.getUser())
+                .nombre(saved.getNombre())
+                .correo(saved.getEmail())
+                .tipo("usuario")
+                .id(saved.getId())
+                .build();
     }
 
     @Override
@@ -42,6 +50,7 @@ public class UsuarioServiceImpl implements IUsuarioService{
 
         return usuarios.stream()
                 .map(usuario -> UsuarioResponseDto.builder()
+                        .id(usuario.getId())
                         .user(usuario.getUser())
                         .nombre(usuario.getNombre())
                         .correo(usuario.getEmail())
@@ -51,13 +60,14 @@ public class UsuarioServiceImpl implements IUsuarioService{
     }
 
     @Override
-    public UsuarioResponseDto buscarUsuarioPorId(Long id) {
+    public UsuarioResponseDto buscarUsuarioPorId(String id) {
         Optional<Usuario> usuarioOpcional = usuarioRepository.findById(id);
-        if(usuarioOpcional.isEmpty()) {
+        if (usuarioOpcional.isEmpty()) {
             throw new UsuarioNoEncontradoException("Usuario con id " + id + " no existe");
         }
         Usuario usuario = usuarioOpcional.get();
         return UsuarioResponseDto.builder()
+                .id(usuario.getId())
                 .user(usuario.getUser())
                 .nombre(usuario.getNombre())
                 .correo(usuario.getEmail())
@@ -66,9 +76,9 @@ public class UsuarioServiceImpl implements IUsuarioService{
     }
 
     @Override
-    public UsuarioResponseDto actualizarUsuario(Long id, UsuarioDto usuarioDto) {
+    public UsuarioResponseDto actualizarUsuario(String id, UsuarioDto usuarioDto) {
         Optional<Usuario> usuarioOpcional = usuarioRepository.findById(id);
-        if(usuarioOpcional.isEmpty()) {
+        if (usuarioOpcional.isEmpty()) {
             throw new UsuarioNoEncontradoException("Usuario con id " + id + " no existe");
         }
         Usuario usuario = usuarioOpcional.get();
@@ -76,19 +86,19 @@ public class UsuarioServiceImpl implements IUsuarioService{
         usuario.setNombre(usuarioDto.getNombre());
         usuario.setEmail(usuarioDto.getCorreo());
         usuario.setPassword(usuarioDto.getPassword());
-        usuarioRepository.update(usuario);
+        Usuario updated = usuarioRepository.save(usuario);
         return UsuarioResponseDto.builder()
-                .user(usuario.getUser())
-                .nombre(usuario.getNombre())
-                .correo(usuario.getEmail())
+                .id(updated.getId())
+                .user(updated.getUser())
+                .nombre(updated.getNombre())
+                .correo(updated.getEmail())
                 .tipo(usuario instanceof Admin ? "admin" : "usuario")
                 .build();
     }
 
     @Override
-    public void borrarUsuario(Long id) {
-        Optional<Usuario> usuarioOpcional = usuarioRepository.findById(id);
-        if (usuarioOpcional.isEmpty()) {
+    public void borrarUsuario(String id) {
+        if (!usuarioRepository.existsById(id)) {
             throw new UsuarioNoEncontradoException("Usuario con id " + id + " no existe");
         }
         usuarioRepository.deleteById(id);
@@ -102,6 +112,7 @@ public class UsuarioServiceImpl implements IUsuarioService{
                 .filter(u -> nombre == null  || u.getNombre().toLowerCase().contains(nombre.toLowerCase()))
                 .filter(u -> correo == null  || u.getEmail().toLowerCase().contains(correo.toLowerCase()))
                 .map(u -> UsuarioResponseDto.builder()
+                        .id(u.getId())
                         .user(u.getUser())
                         .nombre(u.getNombre())
                         .correo(u.getEmail())
@@ -112,7 +123,7 @@ public class UsuarioServiceImpl implements IUsuarioService{
 
     @Override
     public UsuarioResponseDto crearAdmin(UsuarioDto dto) {
-        if (usuarioRepository.existsByUser(dto.getUser()) || usuarioRepository.existsByCorreo(dto.getCorreo())) {
+        if (usuarioRepository.existsByUser(dto.getUser()) || usuarioRepository.existsByEmail(dto.getCorreo())) {
             throw new UsuarioYaExisteException("Ya existe un usuario (o admin) con ese user y/o correo");
         }
         Admin admin = new Admin();
@@ -126,6 +137,7 @@ public class UsuarioServiceImpl implements IUsuarioService{
                 .nombre(admin.getNombre())
                 .correo(admin.getEmail())
                 .tipo("admin")
+                .id(admin.getId())
                 .build();
     }
 }

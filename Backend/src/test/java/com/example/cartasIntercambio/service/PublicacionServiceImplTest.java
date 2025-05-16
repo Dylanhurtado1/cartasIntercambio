@@ -1,20 +1,19 @@
 package com.example.cartasIntercambio.service;
 
 import com.example.cartasIntercambio.dto.PublicacionDto;
+import com.example.cartasIntercambio.exception.PublicacionNoEncontradaException;
 import com.example.cartasIntercambio.model.Mercado.EstadoPublicacion;
 import com.example.cartasIntercambio.model.Mercado.Publicacion;
 import com.example.cartasIntercambio.model.Producto_Carta.Carta;
 import com.example.cartasIntercambio.model.Producto_Carta.EstadoCarta;
 import com.example.cartasIntercambio.model.Usuario.Usuario;
-import com.example.cartasIntercambio.repository.PublicacionRepositoryImpl;
+import com.example.cartasIntercambio.repository.irepository.IPublicacionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -38,7 +37,7 @@ public class PublicacionServiceImplTest {
     private Publicacion publicacion3;
 
     @Mock
-    PublicacionRepositoryImpl publicacionRepository;
+    IPublicacionRepository publicacionRepository;
 
     @InjectMocks
     PublicacionServiceImpl publicacionService;
@@ -48,8 +47,8 @@ public class PublicacionServiceImplTest {
         List<String> imagenes = new ArrayList<>();
 
         // usuarios
-        publicador1 = this.crearUsuarioEjemplo(3L, "Juan", "Perez", "juanpe80", "jperez@cartas.com", "JuanPe!2025", "1980-05-04");
-        Usuario publicador2 = this.crearUsuarioEjemplo(4L, "Pedro", "Gonzales", "pedro25", "pgonzales@cartas.com", "P3dr0!", "1996-08-11");
+        publicador1 = this.crearUsuarioEjemplo("3L", "Juan", "Perez", "juanpe80", "jperez@cartas.com", "JuanPe!2025", "1980-05-04");
+        Usuario publicador2 = this.crearUsuarioEjemplo("4L", "Pedro", "Gonzales", "pedro25", "pgonzales@cartas.com", "P3dr0!", "1996-08-11");
 
         // cartas ofrecidas
         cartaPokemon1 = new Carta("Pokemon", "Pikachu", EstadoCarta.NUEVO, imagenes);
@@ -72,17 +71,17 @@ public class PublicacionServiceImplTest {
         cartasDeInteres1.add(cartaMagic1);
         cartasDeInteres1.add(cartaMagic3);
 
-        publicacion1 = crearPublicacionEjemplo(1L, "Intercambio de cartas Magic", cartaMagic2, BigDecimal.valueOf(50000), cartasDeInteres1, publicador1);
+        publicacion1 = crearPublicacionEjemplo("1L", "Intercambio de cartas Magic", cartaMagic2, BigDecimal.valueOf(50000), cartasDeInteres1, publicador1);
 
         cartasDeInteres2.add(cartaYuGiOh1);
         cartasDeInteres2.add(cartaYuGiOh2);
 
-        publicacion2 = crearPublicacionEjemplo(2L, "Intercambio de cartas Yu-Gi-Oh!", cartaYuGiOh3, BigDecimal.valueOf(20000), cartasDeInteres2, publicador1);
+        publicacion2 = crearPublicacionEjemplo("2L", "Intercambio de cartas Yu-Gi-Oh!", cartaYuGiOh3, BigDecimal.valueOf(20000), cartasDeInteres2, publicador1);
 
         cartasDeInteres3.add(cartaPokemon2);
         cartasDeInteres3.add(cartaPokemon3);
 
-        publicacion3 = crearPublicacionEjemplo(3L, "Intercambio de cartas Pokemon", cartaPokemon1, BigDecimal.valueOf(120000), cartasDeInteres3, publicador2);
+        publicacion3 = crearPublicacionEjemplo("3L", "Intercambio de cartas Pokemon", cartaPokemon1, BigDecimal.valueOf(120000), cartasDeInteres3, publicador2);
     }
 
     // ---------------------------------------- TESTS ---------------------------------------- //
@@ -105,6 +104,13 @@ public class PublicacionServiceImplTest {
         publicacionDto.setCartasInteres(cartasDeInteres);
         publicacionDto.setPublicador(publicador1);
         publicacionDto.setEstado(EstadoPublicacion.ACTIVA.toString());
+
+        Publicacion publicacionMock = new Publicacion(
+                null, fechaHoy, "Intercambio de cartas Pokemon", cartaPokemon1, precio,
+                cartasDeInteres, publicador1, EstadoPublicacion.ACTIVA
+        );
+        when(publicacionRepository.save(any(Publicacion.class))).thenReturn(publicacionMock);
+
 
         // Guardar publicacion, verificar que el metodo save haya sido llamado y la publicacion a guardar esta ok
         publicacionService.guardarPublicacion(publicacionDto);
@@ -131,14 +137,14 @@ public class PublicacionServiceImplTest {
         // Buscar una publicacion y verificar el contenido
         // Simular que una publicación es recuperada luego por findById entre las publicaciones 1 y 2
         //when(publicacionRepository.findById(1L)).thenReturn(Optional.of(publicacion1));
-        when(publicacionRepository.findById(2L)).thenReturn(Optional.of(publicacion2));
+        when(publicacionRepository.findById("2L")).thenReturn(Optional.of(publicacion2));
 
         // Buscar publicacion
-        PublicacionDto publicacionDtoEncontrada = publicacionService.buscarPublicacionDTOPorId(2L);
+        PublicacionDto publicacionDtoEncontrada = publicacionService.buscarPublicacionDTOPorId("2L");
 
         // Asserts
         assertNotNull(publicacionDtoEncontrada);
-        assertEquals(2L, publicacionDtoEncontrada.getId());
+        assertEquals("2L", publicacionDtoEncontrada.getId());
         assertEquals("Intercambio de cartas Yu-Gi-Oh!", publicacionDtoEncontrada.getDescripcion());
         assertEquals("Mirror Force", publicacionDtoEncontrada.getCartaOfrecida().getNombre());
         assertEquals("Blue-Eyes White Dragon", publicacionDtoEncontrada.getCartasInteres().get(0).getNombre());
@@ -149,15 +155,14 @@ public class PublicacionServiceImplTest {
     @Test
     void testBuscarPublicacionPorId_NoExiste_LanzaExcepcion() {
         // Simular que el repositorio no encuentra nada
-        when(publicacionRepository.findById(1L)).thenReturn(Optional.empty());
+        when(publicacionRepository.findById("1")).thenReturn(Optional.empty());
 
         // Ejecutar y verificar que lanza la excepción esperada
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
-            publicacionService.buscarPublicacionDTOPorId(1L);
+        PublicacionNoEncontradaException exception = assertThrows(PublicacionNoEncontradaException.class, () -> {
+            publicacionService.buscarPublicacionDTOPorId("1");
         });
 
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
-        assertTrue(exception.getReason().contains("No existe la publicación con id: 1"));
+        assertTrue(exception.getMessage().contains("No existe la publicación con id: 1"));
     }
 
     @Test
@@ -173,21 +178,21 @@ public class PublicacionServiceImplTest {
         assertEquals(3, publicacionesDTOs.size());
 
         PublicacionDto publicacionDTO1 = publicacionesDTOs.get(0);
-        assertEquals(1L, publicacionDTO1.getId());
+        assertEquals("1L", publicacionDTO1.getId());
         assertEquals("Intercambio de cartas Magic", publicacionDTO1.getDescripcion());
         assertEquals("Shivan Dragon", publicacionDTO1.getCartaOfrecida().getNombre());
         assertEquals("Black Lotus", publicacionDTO1.getCartasInteres().get(0).getNombre());
         assertEquals("ACTIVA", publicacionDTO1.getEstado());
 
         PublicacionDto publicacionDTO2 = publicacionesDTOs.get(1);
-        assertEquals(2L, publicacionDTO2.getId());
+        assertEquals("2L", publicacionDTO2.getId());
         assertEquals("Intercambio de cartas Yu-Gi-Oh!", publicacionDTO2.getDescripcion());
         assertEquals("Mirror Force", publicacionDTO2.getCartaOfrecida().getNombre());
         assertEquals("Blue-Eyes White Dragon", publicacionDTO2.getCartasInteres().get(0).getNombre());
         assertEquals("ACTIVA", publicacionDTO2.getEstado());
 
         PublicacionDto publicacionDTO3 = publicacionesDTOs.get(2);
-        assertEquals(3L, publicacionDTO3.getId());
+        assertEquals("3L", publicacionDTO3.getId());
         assertEquals("Intercambio de cartas Pokemon", publicacionDTO3.getDescripcion());
         assertEquals("Pikachu", publicacionDTO3.getCartaOfrecida().getNombre());
         assertEquals("Bulbasaur", publicacionDTO3.getCartasInteres().get(1).getNombre());
@@ -210,14 +215,14 @@ public class PublicacionServiceImplTest {
         assertEquals(2, publicacionesDTOs.size());
 
         PublicacionDto publicacionDTO1 = publicacionesDTOs.get(0);
-        assertEquals(1L, publicacionDTO1.getId());
+        assertEquals("1L", publicacionDTO1.getId());
         assertEquals("Intercambio de cartas Magic", publicacionDTO1.getDescripcion());
         assertEquals("Shivan Dragon", publicacionDTO1.getCartaOfrecida().getNombre());
         assertEquals("Black Lotus", publicacionDTO1.getCartasInteres().get(0).getNombre());
         assertEquals("ACTIVA", publicacionDTO1.getEstado());
 
         PublicacionDto publicacionDTO2 = publicacionesDTOs.get(1);
-        assertEquals(2L, publicacionDTO2.getId());
+        assertEquals("2L", publicacionDTO2.getId());
         assertEquals("Intercambio de cartas Yu-Gi-Oh!", publicacionDTO2.getDescripcion());
         assertEquals("Mirror Force", publicacionDTO2.getCartaOfrecida().getNombre());
         assertEquals("Blue-Eyes White Dragon", publicacionDTO2.getCartasInteres().get(0).getNombre());
@@ -234,16 +239,8 @@ public class PublicacionServiceImplTest {
     }
     */
 
-    @Test
-    void testFinalizarPublicacion() {
-        // Finalizar publicacion + verificar que se haya llamado al metodo finalizarPublicacion en el repo una vez
-        publicacionService.finalizarPublicacion(1L);
-
-        verify(publicacionRepository, times(1)).finalizarPublicacion(1L);
-    }
-
     // ---------------------------------------- Metodos Aux ---------------------------------------- //
-    private Usuario crearUsuarioEjemplo(Long id, String nombre, String apellido, String user, String email, String password, String fecha) throws ParseException {
+    private Usuario crearUsuarioEjemplo(String id, String nombre, String apellido, String user, String email, String password, String fecha) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date fechaNacimiento = sdf.parse(fecha);
 
@@ -259,10 +256,10 @@ public class PublicacionServiceImplTest {
         return usuario;
     }
 
-    private Publicacion crearPublicacionEjemplo(Long id, String descripcion, Carta cartaOfrecida, BigDecimal precio, List<Carta> cartasInteres, Usuario publicador) {
+    private Publicacion crearPublicacionEjemplo(String id, String descripcion, Carta cartaOfrecida, BigDecimal precio, List<Carta> cartasInteres, Usuario publicador) {
         Publicacion publicacion = new Publicacion();
 
-        publicacion.setId(id); // manualmente se asigna el ID como si el repo lo hubiera hecho
+        publicacion.setId(id);
         publicacion.setFecha(new Date());
         publicacion.setDescripcion(descripcion);
         publicacion.setCartaOfrecida(cartaOfrecida);
@@ -273,5 +270,6 @@ public class PublicacionServiceImplTest {
 
         return publicacion;
     }
+
 
 }

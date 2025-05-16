@@ -22,9 +22,9 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public ResponseEntity<UsuarioDto> registrarUsuario(@RequestBody UsuarioDto usuarioDto) {
-        usuarioService.registrarUsuario(usuarioDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(usuarioDto);
+    public ResponseEntity<UsuarioResponseDto> registrarUsuario(@RequestBody UsuarioDto usuarioDto) {
+        UsuarioResponseDto creado = usuarioService.registrarUsuario(usuarioDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(creado);
     }
 
     @GetMapping
@@ -33,17 +33,18 @@ public class UsuarioController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UsuarioResponseDto> buscarUsuarioPorId(@PathVariable Long id) {
+    public ResponseEntity<UsuarioResponseDto> buscarUsuarioPorId(@PathVariable String id) {
         return ResponseEntity.ok(usuarioService.buscarUsuarioPorId(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UsuarioResponseDto> actualizarUsuario(@PathVariable Long id, @RequestBody UsuarioDto usuarioDto) {
-        return ResponseEntity.ok(usuarioService.actualizarUsuario(id, usuarioDto));
+    public ResponseEntity<UsuarioResponseDto> actualizarUsuario(@PathVariable String id, @RequestBody UsuarioDto usuarioDto) {
+        UsuarioResponseDto actualizado = usuarioService.actualizarUsuario(id, usuarioDto);
+        return ResponseEntity.ok(actualizado);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> borrarUsuario(@PathVariable Long id) {
+    public ResponseEntity<Void> borrarUsuario(@PathVariable String id) {
         usuarioService.borrarUsuario(id);
         return ResponseEntity.noContent().build();
     }

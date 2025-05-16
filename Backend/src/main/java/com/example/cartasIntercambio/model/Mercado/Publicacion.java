@@ -1,6 +1,5 @@
 package com.example.cartasIntercambio.model.Mercado;
 
-import com.example.cartasIntercambio.dto.PublicacionDto;
 import com.example.cartasIntercambio.model.Producto_Carta.Carta;
 import com.example.cartasIntercambio.model.Usuario.Usuario;
 import lombok.AllArgsConstructor;
@@ -10,7 +9,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -20,7 +18,7 @@ import java.util.List;
 @Document(collection = "Publicacion")
 public class Publicacion {
     @Id
-    private Long id;
+    private String id;
     private Date fecha;
     private String descripcion;
     private Carta cartaOfrecida;

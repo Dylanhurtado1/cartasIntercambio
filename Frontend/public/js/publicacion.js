@@ -29,7 +29,7 @@ Vue.createApp({
     function obtenerIdDesdeURL() {
       let url = window.location.href;
       // Expresión regular 
-      let id = url.match(/\/publicacion\/(\d+)/);
+      let id = url.match(/\/publicacion\/([a-fA-F0-9]{24})/);
       
       return id[1]; // de por si desde el backend tiene que recibir un "publicacion/:id", no hace verificar si es nulo
     }
