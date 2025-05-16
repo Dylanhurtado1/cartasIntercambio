@@ -7,7 +7,7 @@ Vue.createApp({
 
     function obtenerIdDesdeURL() {
         let url = window.location.href;
-        let id = url.match(/\/publicacion\/(\d+)/);
+        let id = url.match(/\/publicacion\/([a-fA-F0-9]{24})/);
         return id[1];
       }
 
