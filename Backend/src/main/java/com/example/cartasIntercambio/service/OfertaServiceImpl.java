@@ -35,21 +35,15 @@ public class OfertaServiceImpl implements IOfertaService{
     }
 
     public Oferta buscarOfertaPorId(String idOferta) {
-
         return ofertaRepository.findById(idOferta)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe la oferta con id: " + idOferta));
     }
 
     @Override
-    public void crearOferta(OfertaDto ofertaDto, Publicacion publicacion) {
+    public OfertaDto crearOferta(OfertaDto ofertaDto, Publicacion publicacion) {
         if(!publicacion.getEstado().equals(EstadoPublicacion.ACTIVA)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La publicación ya no está activa.");
         }
-
-        /*if(publicacion.getPublicador().getId().equals(ofertaDto.getOfertante().getId())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No es posible ofertar una publicacion propia.");
-        }*/
-
         Oferta nuevaOferta = new Oferta(
                 ofertaDto.getFecha(),
                 publicacion.getId(),
@@ -59,7 +53,8 @@ public class OfertaServiceImpl implements IOfertaService{
                 EstadoOferta.valueOf("PENDIENTE")
         );
 
-        ofertaRepository.save(nuevaOferta);
+        Oferta guardada = ofertaRepository.save(nuevaOferta);
+        return new OfertaDto(guardada);
     }
 
     // Ofertas recibidas en una publicacion

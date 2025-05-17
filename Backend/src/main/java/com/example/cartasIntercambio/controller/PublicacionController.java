@@ -65,8 +65,8 @@ public class PublicacionController{
     @PostMapping("/{idPublicacion}/ofertas")
     public ResponseEntity<OfertaDto> crearOferta(@PathVariable("idPublicacion") String idPublicacion, @RequestBody OfertaDto ofertaDto) {
         Publicacion publicacion = publicacionService.buscarPublicacionPorId(idPublicacion);
-        ofertaService.crearOferta(ofertaDto, publicacion);
-        return new ResponseEntity<>(ofertaDto, HttpStatus.CREATED);
+        OfertaDto dtoGuardado = ofertaService.crearOferta(ofertaDto, publicacion);
+        return ResponseEntity.status(HttpStatus.CREATED).body(dtoGuardado);
     }
 
     //Buscar todas las ofertas de una publicacion
