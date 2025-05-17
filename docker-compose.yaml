@@ -19,7 +19,7 @@ services:
       - "27017:27017"
     volumes:
       - ./docker-config/mongodb/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
-    # - mongo_data:/data/db      # uncomment if you want persistent DB
+      - mongo_data:/data/db      # uncomment if you want persistent DB
     healthcheck:
       test: [ "CMD", "mongo", "--eval", "db.runCommand('ping').ok == 1" ]
       interval: 10s
@@ -44,5 +44,5 @@ services:
       retries: 3
 
 # (Opcional) Volumen persistente
-#volumes:
-#  mongo_data:
+volumes:
+  mongo_data:
