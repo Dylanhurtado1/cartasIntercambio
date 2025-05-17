@@ -71,7 +71,8 @@ La estructura del proyecto es la siguiente:
 ### 📋 Acceso rápido a la base de datos por navegador
 
 - Podés entrar a [http://localhost:8081](http://localhost:8081) y ver/modificar los datos de MongoDB usando el cliente web **mongo-express**.
-- No requiere usuario ni clave (solo para desarrollo).
+- USERNAME = admin
+- PAASWORD = admin123
     
     ### Para acceder a la API:
     

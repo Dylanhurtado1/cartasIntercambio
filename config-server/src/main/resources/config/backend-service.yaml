@@ -8,4 +8,4 @@ spring:
       port: 27017
       database: TACS_DB
       username: admin
-      password: password
+      password: admin123
