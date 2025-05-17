@@ -7,7 +7,7 @@ const pathHTML = __dirname + '/views'
 
 app.use('/public', express.static(path.join(__dirname, 'public'))); //tener acceso a los archivos estáticos
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
     console.log(`Servidor escuchando en el puerto ${port}`);
 });
 
@@ -66,6 +66,24 @@ app.use((req, res, next) => {
       </html>
     `);
   });
+
+// Procesamiento de señal para cuando cae el servidor, agregado porque vi que el Docker tarda mucho en terminar el proceso
+
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received, shutting down...');
+  server.close(() => {
+    console.log('Server closed');
+    process.exit(0); // Señal de fin
+  });
+});
+
+process.on('SIGINT', () => {
+  console.log('SIGINT received, shutting down...');
+  server.close(() => {
+    console.log('Server closed');
+    process.exit(0); // Señal de fin
+  });
+});
   
 
 
