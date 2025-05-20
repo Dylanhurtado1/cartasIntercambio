@@ -33,7 +33,8 @@
           </div>
         </div>
 
-        <div class="acciones" v-if="oferta.estado === 'PENDIENTE'">
+        <div class="acciones" 
+        v-if="oferta.estado === 'PENDIENTE' && oferta.publicador && oferta.publicador.id === usuarioLogueado.id">
           <button @click="aceptarOferta(oferta.id)">Aceptar</button>
           <button @click="rechazarOferta(oferta.id)">Rechazar</button>
         </div>

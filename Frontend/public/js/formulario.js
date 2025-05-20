@@ -1,3 +1,7 @@
+const usuarioLogueado = JSON.parse(localStorage.getItem("usuarioLogueado"));
+if (!usuarioLogueado) {
+  window.location.href = "/login";
+}
 const { createApp } = Vue;
 
 const backendURL = "http://localhost:8080"; //ahora como modo de prueba, se dejará el link acá 
@@ -78,8 +82,8 @@ createApp({
                     }))
                 ,
                 publicador: {
-                    id: 2,
-                    user: "soyUnPublicadorMisterioso>:)"
+                    id: usuarioLogueado.id,
+                    user: usuarioLogueado.user
                 } // por ahora se quedará como un objeto vacío
                 
             };

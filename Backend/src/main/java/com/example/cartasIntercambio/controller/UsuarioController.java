@@ -2,6 +2,7 @@ package com.example.cartasIntercambio.controller;
 
 import com.example.cartasIntercambio.dto.UsuarioDto;
 import com.example.cartasIntercambio.dto.UsuarioResponseDto;
+import com.example.cartasIntercambio.model.Usuario.Usuario;
 import com.example.cartasIntercambio.service.UsuarioServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -63,6 +64,15 @@ public class UsuarioController {
     public ResponseEntity<UsuarioResponseDto> crearAdmin(@RequestBody UsuarioDto dto) {
         UsuarioResponseDto resp = usuarioService.crearAdmin(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(resp);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<UsuarioResponseDto> login(@RequestBody UsuarioDto userLogin) {
+        UsuarioResponseDto usuario = usuarioService.login(userLogin);
+        if(usuario == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        return ResponseEntity.ok(usuario);
     }
 
 }

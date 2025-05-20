@@ -1,4 +1,9 @@
+const usuarioLogueado = JSON.parse(localStorage.getItem("usuarioLogueado"));
+if (!usuarioLogueado) {
+  window.location.href = "/login";
+}
 const { onMounted } = Vue;
+
 Vue.createApp({
   setup() {
     const publicacion = Vue.ref(null);
@@ -64,8 +69,8 @@ Vue.createApp({
           monto: (price.value == null) ? 0 : price.value,
           cartasOfrecidas: cartasSeleccionadas,
           ofertante: {
-            id: 1,
-            user: "soyUnOfertanteMisterioso>:)" //por ahora hardcodeado
+            id: usuarioLogueado.id,
+            user: usuarioLogueado.user
           }
         }
 

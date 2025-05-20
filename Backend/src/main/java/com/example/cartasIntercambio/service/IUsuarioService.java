@@ -15,4 +15,5 @@ public interface IUsuarioService {
     void borrarUsuario(String id);
     List<UsuarioResponseDto> buscarUsuarios(String user, String nombre, String correo);
     UsuarioResponseDto crearAdmin(UsuarioDto dto);
+    UsuarioResponseDto login(UsuarioDto dto);
 }

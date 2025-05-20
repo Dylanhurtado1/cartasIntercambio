@@ -1,5 +1,8 @@
+const usuarioLogueado = JSON.parse(localStorage.getItem("usuarioLogueado"));
+if (!usuarioLogueado) {
+  window.location.href = "/login";
+}
 //const { createApp, ref, onMounted } = Vue;
-
 Vue.createApp({
   setup() {
     const ofertas = Vue.ref([]);

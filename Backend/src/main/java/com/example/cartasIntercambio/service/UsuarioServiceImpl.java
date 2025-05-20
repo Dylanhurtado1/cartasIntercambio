@@ -140,4 +140,18 @@ public class UsuarioServiceImpl implements IUsuarioService{
                 .id(admin.getId())
                 .build();
     }
+
+    public UsuarioResponseDto login(UsuarioDto userLogin) {
+        Optional<Usuario> usuarioOpt = usuarioRepository.findByUser(userLogin.getUser());
+        if(usuarioOpt.isEmpty()) return null;
+        Usuario usuario = usuarioOpt.get();
+        if(!usuario.getPassword().equals(userLogin.getPassword())) return null;
+        return UsuarioResponseDto.builder()
+                .id(usuario.getId())
+                .user(usuario.getUser())
+                .nombre(usuario.getNombre())
+                .correo(usuario.getEmail())
+                .tipo(usuario instanceof Admin ? "admin" : "usuario")
+                .build();
+    }
 }

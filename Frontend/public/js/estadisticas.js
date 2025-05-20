@@ -1,3 +1,8 @@
+const usuarioLogueado = JSON.parse(localStorage.getItem("usuarioLogueado"));
+if (!usuarioLogueado) {
+  window.location.href = "/login";
+}
+
 const backendURL = "http://localhost:8080"
 
 Vue.createApp({

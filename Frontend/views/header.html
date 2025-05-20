@@ -13,4 +13,15 @@
       </ul>
     </nav>
   </header>
-  
+  <script>
+    const usuarioLogueado = JSON.parse(localStorage.getItem("usuarioLogueado"));
+    if (usuarioLogueado && document.getElementById("usuario-menu")) {
+      document.getElementById("usuario-menu").innerHTML =
+        `Usuario: <b>${usuarioLogueado.user}</b>
+        <button onclick="logout()">Cerrar sesión</button>`;
+    }
+    function logout() {
+      localStorage.removeItem("usuarioLogueado");
+      window.location.href = "/login";
+    }
+    </script>
