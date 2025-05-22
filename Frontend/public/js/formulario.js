@@ -92,7 +92,10 @@ createApp({
             fetch(backendURL + "/publicaciones", {
                 method: "POST",
                 body: JSON.stringify(data),
-                headers: {"Content-type": "application/json; charset=UTF-8"}
+                headers: {
+                    "Content-Type": "application/json; charset=UTF-8",
+                    "Authorization": "Bearer " + localStorage.getItem("jwt")
+                }
             })
             .then(response => response.json()) 
             .then(json => {

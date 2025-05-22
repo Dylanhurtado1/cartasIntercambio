@@ -81,8 +81,11 @@ Vue.createApp({
         fetch(backendURL + "/publicaciones/" + oferta.idPublicacion + "/ofertas", {
           method: "POST",
           body: JSON.stringify(oferta),
-          headers: {"Content-type": "application/json; charset=UTF-8"}
-        })
+          headers: {
+              "Content-Type": "application/json; charset=UTF-8",
+              "Authorization": "Bearer " + localStorage.getItem("jwt")
+          }
+      })
         .then(response => response.json()) 
         .then(json => {
             console.log(json)

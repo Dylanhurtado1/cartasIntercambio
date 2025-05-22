@@ -2,6 +2,7 @@ package com.example.cartasIntercambio.controller;
 
 import com.example.cartasIntercambio.dto.UsuarioDto;
 import com.example.cartasIntercambio.dto.UsuarioResponseDto;
+import com.example.cartasIntercambio.jwt.JwtUtil;
 import com.example.cartasIntercambio.model.Usuario.Usuario;
 import com.example.cartasIntercambio.service.UsuarioServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/usuarios")
@@ -66,13 +68,27 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.CREATED).body(resp);
     }
 
-    @PostMapping("/login")
+    /*@PostMapping("/login")
     public ResponseEntity<UsuarioResponseDto> login(@RequestBody UsuarioDto userLogin) {
         UsuarioResponseDto usuario = usuarioService.login(userLogin);
         if(usuario == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         return ResponseEntity.ok(usuario);
+    }*/
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody UsuarioDto loginDTO) {
+        UsuarioResponseDto user = usuarioService.login(loginDTO);
+        if(user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login inválido");
+        }
+        String token = JwtUtil.generateToken(user.getId(), user.getUser());
+        // Devolvé el token Y el usuario
+        return ResponseEntity.ok(Map.of(
+                "token", token,
+                "usuario", user
+        ));
     }
 
 }

@@ -1,3 +1,4 @@
+const publicacion = Vue.ref(null);
 const usuarioLogueado = JSON.parse(localStorage.getItem("usuarioLogueado"));
 if (!usuarioLogueado) {
   window.location.href = "/login";
@@ -28,13 +29,21 @@ Vue.createApp({
       }
     }
 
+    async function cargarPublicacion() {
+      const id = obtenerIdDesdeURL();
+      const res = await fetch(backendURL + "/publicaciones/" + id);
+      if (!res.ok) throw new Error("No se pudo obtener la publicación");
+      publicacion.value = await res.json();
+    }
+
     async function aceptarOferta(idOferta) {
         console.log(`${backendURL}/ofertas/${idOferta}`)
         try {
           const res = await fetch(`${backendURL}/publicaciones/ofertas/${idOferta}`, {
             method: "PATCH",
             headers: {
-              "Content-Type": "application/json-patch+json"
+              "Content-Type": "application/json-patch+json",
+              "Authorization": "Bearer " + localStorage.getItem("jwt")
             },
             body: JSON.stringify([
               {
@@ -62,7 +71,8 @@ Vue.createApp({
           const res = await fetch(`${backendURL}/publicaciones/ofertas/${idOferta}`, {
             method: "PATCH",
             headers: {
-              "Content-Type": "application/json-patch+json"
+              "Content-Type": "application/json-patch+json",
+              "Authorization": "Bearer " + localStorage.getItem("jwt")
             },
             body: JSON.stringify([
               {
@@ -89,13 +99,18 @@ Vue.createApp({
       return new Date(fecha).toLocaleString("es-AR");
     }
 
-    Vue.onMounted(cargarOfertas);
+    Vue.onMounted(() => {
+      cargarPublicacion();
+      cargarOfertas();
+    });
 
     return {
       ofertas,
       aceptarOferta,
       rechazarOferta,
-      formatearFecha
+      formatearFecha,
+      publicacion,         // ahora el template puede acceder a publicacion
+      usuarioLogueado
     };
   }
 }).mount("#app");

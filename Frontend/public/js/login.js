@@ -16,9 +16,11 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
     if (!res.ok) throw new Error("Usuario o contraseña incorrectos");
     return res.json();
   })
-  .then(user => {
-    localStorage.setItem("usuarioLogueado", JSON.stringify(user));
-    window.location.href = "/"; // Redirige a la página principal o donde quieras
+  .then(response => {
+    // Guardá el token y usuario en localStorage
+    localStorage.setItem("jwt", response.token);
+    localStorage.setItem("usuarioLogueado", JSON.stringify(response.usuario));
+    window.location.href = "/"; // Redirige a la página principal
   })
   .catch(err => {
     document.getElementById('mensaje').textContent = err.message;
