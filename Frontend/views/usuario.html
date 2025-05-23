@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Mi Cuenta</title>
+
+    <link rel="stylesheet" href="/public/css/menu.css" />
+    <link rel="stylesheet" href="/public/css/usuario.css" />
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js" defer></script>
+  </head>
+  <body>
+    <header id="menu-app"></header>
+
+      <section id="app" v-cloak class="contenedor">
+        <h2 v-show="usuario.user">Usuario actual: {{usuario.user}}</h2>
+        
+        <!-- PUBLICACIONES -->
+        <h2>Tus Publicaciones: {{publicaciones.length}}</h2>
+        <div class="lista">
+          <div class="item" v-for="pub in publicaciones" :key="pub.id">
+            <h3>{{ pub.cartaOfrecida.nombre }}</h3>
+            <p>
+              Juego: {{ pub.cartaOfrecida.juego }} | 
+              Estado: {{ pub.cartaOfrecida.estado }}
+            </p>
+            <p>Precio: ${{ pub.precio }}</p>
+          </div>
+        </div>
+
+        <!-- OFERTAS -->
+        <h2>Tus Ofertas: {{ofertas.length}}</h2>
+        <div class="lista">
+          <div class="item" v-for="oferta in ofertas" :key="oferta.id">
+            <p>Oferta para publicación ID: {{ oferta.publicacionId }}</p>
+            <p v-if="oferta.monto">Monto ofrecido: ${{ oferta.monto }}</p>
+            <p>Estado: {{ oferta.estado }}</p>
+            <div v-if="oferta.cartasOfrecidas.length">
+              <p>Cartas ofrecidas:</p>
+              <ul>
+                <li v-for="carta in oferta.cartasOfrecidas" :key="carta.nombre">
+                  {{ carta.nombre }} ({{ carta.juego }}) - {{ carta.estado }}
+                </li>
+              </ul>
+            </div>
+          </div> <!-- Ricas cadenas de divs -->
+        </div>
+
+      </section>
+
+    <script type="module" src="/public/js/menu.js" defer></script>
+    <script type="module" src="/public/js/usuario.js" defer></script>
+
+  </body>
+</html>

@@ -35,6 +35,19 @@ app.get("/estadisticas", (req, res) => {
     //res.send(req.params)
 })
 
+app.get("/login", (req, res) => {
+    res.sendFile(pathHTML + '/login.html');
+})
+
+app.get("/registrar", (req, res) => {
+    res.sendFile(pathHTML + '/registro.html');
+})
+
+app.get("/usuario", (req, res) => {
+    res.sendFile(pathHTML + '/usuario.html');
+})
+
+
 
 // Middleware para rutas no encontradas (error 404)
 app.use((req, res, next) => {
