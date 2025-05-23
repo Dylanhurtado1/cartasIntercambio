@@ -154,4 +154,20 @@ public class UsuarioServiceImpl implements IUsuarioService{
                 .tipo(usuario instanceof Admin ? "admin" : "usuario")
                 .build();
     }
+
+    public Usuario buscarOCrearPorEmail(String email, String nombre, String apellido) {
+        Optional<Usuario> userOpt = usuarioRepository.findByEmail(email);
+        if (userOpt.isPresent()) {
+            return userOpt.get();
+        } else {
+            Usuario nuevo = new Usuario();
+            nuevo.setEmail(email);
+            nuevo.setNombre(nombre);
+            nuevo.setApellido(apellido != null ? apellido : "");
+            // Para "user", podés usar email directamente o nombre de Google
+            nuevo.setUser(email);
+            nuevo.setPassword(""); // O un valor default
+            return usuarioRepository.save(nuevo);
+        }
+    }
 }
