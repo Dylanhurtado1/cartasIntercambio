@@ -6,6 +6,22 @@
 </head>
 <body>
   <h1>Iniciar sesión</h1>
+  <!-- Google Sign-In SDK -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
+<!-- Google Sign-In Button -->
+<div id="g_id_onload"
+     data-client_id="812458598371-3e4t6hj9cg4mc4fuuv2f9554vk4o950s.apps.googleusercontent.com"812458598371-3e4t6hj9cg4mc4fuuv2f9554vk4o950s.apps.googleusercontent.com
+     data-context="signin"
+     data-callback="onGoogleSignIn"
+     data-auto_prompt="false">
+</div>
+<div class="g_id_signin"
+     data-type="standard"
+     data-theme="outline"
+     data-text="sign_in_with"
+     data-size="large">
+</div>
   <form id="loginForm">
     <input type="text" id="user" placeholder="Usuario" required><br>
     <input type="password" id="password" placeholder="Contraseña" required><br>
@@ -14,5 +30,6 @@
   <p id="mensaje"></p>
   <p>¿No tenés cuenta? <a href="/register">Registrate aquí</a></p>
   <script src="/public/js/login.js"></script>
+  <script src="/public/js/login_google.js"></script>
 </body>
 </html>
