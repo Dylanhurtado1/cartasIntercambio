@@ -11,7 +11,7 @@ public interface IOfertaService {
 
     OfertaDto buscarOfertaDto(String idOferta);
 
-    void crearOferta(OfertaDto ofertaDto, Publicacion publicacion);
+    OfertaDto crearOferta(OfertaDto ofertaDto, Publicacion publicacion);
 
     List<OfertaDto> buscarOfertasPorPublicacion(Publicacion publicacion, String idUsuario);
 

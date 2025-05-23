@@ -2,6 +2,7 @@ package com.example.cartasIntercambio.controller;
 
 import com.example.cartasIntercambio.dto.OfertaDto;
 import com.example.cartasIntercambio.dto.PublicacionDto;
+import com.example.cartasIntercambio.jwt.JwtUtil;
 import com.example.cartasIntercambio.model.Mercado.EstadoOferta;
 import com.example.cartasIntercambio.model.Mercado.Oferta;
 import com.example.cartasIntercambio.model.Mercado.Publicacion;
@@ -12,6 +13,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -56,17 +58,31 @@ public class PublicacionController{
 
 
     @PostMapping
-    public ResponseEntity<PublicacionDto> crearPublicacion(@RequestBody PublicacionDto publicacionDto) {
+    public ResponseEntity<PublicacionDto> crearPublicacion(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestBody PublicacionDto publicacionDto) {
+        String token = authHeader.replace("Bearer ", "");
+        Claims claims = JwtUtil.validateToken(token);
+        String userId = claims.getSubject();
+        publicacionDto.getPublicador().setId(userId);
         PublicacionDto guardada= publicacionService.guardarPublicacion(publicacionDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(guardada);
     }
 
     // Crear una oferta para una publicacion
     @PostMapping("/{idPublicacion}/ofertas")
-    public ResponseEntity<OfertaDto> crearOferta(@PathVariable("idPublicacion") String idPublicacion, @RequestBody OfertaDto ofertaDto) {
+    public ResponseEntity<OfertaDto> crearOferta(
+            @RequestHeader("Authorization") String authHeader,
+            @PathVariable("idPublicacion") String idPublicacion,
+            @RequestBody OfertaDto ofertaDto) {
+        String token = authHeader.replace("Bearer ", "");
+        Claims claims = JwtUtil.validateToken(token);
+        String userId = claims.getSubject();
+        ofertaDto.getOfertante().setId(userId);
+
         Publicacion publicacion = publicacionService.buscarPublicacionPorId(idPublicacion);
-        ofertaService.crearOferta(ofertaDto, publicacion);
-        return new ResponseEntity<>(ofertaDto, HttpStatus.CREATED);
+        OfertaDto dtoGuardado = ofertaService.crearOferta(ofertaDto, publicacion);
+        return ResponseEntity.status(HttpStatus.CREATED).body(dtoGuardado);
     }
 
     //Buscar todas las ofertas de una publicacion
@@ -87,8 +103,26 @@ public class PublicacionController{
     // TODO: Chequear si una publicacion esta finalizada. Front??
     // Aceptar o rechazar una oferta
     @PatchMapping(path = "/ofertas/{idOferta}", consumes = "application/json-patch+json")
-    public ResponseEntity<OfertaDto> responderOferta(@PathVariable("idOferta") String idOferta, @RequestBody JsonPatch patch) {
+    public ResponseEntity<OfertaDto> responderOferta(
+            @RequestHeader("Authorization") String authHeader,
+            @PathVariable("idOferta") String idOferta,
+            @RequestBody JsonPatch patch) {
+
+        // 1. Validar token y obtener userId
+        String token = authHeader.replace("Bearer ", "");
+        Claims claims = JwtUtil.validateToken(token);
+        String userId = claims.getSubject();
+
+        // 2. Traer la oferta y la publicación asociada
         Oferta oferta = ofertaService.buscarOfertaPorId(idOferta);
+        Publicacion publicacion = publicacionService.buscarPublicacionPorId(oferta.getIdPublicacion());
+
+        // 3. Chequear que el user actual sea el dueño de la publicación
+        if (!publicacion.getPublicador().getId().equals(userId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        // 4. Proceso normal
         try {
             Oferta ofertaActualizada = patchOferta(patch, oferta);
             ofertaService.guardarOferta(ofertaActualizada);
