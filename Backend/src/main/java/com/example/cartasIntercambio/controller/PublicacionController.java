@@ -56,13 +56,6 @@ public class PublicacionController{
         return new ResponseEntity<>(publicacionDto, HttpStatus.OK);
     }
 
-
-    /*@PostMapping
-    public ResponseEntity<PublicacionDto> crearPublicacion(@RequestBody PublicacionDto publicacionDto) {
-        PublicacionDto guardada= publicacionService.guardarPublicacion(publicacionDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(guardada);
-    }*/
-
     @PostMapping
     public ResponseEntity<PublicacionDto> crearPublicacion(
             @RequestHeader("Authorization") String authHeader,
@@ -78,14 +71,6 @@ public class PublicacionController{
         PublicacionDto guardada= publicacionService.guardarPublicacion(publicacionDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(guardada);
     }
-
-    // Crear una oferta para una publicacion
-    /*@PostMapping("/{idPublicacion}/ofertas")
-    public ResponseEntity<OfertaDto> crearOferta(@PathVariable("idPublicacion") String idPublicacion, @RequestBody OfertaDto ofertaDto) {
-        Publicacion publicacion = publicacionService.buscarPublicacionPorId(idPublicacion);
-        OfertaDto dtoGuardado = ofertaService.crearOferta(ofertaDto, publicacion);
-        return ResponseEntity.status(HttpStatus.CREATED).body(dtoGuardado);
-    }*/
 
     @PostMapping("/{idPublicacion}/ofertas")
     public ResponseEntity<OfertaDto> crearOferta(

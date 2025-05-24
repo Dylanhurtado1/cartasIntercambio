@@ -23,8 +23,14 @@ Vue.createApp({
     const estadoDeLaCarga = ref("Cargando publicaciones...");
 
     function getPublicaciones() {
-      fetch(backendURL + "/publicaciones" + queryString)
-        .then(res => res.json())
+      const jwt = localStorage.getItem('jwt');
+      fetch(backendURL + "/publicaciones" + queryString, {
+          headers: jwt ? { 'Authorization': 'Bearer ' + jwt } : {}
+        })
+        .then(res => {
+          if (!res.ok) throw new Error("Error cargando publicaciones: " + res.status);
+          return res.json();
+        })
         .then(json => {
           listaDePublicaciones.value = json;
           estadoDeLaCarga.value = ""
@@ -33,7 +39,7 @@ Vue.createApp({
         })
         .catch(err =>{
           estadoDeLaCarga.value = "Error al cargar publicaciones del servidor";
-          console.error(estadoDeLaCarga.value)
+          console.error(estadoDeLaCarga.value, err)
         });
     }
 

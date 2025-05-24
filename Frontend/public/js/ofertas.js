@@ -19,7 +19,10 @@ Vue.createApp({
       const publicacionId = obtenerIdDesdeURL();
       console.log(`${backendURL}/publicaciones/${publicacionId}/ofertas`)
       try {
-        const res = await fetch(`${backendURL}/publicaciones/${publicacionId}/ofertas`);
+        const jwt = localStorage.getItem('jwt');
+        const res = await fetch(`${backendURL}/publicaciones/${publicacionId}/ofertas`, {
+          headers: jwt ? { 'Authorization': 'Bearer ' + jwt } : {}
+        });
         if (!res.ok) throw new Error("Error en la carga");
         ofertas.value = await res.json();
       } catch (e) {
@@ -31,9 +34,13 @@ Vue.createApp({
 
     async function cargarPublicacion() {
       const id = obtenerIdDesdeURL();
-      const res = await fetch(backendURL + "/publicaciones/" + id);
+      const jwt = localStorage.getItem('jwt');
+      const res = await fetch(backendURL + "/publicaciones/" + id, {
+      headers: jwt ? { 'Authorization': 'Bearer ' + jwt } : {}
+      });
       if (!res.ok) throw new Error("No se pudo obtener la publicación");
       publicacion.value = await res.json();
+      console.log("publicacion.value:", publicacion.value);
     }
 
     async function aceptarOferta(idOferta) {

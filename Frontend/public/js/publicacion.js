@@ -18,10 +18,12 @@ Vue.createApp({
     async function cargarPublicacion() {
       const id = obtenerIdDesdeURL();
       try {
-        console.log(`${backendURL}/publicaciones/${id}`)
-        const res = await fetch(`${backendURL}/publicaciones/${id}`);
+        const jwt = localStorage.getItem('jwt');
+        const res = await fetch(`${backendURL}/publicaciones/${id}`, {
+          headers: jwt ? { 'Authorization': 'Bearer ' + jwt } : {}
+        });
         if (!res.ok) throw new Error("No se pudo obtener la publicación");
-
+    
         const data = await res.json();
         publicacion.value = data;
         formVisible.value = (publicacion.value.estado != "FINALIZADA")
