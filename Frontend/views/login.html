@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <title>Iniciar Sesión</title>
     <link rel="stylesheet" href="/public/css/menu.css" />
+    <link rel="stylesheet" href="/public/css/flotante.css" />
     <link rel="stylesheet" href="public/css/auth.css" />
 
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
@@ -11,6 +12,7 @@
   <body>
 
     <header id="menu-app"></header>
+    <div id="datos-f"></div>
 
     <section id="loginApp" class="container" v-cloak>
       <form @submit.prevent="handleLogin">
@@ -22,7 +24,8 @@
       </form>
     </section>
 
-    <script type="module" src="/public/js/menu.js" defer></script>
+    <script type="module" src="public/js/menu.js"></script>
+    <script type="module" src="public/js/flotante.js"></script>
     <script type="module" src="public/js/login.js" defer></script>
 
   </body>

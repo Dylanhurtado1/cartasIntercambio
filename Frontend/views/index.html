@@ -4,11 +4,14 @@
   <meta charset="UTF-8" />
   <title>Tienda de Cartas</title>
   <link rel="stylesheet" href="public/css/menu.css" />
+  <link rel="stylesheet" href="public/css/flotante.css" />
   <link rel="stylesheet" href="public/css/home.css" />
 </head>
 <body>
   <!-- Menú -->
   <header id="menu-app"></header>
+  <!-- Flotante asqueroso -->
+  <div id="datos-f"></div>
 
   <!-- Resto de la app -->
   <section id="app" class="buscador" v-cloak>
@@ -43,7 +46,8 @@
   </section>
 
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-  <script src="public/js/menu.js"></script>
+  <script type="module" src="public/js/menu.js"></script>
+  <script type="module" src="public/js/flotante.js"></script>
   <script src="public/js/home.js"></script>
 </body>
 </html>

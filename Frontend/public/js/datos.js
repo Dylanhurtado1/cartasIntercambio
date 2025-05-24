@@ -1,9 +1,13 @@
-export function guardarDatoCrudo(key, value){localStorage.setItem(key, value);}
+// Bellísimo, lo sé
 
-export function guardarDatoObjeto(key, value){localStorage.setItem(key, JSON.stringify(value))};
+function guardarDatoCrudo(key, value){localStorage.setItem(key, value);}
 
-export function obtenerDatoCrudo(key){return localStorage.getItem(key);}
+function guardarDatoObjeto(key, value){localStorage.setItem(key, JSON.stringify(value))};
 
-export function obtenerDatoObjeto(key){return JSON.parse(localStorage.getItem(key))}
+function obtenerDatoCrudo(key){return localStorage.getItem(key);}
 
-//export {guardarDatoCrudo, guardarDatoObjeto, obtenerDatoCrudo, guardarDatoObjeto};
+function obtenerDatoObjeto(key){return JSON.parse(localStorage.getItem(key))}
+
+function vaciarDatos(){localStorage.clear()}
+
+export {guardarDatoCrudo, guardarDatoObjeto, obtenerDatoCrudo, obtenerDatoObjeto, vaciarDatos};

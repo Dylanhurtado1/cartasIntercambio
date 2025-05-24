@@ -1,20 +1,25 @@
-//let { createApp } = Vue;
+import {obtenerDatoCrudo, vaciarDatos} from './datos.js'
 
 Vue.createApp({
   data() {
     return {
+      sesionCerrada: (obtenerDatoCrudo("jwt") === null),
       isMenuOpen: false,
       menuItems: [
-        { label: "Inicio", href: "/" },
-        { label: "Publicar Carta", href: "/publicar" },
-        { label: "Usuario", href: "/usuario" },
-        { label: "Estadísticas", href: "/estadisticas" }
+        { label: "Inicio", href: "/", public: true },
+        { label: "Publicar Carta", href: "/publicar", public: false},
+        { label: "Usuario", href: "/usuario", public: true },
+        { label: "Estadísticas", href: "/estadisticas", public: false }
       ]
     };
   },
   methods: {
     toggleMenu() {
       this.isMenuOpen = !this.isMenuOpen;
+    },
+    cerrarSesion(){
+      vaciarDatos()
+      window.location.href = "/"
     }
   },
   template: `
@@ -27,7 +32,10 @@ Vue.createApp({
       <nav class="menu">
         <ul :class="{ show: isMenuOpen }">
           <li v-for="(item, index) in menuItems" :key="index">
-            <a :href="item.href">{{ item.label }}</a>            
+            <a :href="item.href" v-if="item.public || (!item.public && !sesionCerrada)">{{ item.label }}</a>            
+          </li>
+          <li v-show="!sesionCerrada" @click="cerrarSesion">
+            <a href="#">Cerrar sesión</a>            
           </li>
         </ul>
       </nav>

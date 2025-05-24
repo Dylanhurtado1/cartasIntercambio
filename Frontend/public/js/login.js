@@ -22,8 +22,6 @@ Vue.createApp({
                 return res.json()
             })
             .then(response => {
-                /*localStorage.setItem("jwt", response.token);
-                localStorage.setItem("usuarioActual", JSON.stringify(response.usuario));*/
                 guardarDatoCrudo("jwt", response.token)
                 guardarDatoObjeto("usuarioActual", response.usuario)
                 window.location.href = "/usuario"; // Redirige a la página principal

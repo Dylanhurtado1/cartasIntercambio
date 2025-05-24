@@ -1,0 +1,32 @@
+#datos-f {
+    position: fixed;
+    bottom: 0em;
+    z-index: 1000;
+    display: none;
+}
+
+#sesion{
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    margin: 1em; 
+    padding:  0.5em;
+    text-align: center;
+}
+
+#sesion button{
+    padding: 0.5em;
+    margin: .5em auto;
+    margin-bottom: 0;
+    font-size: .8em;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%;
+}
+
+@media screen and (min-width: 1024px) {
+  #datos-f {
+    display: block;
+  }
+}

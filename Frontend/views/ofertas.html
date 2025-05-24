@@ -4,11 +4,13 @@
   <meta charset="UTF-8" />
   <title>Ofertas de la Publicación</title>
   <link rel="stylesheet" href="/public/css/menu.css" />
+  <link rel="stylesheet" href="/public/css/flotante.css" />
   <link rel="stylesheet" href="/public/css/ofertas.css" />
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 </head>
 <body>
     <header id="menu-app"></header>
+    <div id="datos-f"></div>
 
   <main id="app" v-cloak>
     <section v-if="ofertas.length === 0">
@@ -41,7 +43,8 @@
     </section>
   </main>
   
-  <script src="/public/js/menu.js"></script>
+  <script type="module" src="public/js/menu.js"></script>
+  <script type="module" src="public/js/flotante.js"></script>
   <script src="/public/js/ofertas.js"></script>
 </body>
 </html>
