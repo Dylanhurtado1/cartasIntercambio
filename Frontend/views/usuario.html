@@ -30,7 +30,7 @@
         <h2>Tus Ofertas: {{ofertas.length}}</h2>
         <div class="lista">
           <div class="item" v-for="oferta in ofertas" :key="oferta.id">
-            <p>Oferta para publicación ID: {{ oferta.publicacionId }}</p>
+            <p>Oferta para publicación ID: {{ oferta.idPublicacion }}</p>
             <p v-if="oferta.monto">Monto ofrecido: ${{ oferta.monto }}</p>
             <p>Estado: {{ oferta.estado }}</p>
             <div v-if="oferta.cartasOfrecidas.length">

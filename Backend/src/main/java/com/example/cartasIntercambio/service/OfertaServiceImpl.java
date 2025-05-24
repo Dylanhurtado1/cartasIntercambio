@@ -99,7 +99,7 @@ public class OfertaServiceImpl implements IOfertaService{
     // Ofertas hechas por el usuario logueado a publicaciones de otros usuarios
     @Override
     public List<OfertaDto> buscarOfertasRealizadas(String idUsuario) {
-        List<Oferta> ofertasRealizadas = ofertaRepository.findByOfertante(idUsuario);
+        List<Oferta> ofertasRealizadas = ofertaRepository.findByOfertante_Id(idUsuario);
 
         return ofertasRealizadas.stream()
                 .map(OfertaDto::new)
