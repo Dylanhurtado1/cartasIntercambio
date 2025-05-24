@@ -8,6 +8,6 @@ import java.util.Optional;
 
 public interface IOfertaRepository extends MongoRepository<Oferta, String> {
 
-  List<Oferta> findByOfertante(String idOfertante);
+  List<Oferta> findByOfertante_Id(String idOfertante);
   List<Oferta> findByIdPublicacion(String idPublicacion);
 }
