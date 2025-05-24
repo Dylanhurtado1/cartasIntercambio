@@ -1,4 +1,6 @@
 const { createApp } = Vue;
+import {obtenerDatoObjeto, obtenerDatoCrudo, sesionAbierta} from './datos.js'
+
 
 const backendURL = "http://localhost:8080"; //ahora como modo de prueba, se dejará el link acá 
 
@@ -16,6 +18,11 @@ createApp({
             },
             jsonResultado: ''
         };
+    },
+    mounted(){
+        console.log("FUNCA")
+        if(!sesionAbierta())
+            window.location.href = "/"
     },
     methods: {
         onMainImagesChange(event) {
@@ -78,17 +85,21 @@ createApp({
                     }))
                 ,
                 publicador: {
-                    id: 2,
-                    user: "soyUnPublicadorMisterioso>:)"
-                } // por ahora se quedará como un objeto vacío
-                
+                    id: null,
+                    user: null
+                } 
             };
+
+            console.log(data)
             
             // CREAR PUBLICACIÓN EN SERVER
             fetch(backendURL + "/publicaciones", {
                 method: "POST",
                 body: JSON.stringify(data),
-                headers: {"Content-type": "application/json; charset=UTF-8"}
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8",
+                    "Authorization": "Bearer " + obtenerDatoCrudo("jwt")
+                }
             })
             .then(response => response.json()) 
             .then(json => {
@@ -97,7 +108,7 @@ createApp({
             })
             .catch(err => {
                 console.log(err)
-                alert('Error con el servidor')
+                alert('Error con el servidor: ' + err)
             })
 
             this.jsonResultado = JSON.stringify(data, null, 2);

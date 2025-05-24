@@ -59,7 +59,12 @@
                         <input type="text" v-model="carta.nombre" required>
 
                         <label>Juego de la carta de interés</label>
-                        <input type="text" v-model="carta.juego" required>
+                        <select v-model="carta.juego" required>
+                            <option value="">Seleccionar juego</option>
+                            <option value="Yu-Gi-Oh!">Yu-Gi-Oh!</option>
+                            <option value="Magic">Magic</option>
+                            <option value="Pokémon">Pokémon</option>
+                        </select>
 
                         <label>Estado de la carta de interés</label>
                         <select v-model="carta.estado" required>
@@ -92,6 +97,6 @@
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script type="module" src="public/js/menu.js"></script>
     <script type="module" src="public/js/flotante.js"></script>
-    <script src="public/js/formulario.js"></script>
+    <script type="module" src="public/js/formulario.js"></script>
 </body>
 </html>

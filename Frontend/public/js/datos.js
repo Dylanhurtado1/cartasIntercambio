@@ -10,4 +10,8 @@ function obtenerDatoObjeto(key){return JSON.parse(localStorage.getItem(key))}
 
 function vaciarDatos(){localStorage.clear()}
 
-export {guardarDatoCrudo, guardarDatoObjeto, obtenerDatoCrudo, obtenerDatoObjeto, vaciarDatos};
+function sesionAbierta(){
+    return (obtenerDatoCrudo("jwt") && obtenerDatoCrudo("usuarioActual"))
+}
+
+export {guardarDatoCrudo, guardarDatoObjeto, obtenerDatoCrudo, obtenerDatoObjeto, vaciarDatos, sesionAbierta};

@@ -9,6 +9,7 @@ Vue.createApp({
     const ofertas = Vue.ref([]);
 
     const jwt = obtenerDatoCrudo("jwt");
+    const id = obtenerDatoObjeto("usuarioActual")?.id
     const backendURL = "http://localhost:8080"; 
 
     console.log("Mi usuario actual: " + usuario.value)
@@ -21,13 +22,13 @@ Vue.createApp({
         };
 
         // Obtener publicaciones
-        const pubRes = await fetch(`${backendURL}/publicaciones/usuario/${jwt}`, { headers });
+        const pubRes = await fetch(`${backendURL}/publicaciones/usuario/${id}`, { headers });
         if (pubRes.ok) {
           publicaciones.value = await pubRes.json();
         }
 
         // Obtener ofertas
-        const ofertasRes = await fetch(`${backendURL}/publicaciones/usuario/${jwt}/ofertas/realizadas`, { headers });
+        const ofertasRes = await fetch(`${backendURL}/publicaciones/usuario/${id}/ofertas/realizadas`, { headers });
         if (ofertasRes.ok) {
           ofertas.value = await ofertasRes.json();
         }

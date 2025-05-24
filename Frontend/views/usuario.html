@@ -17,16 +17,14 @@
         
         <!-- PUBLICACIONES -->
         <h2>Tus Publicaciones: {{publicaciones.length}}</h2>
-        <div class="lista">
-          <div class="item" v-for="pub in publicaciones" :key="pub.id">
-            <h3>{{ pub.cartaOfrecida.nombre }}</h3>
-            <p>
-              Juego: {{ pub.cartaOfrecida.juego }} | 
-              Estado: {{ pub.cartaOfrecida.estado }}
-            </p>
-            <p>Precio: ${{ pub.precio }}</p>
-          </div>
-        </div>
+        <section class="cartas">
+          <a v-for="carta in publicaciones" class="carta" :href="`/publicacion/${carta.id}`">
+            <img src="img/carta1.jpg" :alt="`Carta de ${carta.cartaOfrecida.nombre}`" />
+            <h2>{{ carta.cartaOfrecida.nombre }}</h2>
+            <p>{{ carta.cartaOfrecida.juego }}</p>
+            <span>$ {{ carta.precio }}</span>
+          </a>
+        </section>
 
         <!-- OFERTAS -->
         <h2>Tus Ofertas: {{ofertas.length}}</h2>
