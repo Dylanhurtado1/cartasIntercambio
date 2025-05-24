@@ -1,4 +1,6 @@
 const { onMounted } = Vue;
+import {obtenerDatoCrudo, sesionAbierta} from './datos.js'
+
 Vue.createApp({
   setup() {
     const publicacion = Vue.ref(null);
@@ -64,8 +66,8 @@ Vue.createApp({
           monto: (price.value == null) ? 0 : price.value,
           cartasOfrecidas: cartasSeleccionadas,
           ofertante: {
-            id: 1,
-            user: "soyUnOfertanteMisterioso>:)" //por ahora hardcodeado
+            id: null,
+            user: null
           }
         }
 
@@ -76,7 +78,10 @@ Vue.createApp({
         fetch(backendURL + "/publicaciones/" + oferta.idPublicacion + "/ofertas", {
           method: "POST",
           body: JSON.stringify(oferta),
-          headers: {"Content-type": "application/json; charset=UTF-8"}
+          headers: {
+            "Content-type": "application/json; charset=UTF-8",
+            "Authorization": "Bearer " + obtenerDatoCrudo("jwt")
+          }
         })
         .then(response => response.json()) 
         .then(json => {
@@ -95,6 +100,9 @@ Vue.createApp({
     };    
 
     onMounted(() => {
+      if(!sesionAbierta())
+        window.location.href = "/"
+
       cargarPublicacion();
     });
 

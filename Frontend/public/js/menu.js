@@ -31,9 +31,14 @@ Vue.createApp({
       </div>
       <nav class="menu">
         <ul :class="{ show: isMenuOpen }">
-          <li v-for="(item, index) in menuItems" :key="index">
-            <a :href="item.href" v-if="item.public || (!item.public && !sesionCerrada)">{{ item.label }}</a>            
+          <li v-for="(item, index) in menuItems.filter(i => i.public || (!i.public && !sesionCerrada)) " :key="index">
+            <a :href="item.href">{{ item.label }}</a>            
           </li>
+          
+          <li v-show="sesionCerrada">
+            <a href="/registrar">Registrarse</a>            
+          </li>
+
           <li v-show="!sesionCerrada" @click="cerrarSesion">
             <a href="#">Cerrar sesión</a>            
           </li>
