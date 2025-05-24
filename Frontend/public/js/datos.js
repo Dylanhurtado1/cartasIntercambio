@@ -11,7 +11,7 @@ function obtenerDatoObjeto(key){return JSON.parse(localStorage.getItem(key))}
 function vaciarDatos(){localStorage.clear()}
 
 function sesionAbierta(){
-    return (obtenerDatoCrudo("jwt") && obtenerDatoCrudo("usuarioActual"))
+    return (obtenerDatoCrudo("jwt") && obtenerDatoCrudo("usuarioActual")) !== null
 }
 
 export {guardarDatoCrudo, guardarDatoObjeto, obtenerDatoCrudo, obtenerDatoObjeto, vaciarDatos, sesionAbierta};

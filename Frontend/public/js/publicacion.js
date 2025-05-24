@@ -1,10 +1,11 @@
 const { onMounted } = Vue;
-import {obtenerDatoCrudo, sesionAbierta} from './datos.js'
+import {obtenerDatoObjeto, obtenerDatoCrudo, sesionAbierta} from './datos.js'
 
 Vue.createApp({
   setup() {
-    const publicacion = Vue.ref(null);
+    const publicacion = Vue.ref(null)
     const formVisible = Vue.ref(false)
+    const esUsuarioOriginal = Vue.ref(false)
     const backendURL = "http://localhost:8080"
 
 
@@ -21,9 +22,13 @@ Vue.createApp({
 
         const data = await res.json();
         publicacion.value = data;
-        formVisible.value = (publicacion.value.estado != "FINALIZADA")
+
+        const idActual = obtenerDatoObjeto("usuarioActual")?.id;
+        const sesionValida = sesionAbierta() && idActual != publicacion.value.publicador.id
+        formVisible.value = (publicacion.value.estado != "FINALIZADA") && sesionValida 
+        esUsuarioOriginal.value = (idActual == publicacion.value.publicador.id)
+
       } catch (error) {
-        alert("La publicación no existe o el servidor no responde.");
         window.location.href = "/";
       }
     }
@@ -39,7 +44,6 @@ Vue.createApp({
 
     /* OFERTA */
 
-    /*const price = Vue.ref(null); // Precio de oferta*/
     const formSubmitted = Vue.ref(false); // Para mostrar el mensaje después del envío
     const nuevaOferta = Vue.ref({
       precio: null,
@@ -86,7 +90,7 @@ Vue.createApp({
         .then(response => response.json()) 
         .then(json => {
             console.log(json)
-            window.location.href = '../'
+            window.location.href = '/usuario'
         })
         .catch(err => {
             console.log(err)
@@ -100,9 +104,6 @@ Vue.createApp({
     };    
 
     onMounted(() => {
-      if(!sesionAbierta())
-        window.location.href = "/"
-
       cargarPublicacion();
     });
 
@@ -110,15 +111,13 @@ Vue.createApp({
       //VISUALIZACIÓN DE LA PUBLICACIÓN
       publicacion,
       formatearFecha,
+      esUsuarioOriginal,
       // FORMULARIO OFERTAS
       formVisible,
       formSubmitted,
       isValid,
       submitForm,
       nuevaOferta
-      /*handleFileChange
-      addCard,
-      deleteCard*/
     };
   }
 }).mount("#app");
