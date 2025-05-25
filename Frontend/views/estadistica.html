@@ -1,44 +1,46 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title>Estadísticas de Cartas</title>
-  <link rel="stylesheet" href="public/css/menu.css">
-  <link rel="stylesheet" href="/public/css/flotante.css">
-  <link rel="stylesheet" href="public/css/estadisticas.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Estadísticas de Cartas</title>
+    <link href="/public/img/Icon.png" rel="shortcut icon" type="image/png" />
+
+    <link rel="stylesheet" href="public/css/menu.css" />
+    <link rel="stylesheet" href="/public/css/flotante.css" />
+    <link rel="stylesheet" href="public/css/estadisticas.css" />
+  </head>
+  <body>
     <header id="menu-app"></header>
     <div id="datos-f"></div>
 
     <main id="app">
-        <section v-if="estadisticas" class="estadisticas">
-            <div class="estadistica">
-                <h2>Total</h2>
-                <p>{{ estadisticas.Total }}</p>
-            </div>
-            <div class="estadistica">
-                <h2>Magic</h2>
-                <p>{{ estadisticas.Magic }}</p>
-            </div>
-            <div class="estadistica">
-                <h2>Yu-Gi-Oh</h2>
-                <p>{{ estadisticas.YuGiOh }}</p>
-            </div>
-            <div class="estadistica">
-                <h2>Pokémon</h2>
-                <p>{{ estadisticas.Pokemon }}</p>
-            </div>
-        </section>
+      <section v-if="estadisticas" class="estadisticas">
+        <div class="estadistica">
+          <h2>Total</h2>
+          <p>{{ estadisticas.Total }}</p>
+        </div>
+        <div class="estadistica">
+          <h2>Magic</h2>
+          <p>{{ estadisticas.Magic }}</p>
+        </div>
+        <div class="estadistica">
+          <h2>Yu-Gi-Oh</h2>
+          <p>{{ estadisticas.YuGiOh }}</p>
+        </div>
+        <div class="estadistica">
+          <h2>Pokémon</h2>
+          <p>{{ estadisticas.Pokemon }}</p>
+        </div>
+      </section>
 
-        <section v-else class="loading">
-            <p>{{mensaje}}</p>
-        </section>
+      <section v-else class="loading">
+        <p>{{mensaje}}</p>
+      </section>
     </main>
 
-  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-  <script type="module" src="public/js/menu.js"></script>
-  <script type="module" src="/public/js/flotante.js"></script>
-  <script src="public/js/estadisticas.js"></script>
-</body>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script type="module" src="public/js/menu.js"></script>
+    <script type="module" src="/public/js/flotante.js"></script>
+    <script src="public/js/estadisticas.js"></script>
+  </body>
 </html>
