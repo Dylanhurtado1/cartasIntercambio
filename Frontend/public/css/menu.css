@@ -37,6 +37,7 @@ header {
     color: white;
     cursor: pointer;
     display: none;
+    
 }
 
 nav.menu {
@@ -85,14 +86,20 @@ nav.menu li a:hover {
         display: block;
     }
 
-    nav.menu ul {
-        flex-direction: column;
-        display: none;
-        align-items: center;
+    nav.menu ul { 
+        /*Agregué bonita animación <3*/
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height .7s ease;
+        display: flex;
+        flex-direction: row; 
+        padding: 0;
+        margin: 0;
     }
 
     nav.menu ul.show {
         display: flex;
+        max-height: 500px; 
     }
 
     nav.menu li{

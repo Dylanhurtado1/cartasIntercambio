@@ -7,6 +7,7 @@ const backendURL = "http://localhost:8080"; //ahora como modo de prueba, se deja
 createApp({
     data() {
         return {
+            sesionAbierta: sesionAbierta(),
             form: {
                 nombreCarta: '',
                 nombreJuego: '',
@@ -21,8 +22,8 @@ createApp({
     },
     mounted(){
         console.log("FUNCA")
-        if(!sesionAbierta())
-            window.location.href = "/"
+        /*if(!sesionAbierta())
+            window.location.href = "/"*/
     },
     methods: {
         onMainImagesChange(event) {

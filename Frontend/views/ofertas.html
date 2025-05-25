@@ -4,22 +4,25 @@
   <meta charset="UTF-8" />
   <title>Ofertas de la Publicación</title>
   <link rel="stylesheet" href="/public/css/menu.css" />
+  <link rel="stylesheet" href="/public/css/auth-user.css" />
   <link rel="stylesheet" href="/public/css/flotante.css" />
   <link rel="stylesheet" href="/public/css/ofertas.css" />
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 </head>
 <body>
     <header id="menu-app"></header>
+    <div id="user-certification" data-texto="Acá seguro que no tenés que estar"></div>
     <div id="datos-f"></div>
 
   <main id="app" v-cloak>
-    <section v-if="ofertas.length === 0">
-      <p> No hay ofertas aún para esta publicación.</p>
+    <section style="text-align: center;" v-if="!usuarioEsElPublicador || ofertas.length === 0">
+      <h4> {{ explicacion }}</h4>
     </section>
 
     <section v-else class="ofertas">
-      <div class="oferta" v-for="oferta in ofertas" :key="oferta.id">
-        <h2>Oferta #{{ oferta.id }} - {{ formatearFecha(oferta.fecha) }}</h2>
+      <h2>Cantidad de ofertas totales: {{ofertas.length}}</h2>
+      <div class="oferta" v-for="(oferta,index) in ofertas" :key="oferta.id">
+        <h3>Oferta #{{ index + 1 }} - {{ formatearFecha(oferta.fecha) }}</h3>
         <p><strong>Ofertante:</strong> {{ oferta.ofertante.user }} </p>
         <p><strong>Monto:</strong> {{ oferta.monto ? '$' + oferta.monto : 'Sin monto' }}</p>
         <p><strong>Estado:</strong> <span :class="oferta.estado !== 'RECHAZADO' ? 'pendiente' : 'finalizado'"> {{ oferta.estado }}</span></p>
@@ -46,5 +49,6 @@
   <script type="module" src="/public/js/ofertas.js"></script>
   <script type="module" src="/public/js/menu.js"></script>
   <script type="module" src="/public/js/flotante.js"></script>
+  <script type="module" src="/public/js/user-certification.js" defer></script>
 </body>
 </html>

@@ -16,6 +16,7 @@ Vue.createApp({
 
 
     async function fetchDatos() {
+
       try {
         const headers = {
           "Authorization": `Bearer ${jwt}`
@@ -39,11 +40,8 @@ Vue.createApp({
     }
 
     onMounted(() => {
-      if (!jwt) {
-        window.location.href = "/login";
-      } else {
+      if (jwt) 
         fetchDatos();
-      }
     });
 
     return { usuario, publicaciones, ofertas };

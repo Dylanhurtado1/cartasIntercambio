@@ -11,6 +11,11 @@ main {
     gap: 2em;
 }
 
+.ofertas h2{
+    margin-top: 1em;
+    margin-bottom: 0;
+}
+
 .oferta {
     background: white;
     border: 1px solid #ccc;
@@ -19,8 +24,9 @@ main {
     width: 800px;
 }
 
-.oferta h2{
+.oferta h3{
     margin: 0;
+    font-size: 20px;
 }
 
 .cartas {

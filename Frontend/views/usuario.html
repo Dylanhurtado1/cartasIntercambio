@@ -5,50 +5,56 @@
     <title>Mi Cuenta</title>
 
     <link rel="stylesheet" href="/public/css/menu.css" />
+    <link rel="stylesheet" href="/public/css/auth-user.css" />
     <link rel="stylesheet" href="/public/css/usuario.css" />
 
     <script src="https://unpkg.com/vue@3/dist/vue.global.js" defer></script>
   </head>
   <body>
       <header id="menu-app"></header>
-
+      
+      <div id="user-certification" data-texto="Para continuar necesitás iniciar sesión o registrarte."></div>
+      
+      
       <section id="app" v-cloak class="contenedor">
-        <h2 v-show="usuario.user">Usuario actual: {{usuario.user}}</h2>
-        
-        <!-- PUBLICACIONES -->
-        <h2>Tus Publicaciones: {{publicaciones.length}}</h2>
-        <section class="cartas">
-          <a v-for="carta in publicaciones" class="carta" :href="`/publicacion/${carta.id}`">
-            <img src="img/carta1.jpg" :alt="`Carta de ${carta.cartaOfrecida.nombre}`" />
-            <h2>{{ carta.cartaOfrecida.nombre }}</h2>
-            <p>{{ carta.cartaOfrecida.juego }}</p>
-            <span>$ {{ carta.precio }}</span>
-          </a>
-        </section>
+        <div class="app" v-show="usuario.user">
+          <h2>Usuario actual: {{usuario.user}}</h2>
+          
+          <!-- PUBLICACIONES -->
+          <h2>Tus Publicaciones: {{publicaciones.length}}</h2>
+          <section class="cartas">
+            <a v-for="carta in publicaciones" class="carta" :href="`/publicacion/${carta.id}`">
+              <img src="img/carta1.jpg" :alt="`Carta de ${carta.cartaOfrecida.nombre}`" />
+              <h2>{{ carta.cartaOfrecida.nombre }}</h2>
+              <p>{{ carta.cartaOfrecida.juego }}</p>
+              <span>$ {{ carta.precio }}</span>
+            </a>
+          </section>
 
-        <!-- OFERTAS -->
-        <h2>Tus Ofertas: {{ofertas.length}}</h2>
-        <div class="lista">
-          <div class="item" v-for="oferta in ofertas" :key="oferta.id">
-            <p>Oferta para publicación ID: {{ oferta.idPublicacion }}</p>
-            <p v-if="oferta.monto">Monto ofrecido: ${{ oferta.monto }}</p>
-            <p>Estado: {{ oferta.estado }}</p>
-            <div v-if="oferta.cartasOfrecidas.length">
-              <p>Cartas ofrecidas:</p>
-              <ul>
-                <li v-for="carta in oferta.cartasOfrecidas" :key="carta.nombre">
-                  {{ carta.nombre }} ({{ carta.juego }}) - {{ carta.estado }}
-                </li>
-              </ul>
-            </div>
-          </div> <!-- Ricas cadenas de divs -->
+          <!-- OFERTAS -->
+          <h2>Tus Ofertas: {{ofertas.length}}</h2>
+          <div class="lista">
+            <div class="item" v-for="oferta in ofertas" :key="oferta.id">
+              <p>Oferta para publicación ID: {{ oferta.idPublicacion }}</p>
+              <p v-if="oferta.monto">Monto ofrecido: ${{ oferta.monto }}</p>
+              <p>Estado: {{ oferta.estado }}</p>
+              <div v-if="oferta.cartasOfrecidas.length">
+                <p>Cartas ofrecidas:</p>
+                <ul>
+                  <li v-for="carta in oferta.cartasOfrecidas" :key="carta.nombre">
+                    {{ carta.nombre }} ({{ carta.juego }}) - {{ carta.estado }}
+                  </li>
+                </ul>
+              </div>
+            </div> <!-- Ricas cadenas de divs -->
+          </div>
         </div>
-
       </section>
 
     <script type="module" src="public/js/menu.js"></script>
     <script type="module" src="/public/js/flotante.js"></script>
     <script type="module" src="/public/js/usuario.js" defer></script>
+    <script type="module" src="/public/js/user-certification.js" defer></script>
 
   </body>
 </html>

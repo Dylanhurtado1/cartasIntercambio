@@ -5,7 +5,8 @@ Vue.createApp({
   setup() {
     /*if(!sesionAbierta())
       window.location.href = "/login"*/
-
+    const explicacion = Vue.ref("")
+    const usuarioEsElPublicador = Vue.ref(true) //asumo muy potentemente que si
     const ofertas = Vue.ref([]);
     const backendURL = "http://localhost:8080"; 
 
@@ -16,21 +17,30 @@ Vue.createApp({
     }
 
     async function validarPublicador(){
+      if(!sesionAbierta()) //si la sesión no está abierta, directo le dice al usuario que se logue/registre para entrar
+        return
+
       try {
         const res = await fetch(`${backendURL}/publicaciones/${obtenerIdDesdeURL()}`);
         if (!res.ok) throw new Error("Error en la carga de publicacion");
         const data = await res.json();
         const id = data.publicador.id
-
-        if(id != obtenerDatoObjeto("usuarioActual").id)
-          window.location.href = "/"
+        console.log(id == obtenerDatoObjeto("usuarioActual").id)
+        usuarioEsElPublicador.value = (id == obtenerDatoObjeto("usuarioActual").id)
         
-        cargarOfertas()
+        if(usuarioEsElPublicador.value)
+          cargarOfertas()
+        else
+          explicacion.value = "Usted no es el dueño de la publicación, vuelva al inicio"
+          
+          //window.location.href = "/"
+        
 
       } catch(e){
         console.log(e)
         //ante un error del servidor, que se vaya al index y listo el pollo y la gallina 
-        window.location.href = "/"
+        //window.location.href = "/"
+        explicacion.value = e
       }
     }
 
@@ -39,11 +49,10 @@ Vue.createApp({
       try {
         const res = await fetch(`${backendURL}/publicaciones/${publicacionId}/ofertas`);
         if (!res.ok) throw new Error("Error en la carga de ofertas");
-        ofertas.value = await res.json();
-        //console.log(ofertas.value)
+        ofertas.value = await res.json();        
+        if(ofertas.value.length === 0)  
+          explicacion.value = "No hay ofertas aún para esta publicación."
       } catch (e) {
-        //alert("No se pudieron cargar las ofertas. Serás redirigido.");
-        //window.location.href = "/";
         console.log(e)
       }
     }
@@ -119,7 +128,9 @@ Vue.createApp({
       ofertas,
       aceptarOferta,
       rechazarOferta,
-      formatearFecha
+      formatearFecha,
+      usuarioEsElPublicador, 
+      explicacion
     };
   }
 }).mount("#app");

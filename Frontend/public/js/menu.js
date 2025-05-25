@@ -8,7 +8,7 @@ Vue.createApp({
       menuItems: [
         { label: "Inicio", href: "/", public: true },
         { label: "Publicar Carta", href: "/publicar", public: false},
-        { label: "Usuario", href: "/usuario", public: true },
+        { label: "Usuario", href: "/usuario", public: false },
         { label: "Estadísticas", href: "/estadisticas", public: false }
       ]
     };
@@ -35,6 +35,10 @@ Vue.createApp({
             <a :href="item.href">{{ item.label }}</a>            
           </li>
           
+          <li v-show="sesionCerrada">
+            <a href="/login">Iniciar sesión</a>            
+          </li>
+
           <li v-show="sesionCerrada">
             <a href="/registrar">Registrarse</a>            
           </li>
