@@ -32,7 +32,18 @@
 
     <section class="productos">
       <a v-for="carta in listaDePublicaciones" class="producto" :href="`/publicacion/${carta.id}`">
-        <img src="img/carta1.jpg" :alt="`Carta de ${carta.cartaOfrecida.nombre}`" />
+      <img 
+        v-if="carta.imagenUrl" 
+        :src="carta.imagenUrl" 
+        :alt="`Carta de ${carta.cartaOfrecida.nombre}`" 
+        style="max-width:150px; max-height:150px;"
+      />
+      <img 
+      v-else 
+      src="/img/placeholder-carta.jpg" 
+      alt="(Carta sin imagen)" 
+      style="max-width:150px; max-height:150px;"
+      />
         <h2>{{ carta.cartaOfrecida.nombre }}</h2>
         <p>{{ carta.cartaOfrecida.juego }}</p>
         <span>$ {{ carta.precio }}</span>

@@ -6,8 +6,10 @@ import com.example.cartasIntercambio.jwt.JwtUtil;
 import com.example.cartasIntercambio.model.Mercado.EstadoOferta;
 import com.example.cartasIntercambio.model.Mercado.Oferta;
 import com.example.cartasIntercambio.model.Mercado.Publicacion;
+import com.example.cartasIntercambio.model.Producto_Carta.Carta;
 import com.example.cartasIntercambio.service.OfertaServiceImpl;
 import com.example.cartasIntercambio.service.PublicacionServiceImpl;
+import com.example.cartasIntercambio.service.S3Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,10 +20,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/publicaciones")
@@ -29,6 +33,9 @@ public class PublicacionController{
     private final PublicacionServiceImpl publicacionService;
     private final OfertaServiceImpl ofertaService;
     private final ObjectMapper mapper = new ObjectMapper();
+
+    @Autowired
+    private S3Service s3Service;
 
     @Autowired
     public PublicacionController(PublicacionServiceImpl publicacionService, OfertaServiceImpl ofertaService) {
@@ -166,4 +173,58 @@ public class PublicacionController{
         return ResponseEntity.ok(ofertasRealizadas);
     }
 
+    @PostMapping("/{idPublicacion}/imagen")
+    public ResponseEntity<?> uploadImagenPublicacion(
+            @RequestHeader("Authorization") String authHeader,
+            @PathVariable("idPublicacion") String idPublicacion,
+            @RequestParam("imagen") MultipartFile imagen) {
+        try {
+            String urlImagen = s3Service.uploadFile(imagen);
+
+            Publicacion publicacion = publicacionService.buscarPublicacionPorId(idPublicacion);
+            publicacion.setImagenUrl(urlImagen);
+            publicacionService.guardarEntidad(publicacion); // Agregalo si no lo tenés
+
+            return ResponseEntity.ok().body(java.util.Map.of("imagenUrl", urlImagen));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error subiendo imagen: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/{idPublicacion}/cartasInteres/{idx}/imagen")
+    public ResponseEntity<?> uploadImagenCartaInteres(
+            @RequestHeader("Authorization") String authHeader,
+            @PathVariable("idPublicacion") String idPublicacion,
+            @PathVariable("idx") int idx,
+            @RequestParam("imagen") MultipartFile imagen) {
+        try {
+            // Validar token si querés
+            String urlImagen = s3Service.uploadFile(imagen);
+
+            // Buscá la publicación
+            Publicacion publicacion = publicacionService.buscarPublicacionPorId(idPublicacion);
+            // Buscá la carta de interés
+            List<Carta> cartasInteres = publicacion.getCartasInteres();
+            if (cartasInteres == null || idx < 0 || idx >= cartasInteres.size()) {
+                return ResponseEntity.badRequest().body("Índice inválido de carta de interés");
+            }
+
+            Carta carta = cartasInteres.get(idx);
+            // Si no tiene lista de imágenes, la creás
+            if (carta.getImagenes() == null) {
+                carta.setImagenes(new ArrayList<>());
+            }
+            carta.getImagenes().clear(); // Solo una imagen por carta. Si quisieras varias, no hagas clear.
+            carta.getImagenes().add(urlImagen);
+
+            // Guardá la publicación entera nuevamente
+            publicacionService.guardarEntidad(publicacion);
+
+            return ResponseEntity.ok().body(Map.of("imagenUrl", urlImagen));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error subiendo imagen: " + e.getMessage());
+        }
+    }
 }

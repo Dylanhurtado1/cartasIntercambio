@@ -27,5 +27,8 @@ public class Publicacion {
     //private Long idUsuario; TODO: Cuando haya servicio usuarios
     private Usuario publicador;
     private EstadoPublicacion estado;
+    private String imagenUrl;
+
+
 
 }

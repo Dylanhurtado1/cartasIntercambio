@@ -27,6 +27,8 @@ public class PublicacionDto {
     private Usuario publicador;
     //private Long idPublicador;
     private String estado;
+    private String imagenUrl;
+
 
     public PublicacionDto(Publicacion publicacion) {
         this.id = publicacion.getId();
@@ -37,5 +39,6 @@ public class PublicacionDto {
         this.cartasInteres = publicacion.getCartasInteres();
         this.publicador = publicacion.getPublicador();
         this.estado = publicacion.getEstado().toString();
+        this.imagenUrl = publicacion.getImagenUrl();
     }
 }

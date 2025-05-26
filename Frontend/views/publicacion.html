@@ -21,7 +21,12 @@
             <h3><strong>Juego:</strong> {{ publicacion.cartaOfrecida.juego }}</h3>
             <p><strong>Descripción:</strong> {{ publicacion.descripcion }}</p>
             <div class="imagenes">
-              <img v-for="(img, idx) in publicacion.cartaOfrecida.imagenes" :key="idx" :src="`${img}`" alt="Imagen carta ofrecida" />
+              <img 
+                v-if="publicacion.imagenUrl" 
+                :src="publicacion.imagenUrl" 
+                alt="Imagen principal de la carta" 
+                style="max-width:300px; max-height:300px; margin-bottom: 8px;"
+              />
             </div>
           </div>
           <div class="info-secundaria">
@@ -42,7 +47,7 @@
               <p>Juego: {{ carta.juego }}</p>
               <p>Estado: {{ carta.estado }}</p>
               <div class="imagenes">
-                <img v-for="(img, j) in carta.imagenes" :key="j" :src="`/uploads/${img}`" alt="Imagen carta interés" />
+                <img v-for="(img, j) in carta.imagenes" :key="j" :src="img" alt="Imagen carta interés" style="max-width:120px; max-height:120px;" />
               </div>
             </div>
         </div>

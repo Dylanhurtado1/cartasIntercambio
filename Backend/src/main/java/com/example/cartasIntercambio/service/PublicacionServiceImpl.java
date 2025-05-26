@@ -72,7 +72,8 @@ public class PublicacionServiceImpl implements IPublicacionService {
             nuevaPublicacionDto.getPrecio(),
             nuevaPublicacionDto.getCartasInteres(),
             nuevaPublicacionDto.getPublicador(),
-            EstadoPublicacion.valueOf("ACTIVA")
+            EstadoPublicacion.valueOf("ACTIVA"),
+                null
         );
         Publicacion guardada = publicacionRepository.save(nuevaPublicacion);
         return new PublicacionDto(guardada);
@@ -80,9 +81,12 @@ public class PublicacionServiceImpl implements IPublicacionService {
 
 
    public List<PublicacionDto> listarPublicaciones() {
-
         return publicacionRepository.findAll().stream()
                 .map(PublicacionDto::new)
                 .collect(Collectors.toList());
+    }
+
+    public void guardarEntidad(Publicacion publicacion) {
+        publicacionRepository.save(publicacion);
     }
 }

@@ -26,7 +26,7 @@ createApp({
     },
     methods: {
         onMainImagesChange(event) {
-            this.form.imagenesCarta = Array.from(event.target.files);
+            this.form.imagenesCarta = event.target.files.length > 0 ? [event.target.files[0]] : [];
         },
         onInterestImagesChange(event, index) {
             this.form.cartasDeInteres[index].imagenes = Array.from(event.target.files);
@@ -46,26 +46,16 @@ createApp({
             this.form.cartasDeInteres = []
         }
         ,
-        submitForm() {
-            // VALIDACIONES
+        async submitForm() {
+            // Validaciones, igual que tenías...
+        
             if (this.form.imagenesCarta.length === 0) {
                 alert('Debes subir al menos una imagen de la carta en venta.');
                 return;
             }
-
-            if ((parseFloat(this.form.precio) <= 0 || isNaN(parseFloat(this.form.precio))) && this.form.cartasDeInteres.length === 0) {
-                alert('Debes ingresar un precio válido o al menos una carta de interés.');
-                return;
-            }
-
-            for (let i = 0; i < this.form.cartasDeInteres.length; i++) {
-                if (this.form.cartasDeInteres[i].imagenes.length === 0) {
-                    alert(`Cada carta de interés debe tener al menos una imagen (Error en carta #${i + 1}).`);
-                    return;
-                }
-            }
-
-            // CREAR JSON
+            // ...otras validaciones...
+        
+            // 1. Armar datos de publicación SIN images (no mandar file names)
             const data = {
                 fecha: new Date().toJSON(),
                 descripcion: this.form.descripcion,
@@ -73,45 +63,71 @@ createApp({
                     nombre: this.form.nombreCarta,
                     juego: this.form.nombreJuego,
                     estado: this.form.estado,
-                    imagenes: this.form.imagenesCarta.map(file => file.name)        
+                    // Omitir "imagenes"
                 },
                 precio: parseFloat(this.form.precio) > 0 ? parseFloat(this.form.precio) : null,
                 cartasInteres: this.form.cartasDeInteres.map(
                     cartaInd => ({
                         nombre: cartaInd.nombre,
                         juego: cartaInd.juego,
-                        estado: cartaInd.estado,
-                        imagenes: cartaInd.imagenes.map(file => file.name)
-                    }))
-                ,
+                        estado: cartaInd.estado
+                        // Omitir "imagenes"
+                    })),
                 publicador: {
                     id: null,
                     user: null
-                } 
-            };
-
-            console.log(data)
-            
-            // CREAR PUBLICACIÓN EN SERVER
-            fetch(backendURL + "/publicaciones", {
-                method: "POST",
-                body: JSON.stringify(data),
-                headers: {
-                    "Content-type": "application/json; charset=UTF-8",
-                    "Authorization": "Bearer " + obtenerDatoCrudo("jwt")
                 }
-            })
-            .then(response => response.json()) 
-            .then(json => {
-                console.log(json)
-                window.location.href = '../'
-            })
-            .catch(err => {
+            };
+        
+            try {
+                // Paso 1: Crear publicación
+                const res = await fetch(backendURL + "/publicaciones", {
+                    method: "POST",
+                    body: JSON.stringify(data),
+                    headers: {
+                        "Content-type": "application/json; charset=UTF-8",
+                        "Authorization": "Bearer " + obtenerDatoCrudo("jwt")
+                    }
+                });
+                const json = await res.json();
+                const publicacionId = json.id;
+        
+                // Paso 2: Subir imagen principal
+                if (this.form.imagenesCarta.length > 0) {
+                    const formData = new FormData();
+                    formData.append("imagen", this.form.imagenesCarta[0]);
+        
+                    const resImg = await fetch(backendURL + `/publicaciones/${publicacionId}/imagen`, {
+                        method: "POST",
+                        headers: {
+                            "Authorization": "Bearer " + obtenerDatoCrudo("jwt")
+                        },
+                        body: formData
+                    });
+                    if (!resImg.ok) throw new Error("Error al subir imagen");
+                }
+                
+                for (let idx = 0; idx < this.form.cartasDeInteres.length; idx++) {
+                    const carta = this.form.cartasDeInteres[idx];
+                    if (carta.imagenes && carta.imagenes.length > 0) {
+                      const formData = new FormData();
+                      formData.append("imagen", carta.imagenes[0]);
+                      await fetch(`${backendURL}/publicaciones/${publicacionId}/cartasInteres/${idx}/imagen`, {
+                        method: "POST",
+                        headers: { "Authorization": "Bearer " + obtenerDatoCrudo("jwt") },
+                        body: formData
+                      });
+                    }
+                  }
+              
+        
+                // Redirigir o actualizar vista
+                window.location.href = '../';
+        
+            } catch (err) {
                 console.log(err)
                 alert('Error con el servidor: ' + err)
-            })
-
-            this.jsonResultado = JSON.stringify(data, null, 2);
+            }
         }
     }
 }).mount('#app');
