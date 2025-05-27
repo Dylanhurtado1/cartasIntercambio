@@ -107,7 +107,7 @@ createApp({
                 }); 
             });
 
-            // (Comentarios explicativos originales de tu compañero)
+            
             /*
                 La lógica que pensé para rehacer las imágenes de las cartas de interés es la siguiente:
                 Lo que voy a guardar en cartaInteres[index] son las imagenes de las cartas de interés,
@@ -187,7 +187,6 @@ createApp({
                 body: formData,
                 headers: {
                     "Authorization": "Bearer " + obtenerDatoCrudo("jwt")
-                    // NO AGREGUES "Content-type"; el browser lo pone automáticamente
                 }
             })
             .then(response => response.json())
