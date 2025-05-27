@@ -1,8 +1,9 @@
 const { createApp } = Vue;
-import {obtenerDatoCrudo, sesionAbierta} from './datos.js'
-
+import {obtenerDatoCrudo, sesionAbierta, obtenerDatoObjeto} from './datos.js'
 
 const backendURL = "http://localhost:8080"; //ahora como modo de prueba, se dejará el link acá 
+
+const usuarioActual = obtenerDatoObjeto("usuarioActual");
 
 createApp({
     data() {
@@ -45,20 +46,17 @@ createApp({
         },
         eliminarTodasCartasInteres(){
             this.form.cartasDeInteres = []
-        }
-        ,
+        },
         submitForm() {
             // VALIDACIONES
             if (this.form.imagenesCarta.length === 0) {
                 alert('Debes subir al menos una imagen de la carta en venta.');
                 return;
             }
-
             if ((parseFloat(this.form.precio) <= 0 || isNaN(parseFloat(this.form.precio))) && this.form.cartasDeInteres.length === 0) {
                 alert('Debes ingresar un precio válido o al menos una carta de interés.');
                 return;
             }
-
             for (let i = 0; i < this.form.cartasDeInteres.length; i++) {
                 if (this.form.cartasDeInteres[i].imagenes.length === 0) {
                     alert(`Cada carta de interés debe tener al menos una imagen (Error en carta #${i + 1}).`);
@@ -66,7 +64,7 @@ createApp({
                 }
             }
 
-            // CREAR JSON
+            // CREAR JSON (con las imágenes vacías)
             const data = {
                 fecha: new Date().toJSON(),
                 descripcion: this.form.descripcion,
@@ -74,7 +72,7 @@ createApp({
                     nombre: this.form.nombreCarta,
                     juego: this.form.nombreJuego,
                     estado: this.form.estado,
-                    imagenes: this.form.imagenesCarta.map(file => file.name)        
+                    imagenes: []
                 },
                 precio: parseFloat(this.form.precio) > 0 ? parseFloat(this.form.precio) : null,
                 cartasInteres: this.form.cartasDeInteres.map(
@@ -82,36 +80,34 @@ createApp({
                         nombre: cartaInd.nombre,
                         juego: cartaInd.juego,
                         estado: cartaInd.estado,
-                        imagenes: cartaInd.imagenes.map(file => file.name)
-                    }))
-                ,
+                        imagenes: []
+                    })),
                 publicador: {
-                    id: null,
-                    user: null
-                } 
+                    id: usuarioActual ? usuarioActual.id : null,
+                    user: usuarioActual ? usuarioActual.user : null
+                },
+                estado: "ACTIVA"
             };
 
-            // Preparando el terreno para un poderoso posteo de imágenes >:)
-            // De parte de front, lo único que debería hacer es agregar el formData al header del post y sacar el json
+            // ---- ARMADO DEL MULTIPART ----
             const formData = new FormData();
-            
-            formData.append("publicacion", new Blob([JSON.stringify(data)], { type: "application/json" }))
 
+            // JSON principal como Blob
+            formData.append("publicacion", new Blob([JSON.stringify(data)], { type: "application/json" }));
+
+            // Imagenes de la carta ofertada
             this.form.imagenesCarta.forEach(file => { 
                 formData.append("publicacionImagenes", file); 
             });  
-            
+
+            // Imagenes por cada carta de interés
             this.form.cartasDeInteres.forEach((cartaInd, index) => {
                 cartaInd.imagenes.forEach(file => {
                     formData.append(`cartaInteres[${index}]`, file);  
                 }); 
             });
 
-            //console.log(formData.get("publicacion"))
-            //console.log(formData.getAll("publicacionImagenes"))
-            //console.log(formData.getAll("cartaInteres[0]"))
-            
-
+            // (Comentarios explicativos originales de tu compañero)
             /*
                 La lógica que pensé para rehacer las imágenes de las cartas de interés es la siguiente:
                 Lo que voy a guardar en cartaInteres[index] son las imagenes de las cartas de interés,
@@ -185,26 +181,24 @@ createApp({
                 no programar back y front a la vez XDDDDDDDDDDDD
             */
 
-            console.log(data)
-            
-            // CREAR PUBLICACIÓN EN SERVER
+            // --- POST multipart ---
             fetch(backendURL + "/publicaciones", {
                 method: "POST",
-                body: JSON.stringify(data),
+                body: formData,
                 headers: {
-                    "Content-type": "application/json; charset=UTF-8",
                     "Authorization": "Bearer " + obtenerDatoCrudo("jwt")
+                    // NO AGREGUES "Content-type"; el browser lo pone automáticamente
                 }
             })
-            .then(response => response.json()) 
+            .then(response => response.json())
             .then(json => {
-                console.log(json)
-                window.location.href = '../'
+                console.log(json);
+                window.location.href = '../';
             })
             .catch(err => {
-                console.log(err)
-                alert('Error con el servidor: ' + err)
-            })
+                console.log(err);
+                alert('Error con el servidor: ' + err);
+            });
 
             this.jsonResultado = JSON.stringify(data, null, 2);
         }

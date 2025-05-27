@@ -3,10 +3,13 @@ package com.example.cartasIntercambio.controller;
 import com.example.cartasIntercambio.dto.CartaDto;
 import com.example.cartasIntercambio.dto.OfertaDto;
 import com.example.cartasIntercambio.dto.PublicacionDto;
+import com.example.cartasIntercambio.dto.UsuarioResponseDto;
 import com.example.cartasIntercambio.jwt.JwtUtil;
 import com.example.cartasIntercambio.model.Mercado.EstadoOferta;
 import com.example.cartasIntercambio.model.Mercado.Oferta;
 import com.example.cartasIntercambio.model.Mercado.Publicacion;
+import com.example.cartasIntercambio.model.Usuario.Usuario;
+import com.example.cartasIntercambio.service.IUsuarioService;
 import com.example.cartasIntercambio.service.OfertaServiceImpl;
 import com.example.cartasIntercambio.service.PublicacionServiceImpl;
 import com.example.cartasIntercambio.service.S3Service;
@@ -37,6 +40,9 @@ public class PublicacionController{
 
     @Autowired
     private S3Service s3Service;
+
+    @Autowired
+    private IUsuarioService usuarioService;
 
     @Autowired
     public PublicacionController(PublicacionServiceImpl publicacionService, OfertaServiceImpl ofertaService) {
@@ -176,6 +182,7 @@ public class PublicacionController{
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> crearPublicacionMultipart(
+            @RequestHeader("Authorization") String authHeader,
             @RequestPart("publicacion") PublicacionDto publicacionDto,
             @RequestPart(value = "publicacionImagenes", required = false) MultipartFile[] publicacionImagenes,
             @RequestPart(value = "cartaInteres[0]", required = false) MultipartFile[] cartaInteres0,
@@ -184,7 +191,22 @@ public class PublicacionController{
             @RequestPart(value = "cartaInteres[3]", required = false) MultipartFile[] cartaInteres3
     ) {
         try {
-            // Imagenes de la carta ofertada
+            // --- USER DEL JWT ---
+            String token = authHeader.replace("Bearer ", "");
+            Claims claims = JwtUtil.validateToken(token);
+            String userId = claims.getSubject();
+
+            // Buscar usuario real desde tu service
+            UsuarioResponseDto usuarioDto = usuarioService.buscarUsuarioPorId(userId);
+            // Conversión manual, o implementá un método .toModel() si tienes en UsuarioResponseDto
+            Usuario usuario = new Usuario();
+            usuario.setId(usuarioDto.getId());
+            usuario.setUser(usuarioDto.getUser());
+            usuario.setNombre(usuarioDto.getNombre());
+
+            publicacionDto.setPublicador(usuario);
+
+            // --- Imagenes carta principal ---
             List<String> urlsPrincipal = new ArrayList<>();
             if (publicacionImagenes != null) {
                 for (MultipartFile img : publicacionImagenes) {
@@ -195,7 +217,7 @@ public class PublicacionController{
                 publicacionDto.getCartaOfrecida().setImagenes(urlsPrincipal);
             }
 
-            // Imágenes de cartas de interés (hasta 4)
+            // --- Imagenes de cartas de interés (hasta 4) ---
             List<CartaDto> cartasInteres = publicacionDto.getCartasInteres();
             if (cartasInteres != null) {
                 if (cartasInteres.size() > 0 && cartaInteres0 != null) {
@@ -220,7 +242,9 @@ public class PublicacionController{
                 }
             }
 
+            // --- Guardar publicación en BD ---
             PublicacionDto guardada = publicacionService.guardarPublicacion(publicacionDto);
+
             return ResponseEntity.status(HttpStatus.CREATED).body(guardada);
 
         } catch (Exception e) {
