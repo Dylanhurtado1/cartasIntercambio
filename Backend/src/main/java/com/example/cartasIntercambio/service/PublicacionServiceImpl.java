@@ -1,14 +1,18 @@
 package com.example.cartasIntercambio.service;
 
+import com.example.cartasIntercambio.dto.CartaDto;
 import com.example.cartasIntercambio.dto.PublicacionDto;
 import com.example.cartasIntercambio.exception.PublicacionNoEncontradaException;
 import com.example.cartasIntercambio.model.Mercado.EstadoPublicacion;
 import com.example.cartasIntercambio.model.Mercado.Publicacion;
+import com.example.cartasIntercambio.model.Producto_Carta.Carta;
+import com.example.cartasIntercambio.model.Producto_Carta.EstadoCarta;
 import com.example.cartasIntercambio.repository.irepository.IPublicacionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -61,21 +65,42 @@ public class PublicacionServiceImpl implements IPublicacionService {
                 .collect(Collectors.toList());
 
     }
-    
+
     @Override
     public PublicacionDto guardarPublicacion(PublicacionDto nuevaPublicacionDto) {
         Publicacion nuevaPublicacion = new Publicacion(
-            null,
-            nuevaPublicacionDto.getFecha(),
-            nuevaPublicacionDto.getDescripcion(),
-            nuevaPublicacionDto.getCartaOfrecida(),
-            nuevaPublicacionDto.getPrecio(),
-            nuevaPublicacionDto.getCartasInteres(),
-            nuevaPublicacionDto.getPublicador(),
-            EstadoPublicacion.valueOf("ACTIVA")
+                null,
+                nuevaPublicacionDto.getFecha(),
+                nuevaPublicacionDto.getDescripcion(),
+                dtoToCarta(nuevaPublicacionDto.getCartaOfrecida()),        // <--- ¡nuevo!
+                nuevaPublicacionDto.getPrecio(),
+                dtosToCartas(nuevaPublicacionDto.getCartasInteres()),      // <--- ¡nuevo!
+                nuevaPublicacionDto.getPublicador(),
+                EstadoPublicacion.valueOf("ACTIVA")
         );
         Publicacion guardada = publicacionRepository.save(nuevaPublicacion);
         return new PublicacionDto(guardada);
+    }
+
+
+    private Carta dtoToCarta(CartaDto dto) {
+        if (dto == null) return null;
+        Carta carta = new Carta();
+        carta.setJuego(dto.getJuego());
+        carta.setNombre(dto.getNombre());
+        // Si tu entidad usa Enum para estado, convertí:
+        carta.setEstado(EstadoCarta.valueOf(dto.getEstado()));
+        carta.setImagenes(dto.getImagenes()); // Lista de URLs S3
+        return carta;
+    }
+
+    private List<Carta> dtosToCartas(List<CartaDto> dtos) {
+        if (dtos == null) return null;
+        List<Carta> out = new ArrayList<>();
+        for (CartaDto dto : dtos) {
+            out.add(dtoToCarta(dto));
+        }
+        return out;
     }
 
 

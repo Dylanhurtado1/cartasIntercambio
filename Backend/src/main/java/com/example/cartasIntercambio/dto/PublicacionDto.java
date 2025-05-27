@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -21,21 +22,40 @@ public class PublicacionDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private Date fecha;
     private String descripcion;
-    private Carta cartaOfrecida;
+    private CartaDto cartaOfrecida;
     private BigDecimal precio;
-    private List<Carta> cartasInteres;
+    private List<CartaDto> cartasInteres;
     private Usuario publicador;
     //private Long idPublicador;
     private String estado;
 
+    // Constructor desde entidad, ajustá si la entidad usa otra clase
     public PublicacionDto(Publicacion publicacion) {
         this.id = publicacion.getId();
         this.fecha = publicacion.getFecha();
         this.descripcion = publicacion.getDescripcion();
-        this.cartaOfrecida = publicacion.getCartaOfrecida();
+        // Convertí a CartaDto si tu entidad usa Carta real:
+        this.cartaOfrecida = cartaToDto(publicacion.getCartaOfrecida());
         this.precio = publicacion.getPrecio();
-        this.cartasInteres = publicacion.getCartasInteres();
+        this.cartasInteres = cartaListToDto(publicacion.getCartasInteres());
         this.publicador = publicacion.getPublicador();
         this.estado = publicacion.getEstado().toString();
+    }
+
+    // Métodos auxiliares para la conversión
+    private CartaDto cartaToDto(Carta carta) {
+        return new CartaDto(
+                carta.getJuego(),
+                carta.getNombre(),
+                carta.getEstado().toString(),
+                carta.getImagenes() // suponiendo que ahora Imagenes es una lista de Strings (URLs)
+        );
+    }
+
+    private List<CartaDto> cartaListToDto(List<Carta> lista) {
+        if (lista == null) return null;
+        List<CartaDto> out = new ArrayList<>();
+        for (Carta c : lista) out.add(cartaToDto(c));
+        return out;
     }
 }
