@@ -1,13 +1,18 @@
 package com.example.cartasIntercambio.controller;
 
+import com.example.cartasIntercambio.dto.CartaDto;
 import com.example.cartasIntercambio.dto.OfertaDto;
 import com.example.cartasIntercambio.dto.PublicacionDto;
+import com.example.cartasIntercambio.dto.UsuarioResponseDto;
 import com.example.cartasIntercambio.jwt.JwtUtil;
 import com.example.cartasIntercambio.model.Mercado.EstadoOferta;
 import com.example.cartasIntercambio.model.Mercado.Oferta;
 import com.example.cartasIntercambio.model.Mercado.Publicacion;
+import com.example.cartasIntercambio.model.Usuario.Usuario;
+import com.example.cartasIntercambio.service.IUsuarioService;
 import com.example.cartasIntercambio.service.OfertaServiceImpl;
 import com.example.cartasIntercambio.service.PublicacionServiceImpl;
+import com.example.cartasIntercambio.service.S3Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,12 +21,15 @@ import com.github.fge.jsonpatch.JsonPatchException;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/publicaciones")
@@ -29,6 +37,12 @@ public class PublicacionController{
     private final PublicacionServiceImpl publicacionService;
     private final OfertaServiceImpl ofertaService;
     private final ObjectMapper mapper = new ObjectMapper();
+
+    @Autowired
+    private S3Service s3Service;
+
+    @Autowired
+    private IUsuarioService usuarioService;
 
     @Autowired
     public PublicacionController(PublicacionServiceImpl publicacionService, OfertaServiceImpl ofertaService) {
@@ -164,6 +178,79 @@ public class PublicacionController{
     public ResponseEntity<List<OfertaDto>> listarOfertasRealizadas(@PathVariable("idUsuario") String idUsuario) {
         List<OfertaDto> ofertasRealizadas = ofertaService.buscarOfertasRealizadas(idUsuario);
         return ResponseEntity.ok(ofertasRealizadas);
+    }
+
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> crearPublicacionMultipart(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestPart("publicacion") PublicacionDto publicacionDto,
+            @RequestPart(value = "publicacionImagenes", required = false) MultipartFile[] publicacionImagenes,
+            @RequestPart(value = "cartaInteres[0]", required = false) MultipartFile[] cartaInteres0,
+            @RequestPart(value = "cartaInteres[1]", required = false) MultipartFile[] cartaInteres1,
+            @RequestPart(value = "cartaInteres[2]", required = false) MultipartFile[] cartaInteres2,
+            @RequestPart(value = "cartaInteres[3]", required = false) MultipartFile[] cartaInteres3
+    ) {
+        try {
+            // --- USER DEL JWT ---
+            String token = authHeader.replace("Bearer ", "");
+            Claims claims = JwtUtil.validateToken(token);
+            String userId = claims.getSubject();
+
+            // Buscar usuario real desde tu service
+            UsuarioResponseDto usuarioDto = usuarioService.buscarUsuarioPorId(userId);
+            // Conversión manual, o implementá un método .toModel() si tienes en UsuarioResponseDto
+            Usuario usuario = new Usuario();
+            usuario.setId(usuarioDto.getId());
+            usuario.setUser(usuarioDto.getUser());
+            usuario.setNombre(usuarioDto.getNombre());
+
+            publicacionDto.setPublicador(usuario);
+
+            // --- Imagenes carta principal ---
+            List<String> urlsPrincipal = new ArrayList<>();
+            if (publicacionImagenes != null) {
+                for (MultipartFile img : publicacionImagenes) {
+                    urlsPrincipal.add(s3Service.uploadFile(img));
+                }
+            }
+            if (publicacionDto.getCartaOfrecida() != null) {
+                publicacionDto.getCartaOfrecida().setImagenes(urlsPrincipal);
+            }
+
+            // --- Imagenes de cartas de interés (hasta 4) ---
+            List<CartaDto> cartasInteres = publicacionDto.getCartasInteres();
+            if (cartasInteres != null) {
+                if (cartasInteres.size() > 0 && cartaInteres0 != null) {
+                    List<String> urls = new ArrayList<>();
+                    for (MultipartFile img : cartaInteres0) urls.add(s3Service.uploadFile(img));
+                    cartasInteres.get(0).setImagenes(urls);
+                }
+                if (cartasInteres.size() > 1 && cartaInteres1 != null) {
+                    List<String> urls = new ArrayList<>();
+                    for (MultipartFile img : cartaInteres1) urls.add(s3Service.uploadFile(img));
+                    cartasInteres.get(1).setImagenes(urls);
+                }
+                if (cartasInteres.size() > 2 && cartaInteres2 != null) {
+                    List<String> urls = new ArrayList<>();
+                    for (MultipartFile img : cartaInteres2) urls.add(s3Service.uploadFile(img));
+                    cartasInteres.get(2).setImagenes(urls);
+                }
+                if (cartasInteres.size() > 3 && cartaInteres3 != null) {
+                    List<String> urls = new ArrayList<>();
+                    for (MultipartFile img : cartaInteres3) urls.add(s3Service.uploadFile(img));
+                    cartasInteres.get(3).setImagenes(urls);
+                }
+            }
+
+            // --- Guardar publicación en BD ---
+            PublicacionDto guardada = publicacionService.guardarPublicacion(publicacionDto);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(guardada);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error subiendo publicación o imágenes: " + e.getMessage());
+        }
     }
 
 }
