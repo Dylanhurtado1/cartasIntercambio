@@ -44,13 +44,38 @@ La estructura del proyecto es la siguiente:
    ```bash
    git clone https://github.com/Dylanhurtado1/cartasIntercambio.git
 
+## 🚀 Levantar la app con Docker y Variables de Entorno (modo seguro)
+
+> **IMPORTANTE:**  
+> _Nunca subas el archivo `.env` con tus secrets a GitHub.  
+> Usá el template `.env.example`
+
+### **Paso a paso:**
+
+**1. Configurá los secretos de AWS para imágenes**
+
+Copiá el `.env.example` como `.env` y editá los valores según tu S3 real:
+
+```bash
+cp .env.example .env
+``` 
+
+o creá uno nuevo, así:
+
+```
+AWS_S3_BUCKET=nombre-de-tu-bucket-s3
+AWS_ACCESS_KEY_ID=CAMBIA-ESTO
+AWS_SECRET_ACCESS_KEY=CAMBIA-ESTO
+AWS_S3_REGION=us-east-1
+```
+
 2. Navegá al directorio del proyecto:
 
     ```bash cd Backend```
 
 3. Compilá el proyecto:
 
-    ```mvn clean package```
+    ```mvn clean package -DskipTests```
 
 4. Volvé a la raíz del proyecto
 
