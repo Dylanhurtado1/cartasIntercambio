@@ -7,8 +7,10 @@
 
     <link rel="stylesheet" href="/public/css/menu.css" />
     <link rel="stylesheet" href="/public/css/auth-user.css" />
+    <link rel="stylesheet" href="/public/css/slide.css" />
     <link rel="stylesheet" href="/public/css/flotante.css" />
     <link rel="stylesheet" href="/public/css/ofertas.css" />
+    
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   </head>
   <body>
@@ -31,30 +33,39 @@
         <h2>Cantidad de ofertas totales: {{ofertas.length}}</h2>
         <div class="oferta" v-for="(oferta,index) in ofertas" :key="oferta.id">
           <h3>Oferta #{{ index + 1 }} - {{ formatearFecha(oferta.fecha) }}</h3>
-          <p><strong>Ofertante:</strong> {{ oferta.ofertante.user }}</p>
           <p>
             <strong>Monto:</strong> {{ oferta.monto ? '$' + oferta.monto : 'Sin monto' }}
           </p>
           <p>
-            <strong>Estado:</strong>
-            <span
-              :class="oferta.estado !== 'RECHAZADO' ? 'pendiente' : 'finalizado'"
-            >
-              {{ oferta.estado }}</span
-            >
+            <strong>Estado: </strong>
+            <span :class="oferta.estado !== 'RECHAZADO' ? 'pendiente' : 'finalizado'">
+              {{ oferta.estado }}
+            </span>
           </p>
 
+          <p><strong>Cartas en disposición del ofertante: </strong></p>
           <div class="cartas">
-            <div class="carta" v-for="carta in oferta.cartasOfrecidas">
-              <h3>Carta: {{ carta.nombre }}</h3>
-              <p><strong>Juego:</strong> {{ carta.juego }}</p>
-              <p><strong>Estado:</strong> {{ carta.estado }}</p>
-              <div class="imagenes">
-                <img
-                  v-for="img in carta.imagenes"
-                  :src="img"
-                  alt="Imagen carta"
-                />
+            <div class="carta" v-for="cartaInteresPublicacion in publicacionDeOrigen.cartasInteres">
+              <!-- Por ahora lo dejo así, después se puede agregar/sacar cosas o directo cambiarlo  -->
+              <div class="overlay rechazado" v-show="ofertaContieneCarta(oferta, cartaInteresPublicacion)">
+                <p>No disponible</p>
+              </div>
+
+
+              <h3>Carta: {{ cartaInteresPublicacion.nombre }}</h3>
+              <p><strong>Juego:</strong> {{ cartaInteresPublicacion.juego }}</p>
+              <p><strong>Estado:</strong> {{ cartaInteresPublicacion.estado }}</p>
+              <!-- ACÁ ESTÁ LA CONFIRMACIÓN DE QUE SI UNA CARTA ESTÁ EN LA OFERTA -->
+              
+              <div class="slider-container" data-slider>
+                <div class="slider">
+                  <div class="slide" v-for="(img, index) in cartaInteresPublicacion.imagenes" :key="index">
+                    <img :src="img" :alt="`Imagen ${index + 1}`" />
+                  </div>
+                </div>
+
+                <button v-show="cartaInteresPublicacion.imagenes.length > 1" class="nav prev">‹</button>
+                <button v-show="cartaInteresPublicacion.imagenes.length > 1"class="nav next">›</button>
               </div>
             </div>
           </div>

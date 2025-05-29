@@ -1,13 +1,16 @@
-//const { createApp, ref, onMounted } = Vue;
+const { createApp, onMounted, nextTick, watch } = Vue;
 import {sesionAbierta, obtenerDatoCrudo, obtenerDatoObjeto} from './datos.js'
+import {ejecutarSliderVanilla} from './sliderVanilla.js'
 
-Vue.createApp({
+
+createApp({
   setup() {
     /*if(!sesionAbierta())
       window.location.href = "/login"*/
     const explicacion = Vue.ref("")
     const usuarioEsElPublicador = Vue.ref(true) //asumo muy potentemente que si
     const ofertas = Vue.ref([]);
+    const publicacionDeOrigen = Vue.ref(null)
     const backendURL = "http://localhost:8080"; 
 
     function obtenerIdDesdeURL() {
@@ -18,21 +21,23 @@ Vue.createApp({
 
     async function validarPublicador(){
       if(!sesionAbierta()) //si la sesión no está abierta, directo le dice al usuario que se logue/registre para entrar
-        return
+        window.location.href = "/login"
 
       try {
         const res = await fetch(`${backendURL}/publicaciones/${obtenerIdDesdeURL()}`);
         if (!res.ok) throw new Error("Error en la carga de publicacion");
         const data = await res.json();
         const id = data.publicador.id
-        console.log(id == obtenerDatoObjeto("usuarioActual").id)
         usuarioEsElPublicador.value = (id == obtenerDatoObjeto("usuarioActual").id)
-        
-        if(usuarioEsElPublicador.value)
-          cargarOfertas()
-        else
+        console.log(data.cartasInteres)
+        if(!usuarioEsElPublicador.value){
           explicacion.value = "Usted no es el dueño de la publicación, vuelva al inicio"
-          
+          return
+        }
+
+        publicacionDeOrigen.value = data;
+        
+        cargarOfertas()
           //window.location.href = "/"
         
 
@@ -49,7 +54,10 @@ Vue.createApp({
       try {
         const res = await fetch(`${backendURL}/publicaciones/${publicacionId}/ofertas`);
         if (!res.ok) throw new Error("Error en la carga de ofertas");
-        ofertas.value = await res.json();        
+        const data = await res.json();
+        ofertas.value = data;
+        console.log(data)
+   
         if(ofertas.value.length === 0)  
           explicacion.value = "No hay ofertas aún para esta publicación."
       } catch (e) {
@@ -117,14 +125,32 @@ Vue.createApp({
     }
 
     function formatearFecha(fecha) {
-      return new Date(fecha).toLocaleString("es-AR");
+      return new Date(fecha).toLocaleString("es-ES")
     }
 
-    Vue.onMounted(() => {
-      validarPublicador()
+    function ofertaContieneCarta(oferta, carta) {
+      const cartasOfrecidasDeOferta = oferta.cartasOfrecidas;
+      return cartasOfrecidasDeOferta.some(cartaOferta => JSON.stringify(cartaOferta) !== JSON.stringify(carta))
+    }
+
+    onMounted(async () => {
+      await validarPublicador()
+      await nextTick();
+      //ejecutarSliderVanilla(); no me funciona ;(
+
     });
 
+    watch(ofertas, async (nuevasOfertas) => {
+      if (nuevasOfertas.length) {
+        await nextTick();
+        ejecutarSliderVanilla();
+      }
+    });
+
+    
     return {
+      publicacionDeOrigen,
+      ofertaContieneCarta,
       ofertas,
       aceptarOferta,
       rechazarOferta,

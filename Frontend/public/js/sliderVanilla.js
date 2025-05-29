@@ -4,7 +4,9 @@
 // Debería haber usado Vue CLI desde el principio lpm
 
 export function ejecutarSliderVanilla() {
-    document.querySelectorAll("[data-slider]").forEach((container) => {
+    const slider = document.querySelectorAll("[data-slider]");
+    console.log("Cantidad de sliders detectados: " + slider.length)
+    slider.forEach((container) => {
         
         const slider = container.querySelector(".slider");
         const slides = slider.querySelectorAll(".slide");
