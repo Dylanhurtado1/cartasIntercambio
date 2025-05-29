@@ -82,7 +82,8 @@
   padding: 1em;
   border: 1px solid #ccc;
   border-radius: 8px;
-  width: 250px;
+  width: 42%;
+  margin: 0 auto;
 }
 
 .cartas-interes .imagenes {

@@ -69,7 +69,7 @@ pre#resultado {
 @media (max-width: 600px) {
     .formulario-publicacion {
         padding: 1em; 
-        margin-top: 1em; 
+        margin: 1em; 
         max-width: 100%; 
         box-sizing: border-box;
     }

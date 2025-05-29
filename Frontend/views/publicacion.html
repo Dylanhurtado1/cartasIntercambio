@@ -53,23 +53,23 @@
         <p><strong>Descripción:</strong></p>
         <p> {{ publicacion.descripcion }}</p>
         <hr>
-    
+        
+        <h3>Cartas de interés</h3>
         <div v-if="publicacion.cartasInteres && publicacion.cartasInteres.length" class="cartas-interes">
-          <h3>Cartas de interés</h3>
             <div class="carta" v-for="(carta, i) in publicacion.cartasInteres" :key="i">
               <p>Nombre de la carta: <strong>{{ carta.nombre }}</strong> </p>
               <p>Juego: {{ carta.juego }}</p>
               <p>Estado: {{ carta.estado }}</p>
               
-              <div class="slider-container" data-slider>
-                <div class="slider">
-                  <div class="slide" v-for="(img, index) in carta.imagenes" :key="index">
-                    <img :src="img" :alt="`Imagen ${index + 1}`" />
+                <div class="slider-container" data-slider>
+                  <div class="slider">
+                    <div class="slide" v-for="(img, index) in carta.imagenes" :key="index">
+                      <img :src="img" :alt="`Imagen ${index + 1}`" />
+                    </div>
                   </div>
+                  <button v-show="carta.imagenes.length > 1" class="nav prev">‹</button>
+                  <button v-show="carta.imagenes.length > 1"class="nav next">›</button>
                 </div>
-                <button v-show="carta.imagenes.length > 1" class="nav prev">‹</button>
-                <button v-show="carta.imagenes.length > 1"class="nav next">›</button>
-              </div>
             </div>
         </div>
       </main>
