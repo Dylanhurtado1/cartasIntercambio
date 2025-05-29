@@ -19,32 +19,32 @@
 
 .info-principal {
   flex: 1;
-  min-width: 250px;
+  display: block;
+  align-content: center;
+  overflow-wrap: break-word; /* Texto para que nombres muy largos no rompan el poderoso flex*/
+  word-break: break-word;
 }
 
 .info-principal h2, 
 .info-principal h3, 
 .info-principal p{
   margin-top: 0;
-  margin-bottom: 1ex;
+  margin-bottom: 1em;
   text-align: left;
 }
 
-.info-secundaria {
-  text-align: left;
-  min-width: 180px;
+
+.detalle-publicacion p{
+  text-align: justify;
+  white-space: pre-line;
 }
 
-.info-secundaria p {
-  margin-top: .5em;
-  margin-bottom: .5em;
-}
-
-.info-secundaria a {
+.info-principal a {
+  width: 80%;
   text-decoration: none;
-  display: inline-block;
+  display: grid;
   text-align: center;
-  width: 70%;
+  align-items: center;
 }
 
 .imagenes {
@@ -99,6 +99,11 @@
   margin-bottom: 0.5em;
 }
 
+#textoImagenes{
+  display: none;
+  text-align: center;
+}
+
 /* OFERTAS */
 
 .formulario-oferta {
@@ -147,13 +152,14 @@ form h3{
   border: 1px solid #ddd;
 }
 
+/*
 .carta-ofrecida button {
   color: white;
   background-color: #e53935;
   margin-top: 1em;
   padding: 0.5em;
 }
-
+*/
 .btn-principal,
 .btn-secundario {
   width: 100%;
@@ -173,11 +179,6 @@ form h3{
   background-color: #eee;
   color: #333;
 }
-
-/*<div class="checkbox-wrapper-47">
-  <input type="checkbox" name="cb" id="cb-47" />
-  <label for="cb-47">Check this</label>
-</div>*/
 
 #cartasSeleccionadas {
   display: flex;
@@ -249,18 +250,34 @@ form h3{
 
 /* FIN DE OFERTAS */
 
-@media (max-width: 850px) {
-  .info-secundaria {
-    text-align: left;
+@media (max-width: 810px) {  
+  .info-principal a {
+    /*text-align: center;*/
+    width: 50%;
+    margin: 0 auto;
+    margin-top: .5em;
+    padding: 0.6em 1.2em;
+    
   }
 
-  
-  .info-secundaria a {
-    text-align: center;
-    width: 25%;
+  #textoImagenes{
+    display: block;
   }
+
+  .info-principal h2, 
+  .info-principal h3, 
+  .info-principal p{
+    margin-top: 0;
+    margin-bottom: 1ex;
+    text-align: center;
+  }
+
+  .info-principal h2{
+    font-size: 30px;
+  }
+
   .carta-ofrecida {
-    flex-direction: column;
+    display: unset;
   }
 
   .cartas-interes .carta {

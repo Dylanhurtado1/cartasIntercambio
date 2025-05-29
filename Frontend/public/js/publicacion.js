@@ -1,5 +1,7 @@
-const { onMounted } = Vue;
+const { onMounted, nextTick, watch} = Vue;
 import {obtenerDatoObjeto, obtenerDatoCrudo, sesionAbierta} from './datos.js'
+import {ejecutarSliderVanilla} from './sliderVanilla.js'
+
 
 Vue.createApp({
   setup() {
@@ -100,11 +102,12 @@ Vue.createApp({
       } 
       else
         alert("Hay campos inválidos")
-
     };    
 
-    onMounted(() => {
-      cargarPublicacion();
+    onMounted(async () => {
+        await cargarPublicacion(); // los hacks malvados que hago para no refactorizar todo las vistas que tienen imágenes JAJAJA
+        await nextTick();
+        ejecutarSliderVanilla();
     });
 
     return {
@@ -121,3 +124,7 @@ Vue.createApp({
     };
   }
 }).mount("#app");
+
+window.addEventListener('DOMContentLoaded', () => {
+  ejecutarSliderVanilla();
+});
