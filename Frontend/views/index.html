@@ -39,13 +39,8 @@
       <img
         v-if="carta.cartaOfrecida.imagenes && carta.cartaOfrecida.imagenes.length"
         :src="carta.cartaOfrecida.imagenes[0]"
+        @error="manejarErrorImagen"
         :alt="`Carta de ${carta.cartaOfrecida.nombre}`"
-        style="max-width:120px;max-height:120px;"
-      />
-      <img
-        v-else
-        src="/img/placeholder-carta.jpg"
-        alt="(Sin imagen)"
         style="max-width:120px;max-height:120px;"
       />
         <h2>{{ carta.cartaOfrecida.nombre }}</h2>

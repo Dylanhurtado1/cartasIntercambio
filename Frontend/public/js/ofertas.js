@@ -1,5 +1,5 @@
 const { createApp, onMounted, nextTick, watch } = Vue;
-import {sesionAbierta, obtenerDatoCrudo, obtenerDatoObjeto} from './datos.js'
+import {sesionAbierta, obtenerDatoCrudo, obtenerDatoObjeto, manejarErrorImagen} from './datos.js'
 import {ejecutarSliderVanilla} from './sliderVanilla.js'
 
 
@@ -156,7 +156,8 @@ createApp({
       rechazarOferta,
       formatearFecha,
       usuarioEsElPublicador, 
-      explicacion
+      explicacion,
+      manejarErrorImagen
     };
   }
 }).mount("#app");

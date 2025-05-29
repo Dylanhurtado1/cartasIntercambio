@@ -2,7 +2,7 @@
 .buscador {
     background-color: #fff;
     padding: 1em 2em;
-    margin: 1em;
+    margin: 1em auto;
     border-radius: 8px;
     max-width: 800px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
@@ -68,12 +68,14 @@
     width: 100%;
     height: auto;
     border-radius: 4px;
-    margin-bottom: 0.5em;
-    object-fit: cover;
+    object-fit: contain;
 }
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 600px) {
+    .buscador {
+        margin: 1em;
+    }
     .buscador form {
         flex-direction: column;
         align-items: stretch;

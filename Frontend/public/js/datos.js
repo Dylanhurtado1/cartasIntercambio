@@ -1,5 +1,6 @@
 // Bellísimo, lo sé
 
+
 function guardarDatoCrudo(key, value){localStorage.setItem(key, value);}
 
 function guardarDatoObjeto(key, value){localStorage.setItem(key, JSON.stringify(value))};
@@ -14,4 +15,17 @@ function sesionAbierta(){
     return (obtenerDatoCrudo("jwt") && obtenerDatoCrudo("usuarioActual")) !== null
 }
 
-export {guardarDatoCrudo, guardarDatoObjeto, obtenerDatoCrudo, obtenerDatoObjeto, vaciarDatos, sesionAbierta};
+// separación mental
+
+function manejarErrorImagen(event) {
+    const img = event.target;
+
+    if (!img.dataset.fallback) {
+    img.src = '/public/img/noCard.png';
+    img.dataset.fallback = 'true';
+    }
+}
+
+
+
+export {guardarDatoCrudo, guardarDatoObjeto, obtenerDatoCrudo, obtenerDatoObjeto, vaciarDatos, sesionAbierta, manejarErrorImagen};

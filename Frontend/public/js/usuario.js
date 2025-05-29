@@ -1,4 +1,4 @@
-import {obtenerDatoCrudo, obtenerDatoObjeto} from './datos.js'
+import {obtenerDatoCrudo, obtenerDatoObjeto, manejarErrorImagen} from './datos.js'
 const { onMounted } = Vue;
 
 Vue.createApp({
@@ -44,6 +44,6 @@ Vue.createApp({
         fetchDatos();
     });
 
-    return { usuario, publicaciones, ofertas };
+    return { usuario, publicaciones, ofertas, manejarErrorImagen };
   }
 }).mount("#app");

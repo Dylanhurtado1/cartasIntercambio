@@ -32,8 +32,17 @@ Vue.createApp({
         });
     }
 
+    function manejarErrorImagen(event) {
+      const img = event.target;
+
+      if (!img.dataset.fallback) {
+        img.src = '/public/img/noCard.png';
+        img.dataset.fallback = 'true';
+      }
+    }
+
     getPublicaciones();
 
-    return { listaDePublicaciones, estadoDeLaCarga, datosBuscador};
+    return { listaDePublicaciones, estadoDeLaCarga, datosBuscador, manejarErrorImagen};
   }
 }).mount("#app");

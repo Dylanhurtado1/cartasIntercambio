@@ -1,5 +1,5 @@
 const { onMounted, nextTick, watch} = Vue;
-import {obtenerDatoObjeto, obtenerDatoCrudo, sesionAbierta} from './datos.js'
+import {obtenerDatoObjeto, obtenerDatoCrudo, sesionAbierta, manejarErrorImagen} from './datos.js'
 import {ejecutarSliderVanilla} from './sliderVanilla.js'
 
 
@@ -120,7 +120,8 @@ Vue.createApp({
       formSubmitted,
       isValid,
       submitForm,
-      nuevaOferta
+      nuevaOferta,
+      manejarErrorImagen
     };
   }
 }).mount("#app");

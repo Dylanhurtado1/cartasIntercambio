@@ -60,7 +60,7 @@
               <div class="slider-container" data-slider>
                 <div class="slider">
                   <div class="slide" v-for="(img, index) in cartaInteresPublicacion.imagenes" :key="index">
-                    <img :src="img" :alt="`Imagen ${index + 1}`" />
+                    <img :src="img" :alt="`Imagen ${index + 1}`" @error="manejarErrorImagen" />
                   </div>
                 </div>
 

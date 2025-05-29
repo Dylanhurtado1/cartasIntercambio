@@ -38,7 +38,7 @@
                   <h3 id="textoImagenes">Imágenes</h3>
                   <div class="slider"> <!---->
                     <div class="slide" v-for="(img, index) in publicacion.cartaOfrecida.imagenes" :key="index">
-                      <img :src="img" :alt="`Imagen ${index + 1}`" />
+                      <img :src="img" :alt="`Imagen ${index + 1}`" @error="manejarErrorImagen" />
                     </div>
                   </div>
 
@@ -64,7 +64,7 @@
                 <div class="slider-container" data-slider>
                   <div class="slider">
                     <div class="slide" v-for="(img, index) in carta.imagenes" :key="index">
-                      <img :src="img" :alt="`Imagen ${index + 1}`" />
+                      <img :src="img" :alt="`Imagen ${index + 1}`" @error="manejarErrorImagen"/>
                     </div>
                   </div>
                   <button v-show="carta.imagenes.length > 1" class="nav prev">‹</button>
