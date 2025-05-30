@@ -10,7 +10,7 @@ Vue.createApp({
 
     const jwt = obtenerDatoCrudo("jwt");
     const id = obtenerDatoObjeto("usuarioActual")?.id
-    const backendURL = "http://localhost:8080"; 
+    const backendURL = "http://44.202.67.120:8080";
 
     console.log("Mi usuario actual: " + usuario.value)
 

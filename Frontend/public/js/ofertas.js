@@ -8,7 +8,7 @@ Vue.createApp({
     const explicacion = Vue.ref("")
     const usuarioEsElPublicador = Vue.ref(true) //asumo muy potentemente que si
     const ofertas = Vue.ref([]);
-    const backendURL = "http://localhost:8080"; 
+    const backendURL = "http://44.202.67.120:8080";
 
     function obtenerIdDesdeURL() {
       let url = window.location.href;

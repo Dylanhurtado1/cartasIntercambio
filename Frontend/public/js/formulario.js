@@ -1,7 +1,7 @@
 const { createApp } = Vue;
 import {obtenerDatoCrudo, sesionAbierta, obtenerDatoObjeto} from './datos.js'
 
-const backendURL = "http://localhost:8080"; //ahora como modo de prueba, se dejará el link acá 
+const backendURL = "http://44.202.67.120:8080"; //ahora como modo de prueba, se dejará el link acá
 
 const usuarioActual = obtenerDatoObjeto("usuarioActual");
 

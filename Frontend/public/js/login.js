@@ -6,7 +6,7 @@ Vue.createApp({
     const user = Vue.ref("")
     const password = Vue.ref("")
     const error = Vue.ref("")
-    const backendURL = "http://localhost:8080"; 
+    const backendURL = "http://44.202.67.120:8080";
 
 
     function handleLogin() {

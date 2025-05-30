@@ -6,7 +6,7 @@ Vue.createApp({
     const publicacion = Vue.ref(null)
     const formVisible = Vue.ref(false)
     const esUsuarioOriginal = Vue.ref(false)
-    const backendURL = "http://localhost:8080"
+    const backendURL = "http://44.202.67.120:8080"
 
 
     function formatearFecha(fechaISO) {
