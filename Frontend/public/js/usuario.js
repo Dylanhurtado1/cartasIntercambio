@@ -1,4 +1,4 @@
-import {obtenerDatoCrudo, obtenerDatoObjeto, manejarErrorImagen} from './datos.js'
+import {obtenerDatoCrudo, obtenerDatoObjeto, manejarErrorImagen, obtenerURL} from './utils.js'
 const { onMounted } = Vue;
 
 Vue.createApp({
@@ -10,7 +10,7 @@ Vue.createApp({
 
     const jwt = obtenerDatoCrudo("jwt");
     const id = obtenerDatoObjeto("usuarioActual")?.id
-    const backendURL = "http://localhost:8080"; 
+    const backendURL = obtenerURL(); 
 
     console.log("Mi usuario actual: " + usuario.value)
 

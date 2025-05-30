@@ -1,6 +1,6 @@
 const { createApp, onMounted, nextTick, watch } = Vue;
-import {sesionAbierta, obtenerDatoCrudo, obtenerDatoObjeto, manejarErrorImagen} from './datos.js'
-import {ejecutarSliderVanilla} from './sliderVanilla.js'
+import {sesionAbierta, obtenerDatoCrudo, obtenerDatoObjeto, manejarErrorImagen, obtenerURL, ejecutarSliderVanilla} from './utils.js'
+//import {ejecutarSliderVanilla} from './sliderVanilla.js'
 
 
 createApp({
@@ -11,7 +11,7 @@ createApp({
     const usuarioEsElPublicador = Vue.ref(true) //asumo muy potentemente que si
     const ofertas = Vue.ref([]);
     const publicacionDeOrigen = Vue.ref(null)
-    const backendURL = "http://localhost:8080"; 
+    const backendURL = obtenerURL(); 
 
     function obtenerIdDesdeURL() {
       let url = window.location.href;
@@ -29,7 +29,6 @@ createApp({
         const data = await res.json();
         const id = data.publicador.id
         usuarioEsElPublicador.value = (id == obtenerDatoObjeto("usuarioActual").id)
-        console.log(data.cartasInteres)
         if(!usuarioEsElPublicador.value){
           explicacion.value = "Usted no es el dueño de la publicación, vuelva al inicio"
           return
@@ -56,7 +55,6 @@ createApp({
         if (!res.ok) throw new Error("Error en la carga de ofertas");
         const data = await res.json();
         ofertas.value = data;
-        console.log(data)
    
         if(ofertas.value.length === 0)  
           explicacion.value = "No hay ofertas aún para esta publicación."

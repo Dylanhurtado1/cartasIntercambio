@@ -1,4 +1,4 @@
-import {obtenerDatoCrudo, vaciarDatos} from './datos.js'
+import {obtenerDatoCrudo, vaciarDatos} from './utils.js'
 
 Vue.createApp({
   data() {

@@ -1,6 +1,6 @@
 const { onMounted, nextTick, watch} = Vue;
-import {obtenerDatoObjeto, obtenerDatoCrudo, sesionAbierta, manejarErrorImagen} from './datos.js'
-import {ejecutarSliderVanilla} from './sliderVanilla.js'
+import {obtenerDatoObjeto, obtenerDatoCrudo, sesionAbierta, manejarErrorImagen, obtenerURL, ejecutarSliderVanilla} from './utils.js'
+//import {ejecutarSliderVanilla} from './sliderVanilla.js'
 
 
 Vue.createApp({
@@ -8,7 +8,7 @@ Vue.createApp({
     const publicacion = Vue.ref(null)
     const formVisible = Vue.ref(false)
     const esUsuarioOriginal = Vue.ref(false)
-    const backendURL = "http://localhost:8080"
+    const backendURL = obtenerURL()
 
 
     function formatearFecha(fechaISO) {

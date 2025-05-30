@@ -1,4 +1,4 @@
-import {obtenerDatoObjeto, vaciarDatos} from './datos.js'
+import {obtenerDatoObjeto, vaciarDatos} from './utils.js'
 const { createApp, ref, onMounted } = Vue;
 
 createApp({

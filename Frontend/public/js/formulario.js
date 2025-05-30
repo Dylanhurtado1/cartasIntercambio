@@ -1,7 +1,7 @@
 const { createApp } = Vue;
-import {obtenerDatoCrudo, sesionAbierta, obtenerDatoObjeto} from './datos.js'
+import {obtenerDatoCrudo, sesionAbierta, obtenerDatoObjeto, obtenerURL} from './utils.js'
 
-const backendURL = "http://localhost:8080"; //ahora como modo de prueba, se dejará el link acá 
+const backendURL = obtenerURL() 
 
 const usuarioActual = obtenerDatoObjeto("usuarioActual");
 
