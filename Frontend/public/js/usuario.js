@@ -1,4 +1,4 @@
-import {obtenerDatoCrudo, obtenerDatoObjeto} from './datos.js'
+import {obtenerDatoCrudo, obtenerDatoObjeto, manejarErrorImagen, obtenerURL} from './utils.js'
 const { onMounted } = Vue;
 
 Vue.createApp({
@@ -10,7 +10,7 @@ Vue.createApp({
 
     const jwt = obtenerDatoCrudo("jwt");
     const id = obtenerDatoObjeto("usuarioActual")?.id
-    const backendURL = "http://44.202.67.120:8080";
+    const backendURL = obtenerURL();
 
     console.log("Mi usuario actual: " + usuario.value)
 
@@ -44,6 +44,6 @@ Vue.createApp({
         fetchDatos();
     });
 
-    return { usuario, publicaciones, ofertas };
+    return { usuario, publicaciones, ofertas, manejarErrorImagen };
   }
 }).mount("#app");

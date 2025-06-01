@@ -1,4 +1,6 @@
-const backendURL = "http://44.202.67.120:8080"
+import {obtenerURL} from './utils.js'
+
+const backendURL = obtenerURL()
 
 Vue.createApp({
   setup() {

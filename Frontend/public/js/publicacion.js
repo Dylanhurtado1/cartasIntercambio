@@ -1,12 +1,14 @@
-const { onMounted } = Vue;
-import {obtenerDatoObjeto, obtenerDatoCrudo, sesionAbierta} from './datos.js'
+const { onMounted, nextTick, watch} = Vue;
+import {obtenerDatoObjeto, obtenerDatoCrudo, sesionAbierta, manejarErrorImagen, obtenerURL, ejecutarSliderVanilla} from './utils.js'
+//import {ejecutarSliderVanilla} from './sliderVanilla.js'
+
 
 Vue.createApp({
   setup() {
     const publicacion = Vue.ref(null)
     const formVisible = Vue.ref(false)
     const esUsuarioOriginal = Vue.ref(false)
-    const backendURL = "http://44.202.67.120:8080"
+    const backendURL = obtenerURL()
 
 
     function formatearFecha(fechaISO) {
@@ -100,11 +102,12 @@ Vue.createApp({
       } 
       else
         alert("Hay campos inválidos")
-
     };    
 
-    onMounted(() => {
-      cargarPublicacion();
+    onMounted(async () => {
+        await cargarPublicacion(); // los hacks malvados que hago para no refactorizar todo las vistas que tienen imágenes JAJAJA
+        await nextTick();
+        ejecutarSliderVanilla();
     });
 
     return {
@@ -117,7 +120,12 @@ Vue.createApp({
       formSubmitted,
       isValid,
       submitForm,
-      nuevaOferta
+      nuevaOferta,
+      manejarErrorImagen
     };
   }
 }).mount("#app");
+
+window.addEventListener('DOMContentLoaded', () => {
+  ejecutarSliderVanilla();
+});

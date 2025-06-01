@@ -8,7 +8,7 @@
 }
 
 .contenedor {
-  padding: 2em;
+  margin: 1em;
 }
 
 .lista {
@@ -49,9 +49,10 @@
 }
 
 .carta img {
+    max-width: 120px;
+    max-height: 120px;
     width: 100%;
     height: auto;
     border-radius: 4px;
-    margin-bottom: 0.5em;
-    object-fit: cover;
+    object-fit: contain;
 }

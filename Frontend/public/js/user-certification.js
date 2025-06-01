@@ -1,5 +1,5 @@
 const { createApp, ref, onMounted } = Vue;
-import {sesionAbierta} from './datos.js'
+import {sesionAbierta} from './utils.js'
 
 createApp({
   setup() {

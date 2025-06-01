@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/public/css/menu.css">
     <link rel="stylesheet" href="/public/css/flotante.css" />
     <link rel="stylesheet" href="/public/css/publicacion.css">
+    <link rel="stylesheet" href="/public/css/slide.css">
   </head>
   <body>
     <header id="menu-app"></header>
@@ -17,43 +18,58 @@
       <!-- VISTA DE LA PUBLICACIÓN -->
     
       <main v-if="publicacion" class="detalle-publicacion" v-cloak>
-        <div class="carta-ofrecida">
-            <div class="info-principal">
-            <h2>{{ publicacion.cartaOfrecida.nombre }}</h2>
-            <h3><strong>Juego:</strong> {{ publicacion.cartaOfrecida.juego }}</h3>
-            <p><strong>Descripción:</strong> {{ publicacion.descripcion }}</p>
-            <div class="imagenes">
-            <img v-for="(img, idx) in publicacion.cartaOfrecida.imagenes"
-            :key="idx"
-            :src="img"
-            alt="Imagen carta ofrecida"
-            style="max-width:300px; max-height:300px; margin-bottom:8px;" />
-            </div>
+          <div v-show="publicacion" class="carta-ofrecida">
+              <div class="info-principal">
+              <h2>{{ publicacion.cartaOfrecida.nombre }}</h2>
+              <h3><strong>Juego:</strong> {{ publicacion.cartaOfrecida.juego }}</h3>
+              
+              <p><strong>Estado:</strong> {{ publicacion.cartaOfrecida.estado }}</p>
+              <p><strong>Fecha:</strong> {{ formatearFecha(publicacion.fecha) }}</p>
+              <p v-show="publicacion.precio"><strong>Precio:</strong> ${{ publicacion.precio }}</p>
+              <p><strong>Estado:</strong> <span :class="publicacion.estado == 'ACTIVA' ? 'activo' : 'finalizado'">{{ publicacion.estado }}</span></p>
+              <a v-show="esUsuarioOriginal" class="btn-principal" :href="'/publicacion/' + publicacion.id + '/ofertas'" >Ver ofertas recibidas</a>
+
+
+
+              </div>            
+              <!-- Poderoso slider bien vanilla agregado (mátenme) -->
+              <div style="flex: 3;">
+                <div class="slider-container" data-slider>
+                  <h3 id="textoImagenes">Imágenes</h3>
+                  <div class="slider"> <!---->
+                    <div class="slide" v-for="(img, index) in publicacion.cartaOfrecida.imagenes" :key="index">
+                      <img :src="img" :alt="`Imagen ${index + 1}`" @error="manejarErrorImagen" />
+                    </div>
+                  </div>
+
+                  
+                  <button v-show="publicacion.cartaOfrecida.imagenes.length > 1" class="nav prev">‹</button>
+                  <button v-show="publicacion.cartaOfrecida.imagenes.length > 1"class="nav next">›</button>
+                </div>
+              </div>
+
           </div>
-          <div class="info-secundaria">
-            <p><strong>Estado:</strong> {{ publicacion.cartaOfrecida.estado }}</p>
-            <p><strong>Fecha:</strong> {{ formatearFecha(publicacion.fecha) }}</p>
-            <p v-show="publicacion.precio"><strong>Precio:</strong> ${{ publicacion.precio }}</p>
-            <p><strong>Estado:</strong> <span :class="publicacion.estado == 'ACTIVA' ? 'activo' : 'finalizado'">{{ publicacion.estado }}</span></p>
-            <a v-if="esUsuarioOriginal" class="btn-principal" :href="'/publicacion/' + publicacion.id + '/ofertas'" >Ver ofertas</a>
-          </div>
-        </div>
-      
+        
+        <p><strong>Descripción:</strong></p>
+        <p> {{ publicacion.descripcion }}</p>
         <hr>
-    
+        
+        <h3>Cartas de interés</h3>
         <div v-if="publicacion.cartasInteres && publicacion.cartasInteres.length" class="cartas-interes">
-          <h3>Cartas de interés</h3>
             <div class="carta" v-for="(carta, i) in publicacion.cartasInteres" :key="i">
               <p>Nombre de la carta: <strong>{{ carta.nombre }}</strong> </p>
               <p>Juego: {{ carta.juego }}</p>
               <p>Estado: {{ carta.estado }}</p>
-              <div class="imagenes">
-              <img v-for="(img, j) in carta.imagenes"
-              :key="j"
-              :src="img"
-              alt="Imagen carta interés"
-              style="max-width:120px; max-height:120px;" />
-              </div>
+              
+                <div class="slider-container" data-slider>
+                  <div class="slider">
+                    <div class="slide" v-for="(img, index) in carta.imagenes" :key="index">
+                      <img :src="img" :alt="`Imagen ${index + 1}`" @error="manejarErrorImagen"/>
+                    </div>
+                  </div>
+                  <button v-show="carta.imagenes.length > 1" class="nav prev">‹</button>
+                  <button v-show="carta.imagenes.length > 1"class="nav next">›</button>
+                </div>
             </div>
         </div>
       </main>
@@ -77,7 +93,7 @@
           />
         </div>
         
-        <div v-if="publicacion.cartasInteres.length">
+        <div v-show="publicacion.cartasInteres.length">
           <label for="nuevaOferta.cartasSeleccionadas"><strong>Carta ofrecida (de las cartas de interés)</strong></label>
           <div id="cartasSeleccionadas">
             <div>
@@ -91,7 +107,7 @@
             <div id="listaDeSeleccionadas">
               <label>Cartas seleccionadas: </label>
               <label v-for="(cartaSeleccionada, index) in nuevaOferta.cartasSeleccionadas"> 
-                {{publicacion.cartasInteres[index].nombre}}
+                {{publicacion.cartasInteres[cartaSeleccionada].nombre}}
               </label>
             </div>
           </div>

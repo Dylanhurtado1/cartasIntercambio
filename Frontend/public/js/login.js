@@ -1,4 +1,4 @@
-import {guardarDatoCrudo, guardarDatoObjeto} from './datos.js'
+import {guardarDatoCrudo, guardarDatoObjeto, obtenerURL} from './utils.js'
 const { onMounted } = Vue;
 
 Vue.createApp({
@@ -6,7 +6,7 @@ Vue.createApp({
     const user = Vue.ref("")
     const password = Vue.ref("")
     const error = Vue.ref("")
-    const backendURL = "http://44.202.67.120:8080";
+    const backendURL = obtenerURL();
 
 
     function handleLogin() {

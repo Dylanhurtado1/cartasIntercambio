@@ -27,17 +27,13 @@
           <section class="cartas">
             <a v-for="carta in publicaciones" class="carta" :href="`/publicacion/${carta.id}`">
               <img
-              v-if="carta.cartaOfrecida.imagenes && carta.cartaOfrecida.imagenes.length"
-              :src="carta.cartaOfrecida.imagenes[0]"
-              :alt="`Carta de ${carta.cartaOfrecida.nombre}`"
-              style="max-width:120px;max-height:120px;"
+                v-if="carta.cartaOfrecida.imagenes && carta.cartaOfrecida.imagenes.length"
+                :src="carta.cartaOfrecida.imagenes[0]"
+                :alt="`Carta de ${carta.cartaOfrecida.nombre}`"
+                
+                @error="manejarErrorImagen"
+                style="max-width:120px;max-height:120px;"
               />
-              <img
-               v-else
-               src="/img/placeholder-carta.jpg"
-               alt="(Sin imagen)"
-               style="max-width:120px;max-height:120px;"
-               />
               <h2>{{ carta.cartaOfrecida.nombre }}</h2>
               <p>{{ carta.cartaOfrecida.juego }}</p>
               <span>$ {{ carta.precio }}</span>

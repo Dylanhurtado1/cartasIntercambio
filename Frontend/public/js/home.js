@@ -1,6 +1,7 @@
-let { ref } = Vue;
+const { ref } = Vue
+import {obtenerURL} from './utils.js'
 
-const backendURL = "http://44.202.67.120:8080"
+const backendURL = obtenerURL()
 
 Vue.createApp({
   setup() {
@@ -32,8 +33,17 @@ Vue.createApp({
         });
     }
 
+    function manejarErrorImagen(event) {
+      const img = event.target;
+
+      if (!img.dataset.fallback) {
+        img.src = '/public/img/noCard.png';
+        img.dataset.fallback = 'true';
+      }
+    }
+
     getPublicaciones();
 
-    return { listaDePublicaciones, estadoDeLaCarga, datosBuscador};
+    return { listaDePublicaciones, estadoDeLaCarga, datosBuscador, manejarErrorImagen};
   }
 }).mount("#app");

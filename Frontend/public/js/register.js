@@ -1,3 +1,5 @@
+import {obtenerURL} from './utils.js'
+
 Vue.createApp({
   setup() {
     const user = Vue.ref("")
@@ -5,7 +7,7 @@ Vue.createApp({
     const email = Vue.ref("")
     const password = Vue.ref("")
     const error = Vue.ref("")
-    const backendURL = "http://44.202.67.120:8080";
+    const backendURL = obtenerURL();
 
 
     function handleRegister() {
