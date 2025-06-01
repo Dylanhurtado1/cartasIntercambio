@@ -19,15 +19,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -180,15 +186,51 @@ public class PublicacionController{
         return ResponseEntity.ok(ofertasRealizadas);
     }
 
+    public Map<String, List<MultipartFile>> extraerImagenesPorCarta(HttpServletRequest request) {
+        // Si, si mandás algo que no sea el formato cartaInteres[i], lo bocha básicamente
+        Map<String, List<MultipartFile>> imagenesPorCarta = new HashMap<>();
+
+        // Tengo entendido que el if valida si hay multiples archivos acá, si no saltea
+        if (request instanceof MultipartHttpServletRequest multipartRequest) {
+            MultiValueMap<String, MultipartFile> multiFileMap = multipartRequest.getMultiFileMap();
+            
+            for (Map.Entry<String, List<MultipartFile>> entry : multiFileMap.entrySet()) {
+                String key = entry.getKey(); 
+                // Solo procesamos las claves que empiecen con "cartaInteres[", el resto no lo apreciamos
+                if (key.startsWith("cartaInteres[")) {
+                    imagenesPorCarta
+                        .computeIfAbsent(key, k -> new ArrayList<>())
+                        .addAll(entry.getValue());
+                }
+            }
+        }
+        return imagenesPorCarta;
+    }
+
+    
+    private List<String> getUrlsFromS3(List<MultipartFile> imgDeCTActual) {
+        return imgDeCTActual.stream()
+                            .map(img -> {
+                                // un try-catch por si s3service falla, el ide me rompiá los huevos para agregarlo
+                                try {
+                                    return s3Service.uploadFile(img);
+                                } catch (IOException e) {
+                                    // si llegó acá, estamos jodidos. por suerte el poderoso front ya maneja cuando la imagen no tiene un url funcionando
+                                    System.out.println("Error guardando archivo: " + e);
+                                    e.printStackTrace(); // no tiene sentido porque esta función lo llama solo cuando hago un post de publicación, pero queda lindo
+                                    throw new RuntimeException("No se pudo guardar la imagen: " + img.getOriginalFilename());
+                                }
+                            })
+                            .toList();
+    }
+
+
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> crearPublicacionMultipart(
             @RequestHeader("Authorization") String authHeader,
             @RequestPart("publicacion") PublicacionDto publicacionDto,
-            @RequestPart(value = "publicacionImagenes", required = false) MultipartFile[] publicacionImagenes,
-            @RequestPart(value = "cartaInteres[0]", required = false) MultipartFile[] cartaInteres0,
-            @RequestPart(value = "cartaInteres[1]", required = false) MultipartFile[] cartaInteres1,
-            @RequestPart(value = "cartaInteres[2]", required = false) MultipartFile[] cartaInteres2,
-            @RequestPart(value = "cartaInteres[3]", required = false) MultipartFile[] cartaInteres3
+            @RequestPart(value = "publicacionImagenes", required = true) MultipartFile[] publicacionImagenes,
+            HttpServletRequest restoDeInformacion // acá estará el "cartaInteres[i]" por cada carta de interés, en orden 
     ) {
         try {
             // --- USER DEL JWT ---
@@ -217,29 +259,31 @@ public class PublicacionController{
                 publicacionDto.getCartaOfrecida().setImagenes(urlsPrincipal);
             }
 
-            // --- Imagenes de cartas de interés (hasta 4) ---
+            // --- Imagenes de cartas de interés (ahora si acepta N de una vez) ---
+            Map<String, List<MultipartFile>> cartaInteresImagenes = extraerImagenesPorCarta(restoDeInformacion);
             List<CartaDto> cartasInteres = publicacionDto.getCartasInteres();
-            if (cartasInteres != null) {
-                if (cartasInteres.size() > 0 && cartaInteres0 != null) {
-                    List<String> urls = new ArrayList<>();
-                    for (MultipartFile img : cartaInteres0) urls.add(s3Service.uploadFile(img));
-                    cartasInteres.get(0).setImagenes(urls);
+            int cantidadDeCTs = cartasInteres.size();
+
+            // Itero por cada carta de interés
+            System.out.println("Llegó " + cantidadDeCTs + " cartas de interés");
+            for (int i = 0; i < cantidadDeCTs; i++) {
+                // Obtengo las imágenes asociadas a "cartaInteres[i]"
+                List<MultipartFile> imgDeCTActual = cartaInteresImagenes.get("cartaInteres[" + i + "]");
+                
+                System.out.println("La carta " + i + " tiene " + imgDeCTActual.size() + " fotos");
+                
+                // No puede haber cartas de interés sin imágenes, es ridículo
+                if (imgDeCTActual == null || imgDeCTActual.size() == 0) {
+                    return ResponseEntity.badRequest().body("La oferta #" + (i + 1) + " debe tener al menos una imagen.");
                 }
-                if (cartasInteres.size() > 1 && cartaInteres1 != null) {
-                    List<String> urls = new ArrayList<>();
-                    for (MultipartFile img : cartaInteres1) urls.add(s3Service.uploadFile(img));
-                    cartasInteres.get(1).setImagenes(urls);
-                }
-                if (cartasInteres.size() > 2 && cartaInteres2 != null) {
-                    List<String> urls = new ArrayList<>();
-                    for (MultipartFile img : cartaInteres2) urls.add(s3Service.uploadFile(img));
-                    cartasInteres.get(2).setImagenes(urls);
-                }
-                if (cartasInteres.size() > 3 && cartaInteres3 != null) {
-                    List<String> urls = new ArrayList<>();
-                    for (MultipartFile img : cartaInteres3) urls.add(s3Service.uploadFile(img));
-                    cartasInteres.get(3).setImagenes(urls);
-                }
+
+                // Guardar imágenes de la oferta y asignar URLs
+                CartaDto CTActual = cartasInteres.get(i);
+                List<String> urls = getUrlsFromS3(imgDeCTActual);
+
+                // Al final, guardo las imágenes en la carta de interés que estoy parado en la iteración
+                CTActual.setImagenes(urls);
+                System.out.println(CTActual.getImagenes());
             }
 
             // --- Guardar publicación en BD ---
