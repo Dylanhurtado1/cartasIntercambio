@@ -18,14 +18,20 @@
     
 
     <main id="app">
+        <div v-show="formDisable" id="cargando"> 
+            <div>
+                <p>Subiendo su publicación, espere por favor</p>
+                <img src="/public/img/loading/loading.gif">
+            </div> 
+        </div>
         <section v-if="sesionAbierta" class="formulario-publicacion">
             <form @submit.prevent="submitForm">
 
                 <label for="nombre">Nombre de la carta</label>
-                <input type="text" id="nombreCarta" v-model="form.nombreCarta" required>
+                <input :disabled="formDisable" type="text" id="nombreCarta" v-model="form.nombreCarta" required>
 
                 <label for="juego">Nombre del juego</label>
-                <select id="nombreJuego" v-model="form.nombreJuego" required>
+                <select :disabled="formDisable" id="nombreJuego" v-model="form.nombreJuego" required>
                     <option value="">Seleccionar juego</option>
                     <option value="Yu-Gi-Oh!">Yu-Gi-Oh!</option>
                     <option value="Magic">Magic</option>
@@ -33,10 +39,10 @@
                 </select>
 
                 <label for="descripcion">Descripción de la carta</label>
-                <textarea id="descripcion" v-model="form.descripcion" rows="4" required></textarea>
+                <textarea id="descripcion" v-model="form.descripcion" rows="4" required :disabled="formDisable"></textarea>
 
                 <label for="estado">Estado</label>
-                <select id="estado" v-model="form.estado" required>
+                <select :disabled="formDisable" id="estado" v-model="form.estado" required>
                     <option value="">Seleccionar estado</option>
                     <option value="NUEVO">NUEVO</option>
                     <option value="MUY_BUENO">MUY BUENO</option>
@@ -46,10 +52,10 @@
                 </select>
 
                 <label>Imágenes de la carta</label>
-                <input type="file" @change="onMainImagesChange" multiple accept="image/*" required>
+                <input :disabled="formDisable" type="file" @change="onMainImagesChange" multiple accept="image/*" required>
 
                 <label for="precio">Precio de la carta</label>
-                <input type="number" id="precio" v-model="form.precio" min="0" step="0.01">
+                <input :disabled="formDisable" type="number" id="precio" v-model="form.precio" min="0" step="0.01">
 
                 <label>Cartas de Interés: {{form.cartasDeInteres.length}}</label>
                 <div id="cartasInteres">
@@ -57,10 +63,10 @@
 
                     <div v-for="(carta, index) in form.cartasDeInteres" :key="index" class="carta-interes">
                         <label>Nombre de la carta de interés</label>
-                        <input type="text" v-model="carta.nombre" required>
+                        <input :disabled="formDisable" type="text" v-model="carta.nombre" required>
 
                         <label>Juego de la carta de interés</label>
-                        <select v-model="carta.juego" required>
+                        <select :disabled="formDisable" v-model="carta.juego" required>
                             <option value="">Seleccionar juego</option>
                             <option value="Yu-Gi-Oh!">Yu-Gi-Oh!</option>
                             <option value="Magic">Magic</option>
@@ -68,7 +74,7 @@
                         </select>
 
                         <label>Estado de la carta de interés</label>
-                        <select v-model="carta.estado" required>
+                        <select :disabled="formDisable" v-model="carta.estado" required>
                             <option value="">Seleccionar estado</option>
                             <option value="NUEVO">NUEVO</option>
                             <option value="MUY_BUENO">MUY BUENO</option>
@@ -78,7 +84,7 @@
                         </select>
 
                         <label>Imágenes de la carta de interés</label>
-                        <input type="file" @change="onInterestImagesChange($event, index)" multiple accept="image/*" required>
+                        <input :disabled="formDisable" type="file" @change="onInterestImagesChange($event, index)" multiple accept="image/*" required>
 
                         <button type="button" @click="eliminarCartaInteres(index)">Eliminar</button>
                     </div>

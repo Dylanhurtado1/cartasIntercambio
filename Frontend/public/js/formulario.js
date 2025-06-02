@@ -18,7 +18,8 @@ createApp({
                 imagenesCarta: [],
                 cartasDeInteres: []
             },
-            jsonResultado: ''
+            jsonResultado: '',
+            formDisable: false
         };
     },
     mounted(){
@@ -53,17 +54,19 @@ createApp({
                 alert('Debes subir al menos una imagen de la carta en venta.');
                 return;
             }
+
             if ((parseFloat(this.form.precio) <= 0 || isNaN(parseFloat(this.form.precio))) && this.form.cartasDeInteres.length === 0) {
                 alert('Debes ingresar un precio válido o al menos una carta de interés.');
                 return;
             }
+
             for (let i = 0; i < this.form.cartasDeInteres.length; i++) {
                 if (this.form.cartasDeInteres[i].imagenes.length === 0) {
                     alert(`Cada carta de interés debe tener al menos una imagen (Error en carta #${i + 1}).`);
                     return;
                 }
             }
-
+            this.formDisable = true
             // CREAR JSON (con las imágenes vacías)
             const data = {
                 fecha: new Date().toJSON(),
@@ -178,7 +181,9 @@ createApp({
                 Obviamente asumo muy fuerte que van a armar "apiSalvadoraQueGuardaImagen", si no estamos en el horno JAJAJAJ
 
                 "Mucho texto y poco código, por qué no lo hacés vos?" POR PURA PAJA, me divierte escribir mis ideas pero
-                no programar back y front a la vez XDDDDDDDDDDDD
+                no programar back y front a la vez XDDDDDDDDDDDD 
+
+                Novedad: al final lo hice yo hdps 
             */
 
             // --- POST multipart ---
@@ -190,16 +195,18 @@ createApp({
                 }
             })
             .then(response => response.json())
-            .then(json => {
+            .then(async (json) => {
                 console.log(json);
+                this.formDisable = false
                 window.location.href = '../';
             })
             .catch(err => {
+                this.formDisable = false
                 console.log(err);
-                alert('Error con el servidor: ' + err);
+                alert('Error al subir la publicación: ' + err);
             });
 
-            this.jsonResultado = JSON.stringify(data, null, 2);
+            //this.jsonResultado = JSON.stringify(data, null, 2);
         }
     }
 }).mount('#app');
