@@ -49,7 +49,6 @@ createApp({
             this.form.cartasDeInteres = []
         },
         submitForm() {
-             
             // VALIDACIONES
             if (this.form.imagenesCarta.length === 0) {
                 alert('Debes subir al menos una imagen de la carta en venta.');
@@ -188,11 +187,6 @@ createApp({
             */
 
             // --- POST multipart ---
-            async function sleep(ms) {
-                console.log("ENTRO SLEEP")
-                return new Promise(resolve => setTimeout(resolve, ms));
-            }
-
             fetch(backendURL + "/publicaciones", {
                 method: "POST",
                 body: formData,
@@ -202,7 +196,6 @@ createApp({
             })
             .then(response => response.json())
             .then(async (json) => {
-                await sleep(10000)
                 console.log(json);
                 this.formDisable = false
                 //window.location.href = '../';
