@@ -198,12 +198,12 @@ createApp({
             .then(async (json) => {
                 console.log(json);
                 this.formDisable = false
-                //window.location.href = '../';
+                window.location.href = '../';
             })
             .catch(err => {
                 this.formDisable = false
                 console.log(err);
-                alert('Error con el servidor: ' + err);
+                alert('Error al subir la publicación: ' + err);
             });
 
             //this.jsonResultado = JSON.stringify(data, null, 2);
