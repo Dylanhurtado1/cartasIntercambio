@@ -7,12 +7,6 @@ Esta es una aplicación para intercambiar cartas de juegos coleccionables como M
 
 ### Endpoints
 
-*Aclaraciones:*
-
-*Al no tener implementado una BBDD, en esta instancia se pasan los usuarios completos en el cuerpo de la solicitud. Tanto cuando se haga una publicación o una oferta, serán con usuarios hardcodeados.*
-
-*Además, aún no está implementado el sistema de carga de imágenes. Por ahora, solo guarda el nombre de las imágenes*
-
 | **Enlace**                                                        | **Descripción**   |
 |-------------------------------------------------------------------|-----|
 | [localhost:9090](http://localhost:9090)                           | En este enlace se enlistan todas las publicaciones del sistema. Incluye un buscador para realizar filtros. Al hacer clic en una publicación, se accede a sus detalles. |
@@ -29,7 +23,7 @@ La estructura del proyecto es la siguiente:
 - **Dockerfile**: Define cómo construir la imagen de cada aplicación en el sistema. Tanto backend como frontend tienen sus propios dockerfiles respectivamente.
 - **docker-compose.yml**: Contiene la configuración de los servicios a ejecutar en contenedores.
 
-## Cómo Ejecutar la Aplicación
+## Cómo Ejecutar la Aplicación en Modo Local
 
 ### Pre requisitos
 
@@ -96,10 +90,160 @@ AWS_S3_REGION=us-east-1
 
 - Podés entrar a [http://localhost:8081](http://localhost:8081) y ver/modificar los datos de MongoDB usando el cliente web **mongo-express**.
 - USERNAME = admin
-- PAASWORD = admin123
+- PASSWORD = admin123
     
     ### Para acceder a la API:
     
     El front estará disponible en http://localhost:9090.
 
+## Como realizar el deploy en AWS EC2 con Docker
 
+### Pre requisitos
+- Tener una cuenta en AWS
+
+### Instrucciones para deployar en EC2
+
+1. Lanzar una instancia EC2 en la región us-east-1
+   - Tipo de instancia t2.micro
+   - Sistema Ubuntu 24.04 de 64 bits
+   - Crear un nuevo par de claves
+   - Configurar el Security Group para que acepte puertos 8080 y 9090 desde cualquier lugar
+   - Configurar almacenamiento: un disco EBS con 16 GB
+   - Descargar el archivo .pem (clave privada que te permite conectarte a la instancia mediante SSH)
+
+2. Abrir una consola y acceder por SSH
+   ```
+   chmod 400 nombre-archivo-key.pem #SOLO EJECUTARLO LA PRIMERA VEZ
+   ```
+   ```
+   ssh -i "ruta/nombre-archivo-key.pem" ubuntu@<IP_PUBLICA_EC2>
+   ```
+
+3. Actualizar paquetes
+   ```
+   sudo apt update && sudo apt upgrade -y
+   ```
+
+4. Instalar Docker y Docker Compose
+   - Instalar Docker
+     ```
+     sudo apt install docker.io -y
+     sudo systemctl start docker
+     sudo systemctl enable docker 
+     sudo usermod -aG docker ubuntu
+     ```
+   - Cerrar la sesión y volver a entrar para que se apliquen los cambios
+     ```
+     exit
+     ```
+     ```
+     ssh -i "ruta/nombre-archivo-key.pem" ubuntu@<IP_PUBLICA_EC2>
+     ```
+   - Instalar Docker Compose
+     ```
+     sudo curl -L "https://github.com/docker/compose/releases/download/v2.23.3/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+     sudo chmod +x /usr/local/bin/docker-compose
+     ```
+   - Chequear que se haya instalado correctamente
+     ```
+     docker-compose --version
+     ```
+
+5. Instalar y configurar Java 17
+   - Instalar java 17 
+     ```
+     sudo apt update
+     sudo apt install openjdk-17-jdk -y
+     ```
+   - Setear la versión de Java
+     ```
+     sudo update-alternatives --config java
+     ```
+     Configurar las variables de entorno
+     ```
+     export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))
+     export PATH=$JAVA_HOME/bin:$PATH
+     source ~/.bashrc
+     ```
+   - Verificar que se haya seteado la versión de Java correctamente 
+     ```
+     echo $JAVA_HOME
+     java -version
+     ```
+
+6. Instalar Maven
+   ```
+   sudo apt install maven -y
+   ```
+   Chequeamos que se haya instalado correctamente:
+   ```
+   mvn --version
+   ```
+
+7. Clonar el repositorio
+   ```
+   git clone https://github.com/Dylanhurtado1/cartasIntercambio.git
+   ```
+   
+   ```
+   cd cartasIntercambio
+   ```
+
+8. Configurar el .env
+   ```
+   nano .env
+   ```
+   Cargar las claves de S3:
+
+   ```
+    AWS_S3_BUCKET=nombre-de-tu-bucket-s3
+    AWS_ACCESS_KEY_ID=CAMBIA-ESTO
+    AWS_SECRET_ACCESS_KEY=CAMBIA-ESTO
+    AWS_S3_REGION=us-east-1
+   ```
+   
+   Ctrl+O y Enter para guardar
+
+   Ctrl+X para salir
+
+
+9. Compilar y levantar la app
+   - Navegar al directorio del proyecto
+   ```
+   cd Backend
+   ```
+   - Compilar
+   ```
+   mvn clean package -DskipTests
+   ```
+   - Volver a la raíz del proyecto
+   ```
+   cd ..
+   ```
+   - Construir y ejecutar los contenedores
+   ```
+   docker-compose up -d --build
+   ```
+
+10. Para detener la instancia EC2
+   - Primero detener la ejecución de los contenedores
+   ```
+   docker-compose down
+   ```
+   - Cerramos la sesión
+   ```
+   exit
+   ```
+   - Desde la página de AWS, detenemos la instancia EC2
+
+
+📌 **NOTA**: La instalación de Docker, Maven y Java, así como la configuración del archivo .env, solo es necesaria la primera vez que se prepara la instancia.
+
+
+### Para acceder desde el navegador:
+
+Podés ver los datos de MongoDB usando el cliente web **mongo-express** desde http://<IP_PUBLICA_EC2>:8081
+- USERNAME = admin
+- PASSWORD = admin123
+
+La aplicación estará disponible en http://<IP_PUBLICA_EC2>:9090
