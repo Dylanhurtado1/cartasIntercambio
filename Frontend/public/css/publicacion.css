@@ -189,71 +189,70 @@ form h3{
   margin-bottom: .7em;
 }
 
-#cartasSeleccionadas div{
-  width: 48%;
-  padding: .5em;
-  z-index: 1;
-  margin-left: auto;
-  margin-right: auto;
-}
+/* Nuevo "checkbox", guiño guiño */
 
-#cartasSeleccionadas #listaDeSeleccionadas{
-  display:grid;
-  border: 2px solid #9098A9;
-  border-radius: 10px;
-}
-
-/* CHECKBOX LINDO */
-.checkbox-wrapper input[type="checkbox"] {
+input[type="checkbox"]{
   display: none;
-  visibility: hidden;
+  /* Empezamos fuerte */
 }
 
-.checkbox-wrapper label {
-  position: relative;
-  padding-left: 2em;
-  padding-right: 1em;
-  line-height: 2;
+.cartaInteres{
+  min-width: 180px;
+  width:min-content;
+  margin: .5em .5em;
+  flex: 1;
+  text-align: center;
+  border-radius: 8px;
+  border: 1px solid rgb(194, 194, 194);
   cursor: pointer;
-  display: inline-flex;
+
+  position: relative;
 }
 
-.checkbox-wrapper label:before {
-  box-sizing: border-box;
-  content: " ";
+.seleccionado {
   position: absolute;
-  top: 0.3em;
-  left: 0;
-  display: block;
-  width: 1.4em;
-  height: 1.4em;
-  border: 2px solid #9098A9;
-  border-radius: 6px;
-  z-index: -1;
-}
-
-.checkbox-wrapper input[type=checkbox]:checked + label {
-  padding-left: 1em;
-  color: #0f5229;
-}
-
-.checkbox-wrapper label,
-.checkbox-wrapper label::before {
-  transition: 0.25s all ease;
-}
-
-.checkbox-wrapper input[type=checkbox]:checked + label:before {
   top: 0;
+  left: 0;
   width: 100%;
-  height: 2em;
-  background: #b7e6c9;
-  border-color: #2cbc63;
+  height: 100%;
+  background-color: rgba(0, 255, 0, 0.5); /* fondo translúcido */
+  z-index: 1;
+  pointer-events: none;
+  border-radius: 8px;
+  align-content: center;
+}
+
+.seleccionado.negado{
+  display: none;
+}
+
+.seleccionado p{
+  text-align: center;
+  font-size: 120%;
+  transform: rotate(43deg);
+
+  font-weight: bold;
+}
+
+.cartaInteres label{
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  display: inline-block;
+  margin: 0;
+  user-select: none;
+}
+
+.cartaInteres img{
+  max-width: 100px;
+  position:relative;
+  top:100%;
 }
 
 
 /* FIN DE OFERTAS */
 
-@media (max-width: 810px) {  
+@media (max-width: 900px) {  
   .info-principal a {
     /*text-align: center;*/
     width: 50%;
@@ -295,5 +294,19 @@ form h3{
 
   .checkbox-wrapper{
     text-align: center;
+  }
+
+  #cartasSeleccionadas{
+    flex-wrap: wrap;
+  }
+
+  .cartaInteres{
+    min-width: initial;
+    padding: 10px;
+    width: calc(50% - 5px);
+  }
+  
+  .seleccionado p{
+    font-size: 100%;
   }
 }

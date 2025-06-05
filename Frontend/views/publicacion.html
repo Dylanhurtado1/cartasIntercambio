@@ -57,7 +57,7 @@
         <h3>Cartas de interés</h3>
         <div v-if="publicacion.cartasInteres && publicacion.cartasInteres.length" class="cartas-interes">
             <div class="carta" v-for="(carta, i) in publicacion.cartasInteres" :key="i">
-              <p>Nombre de la carta: <strong>{{ carta.nombre }}</strong> </p>
+              <p>Nombre de la carta #{{i+1}}: <strong>{{ carta.nombre }}</strong> </p>
               <p>Juego: {{ carta.juego }}</p>
               <p>Estado: {{ carta.estado }}</p>
               
@@ -94,20 +94,23 @@
         </div>
         
         <div v-show="publicacion.cartasInteres.length">
-          <label for="nuevaOferta.cartasSeleccionadas"><strong>Carta ofrecida (de las cartas de interés)</strong></label>
+          <label><strong>Carta ofrecida (de las cartas de interés): {{ nuevaOferta.cartasSeleccionadas.length }}</strong></label>
           <div id="cartasSeleccionadas">
-            <div>
-              <div class="checkbox-wrapper" v-for="(carta, index) in publicacion.cartasInteres" style="width: auto;">
-                <input type="checkbox" :id="index" :value="index" v-model="nuevaOferta.cartasSeleccionadas"/>
-                <label :for="index">{{ carta.nombre }}</label>
-              </div>
-            </div>
 
-            
-            <div id="listaDeSeleccionadas">
-              <label>Cartas seleccionadas: </label>
-              <label v-for="(cartaSeleccionada, index) in nuevaOferta.cartasSeleccionadas"> 
-                {{publicacion.cartasInteres[cartaSeleccionada].nombre}}
+            <div class="cartaInteres" v-for="(carta, index) in publicacion.cartasInteres">
+
+              <div :class="[nuevaOferta.cartasSeleccionadas.includes(index) ? 'seleccionado' : 'seleccionado negado']">
+                <p>SELECCIONADA</p>
+              </div> 
+              
+              
+              <input type="checkbox" :id="index" :value="index" v-model="nuevaOferta.cartasSeleccionadas" />
+              <!-- :style="{ color: nuevaOferta.cartasSeleccionadas.includes(index) ? 'green' : 'blue' }" -->
+              <label :for="index" >
+                <div>
+                  <p>Carta nº{{ index + 1}}: {{carta.nombre}}</p>
+                  <img :src="carta.imagenes[0]" :alt="`Imagen de ${carta.nombre}`" @error="manejarErrorImagen"/>
+                </div>
               </label>
             </div>
           </div>
