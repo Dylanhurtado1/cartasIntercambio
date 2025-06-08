@@ -19,7 +19,8 @@
     margin-bottom: 0.25em;
 }
 
-.formulario-publicacion input,
+.formulario-publicacion input[type="number"],
+.formulario-publicacion input[type="text"],
 .formulario-publicacion textarea,
 .formulario-publicacion select,
 .formulario-publicacion button {
@@ -46,16 +47,31 @@
 
 .carta-interes {
     border: 1px solid #828282;
+    border-radius: 4px;
     padding: 1em;
     background-color: #fafafa;
     position: relative;
     background-color: rgb(240, 240, 240);
+    gap: .6em;
+    display: grid;
 }
 
-.carta-interes button {
+.titulo-carta-interes{
+    display:flex;
+}
+
+.carta-interes h3{
+    margin: 0;
+    align-content: center;
+    margin-right: .5em;
+}
+
+.titulo-carta-interes button {
     background-color: #e53935;
-    margin-top: 1em;
     padding: 0.5em;
+    width: fit-content;
+    /*flex-grow: .2;*/
+    margin-left: auto;
 }
 
 pre#resultado {
@@ -74,6 +90,7 @@ pre#resultado {
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente */
     align-content: center;
+    z-index: 2;
 }
 
 #cargando div{
@@ -89,6 +106,44 @@ pre#resultado {
 
 #cargando img{
     width: 300;
+}
+
+/* Rediseño de input de fotos */
+
+.input-file-container {
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+}
+
+.input-file-label {
+  background-color: #333;
+  color: #fff;
+  padding: 0.5em 1em;
+  cursor: pointer;
+  display: inline-block;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  transition: background 0.3s;
+  margin-left: .7em;
+}
+
+.input-file-label:hover {
+  background-color: #555;
+}
+
+.input-file {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  cursor: pointer;
+  height: 100%;
+}
+
+.contenedor-input{
+    align-items: center;
+    display: flex;
 }
 
 @media (max-width: 600px) {
@@ -131,4 +186,21 @@ pre#resultado {
         width: 80%;
         margin: 0 auto;
     }
+
+    .titulo-carta-interes{
+        display: block;
+    }
+
+    .carta-interes h3{
+        margin: 0;
+        align-content: center;
+        margin-right: 0;
+        text-align: center;
+    }
+
+    .titulo-carta-interes button {
+        width: 100%;
+        margin: 1em 0;
+    }
+
 }

@@ -8,11 +8,12 @@
     <link rel="stylesheet" href="public/css/menu.css">
     <link rel="stylesheet" href="/public/css/auth-user.css" />
     <link rel="stylesheet" href="/public/css/flotante.css" />
+    <link rel="stylesheet" href="public/css/image-upload.css">
     <link rel="stylesheet" href="public/css/formulario.css">
 </head>
 <body>
     <header id="menu-app"></header>
-    
+
     <div id="user-certification" data-texto="EY, no deberías estar acá. Iniciá sesión o registrate"></div>
     <div id="datos-f"></div>
     
@@ -51,17 +52,39 @@
                     <option value="MUY_MALO">MUY MALO</option>
                 </select>
 
-                <label>Imágenes de la carta</label>
-                <input :disabled="formDisable" type="file" @change="onMainImagesChange" multiple accept="image/*" required>
+                
+                <div class="input-file-container">
+                    <label>Imágenes de la carta</label>
+
+                    <label class="input-file-label">
+                        {{(form.imagenesCarta.length) ?  formatearTextoDeInput(form.imagenesCarta) : "Seleccionar imágenes"}}          
+                        <input 
+                            :disabled="formDisable" @change="onMainImagesChange" 
+                            ref="imagenPublicacion" class="input-file" type="file" multiple accept="image/*" required> 
+
+                    </label>
+                </div>
+                <image-upload :imagenes="form.imagenesCarta" @borrar-todas="resetImages"></image-upload>
+
+                <!-- <input :disabled="formDisable" type="file" @change="onMainImagesChange" multiple accept="image/*" required> -->
+
 
                 <label for="precio">Precio de la carta</label>
                 <input :disabled="formDisable" type="number" id="precio" v-model="form.precio" min="0" step="0.01">
 
-                <label>Cartas de Interés: {{form.cartasDeInteres.length}}</label>
+                <label>Cartas de Interés - Cantidad actual: {{form.cartasDeInteres.length}}</label>
                 <div id="cartasInteres">
-                    <button type="button" v-if="form.cartasDeInteres.length > 0" @click="eliminarTodasCartasInteres">Eliminar todas las cartas</button>
+                    <button type="button" v-if="form.cartasDeInteres.length" @click="eliminarTodasCartasInteres">Eliminar todas las cartas</button>
 
                     <div v-for="(carta, index) in form.cartasDeInteres" :key="index" class="carta-interes">
+                        <div class="titulo-carta-interes">
+                            <h3>Carta de interés nº{{index+1}}</h3>
+                            <button type="button" @click="eliminarCartaInteres(index)">Eliminar carta de interés</button>
+                        </div>
+                        
+
+
+
                         <label>Nombre de la carta de interés</label>
                         <input :disabled="formDisable" type="text" v-model="carta.nombre" required>
 
@@ -82,11 +105,23 @@
                             <option value="MALO">MALO</option>
                             <option value="MUY_MALO">MUY MALO</option>
                         </select>
+                        <div class="contenedor-input">
+                            <label>Imágenes de la carta de interés</label>
 
-                        <label>Imágenes de la carta de interés</label>
-                        <input :disabled="formDisable" type="file" @change="onInterestImagesChange($event, index)" multiple accept="image/*" required>
+                            <div class="input-file-container">
+                                <label class="input-file-label">
+                                {{(carta.imagenes.length) ?  formatearTextoDeInput(carta.imagenes) : "Seleccionar imágenes"}}          
+                                    <input 
+                                        :disabled="formDisable" @change="onInterestImagesChange($event, index)"
+                                        ref="imagenPublicacion" class="input-file" type="file" multiple accept="image/*" required> 
 
-                        <button type="button" @click="eliminarCartaInteres(index)">Eliminar</button>
+                                </label>
+                            </div>
+                        </div>
+                        <image-upload :imagenes="carta.imagenes" @borrar-todas="resetImagesOfertas(index)"></image-upload>
+
+                        <!-- <input :disabled="formDisable" type="file" @change="onInterestImagesChange($event, index)" multiple accept="image/*" required> -->
+
                     </div>
                 </div>
 

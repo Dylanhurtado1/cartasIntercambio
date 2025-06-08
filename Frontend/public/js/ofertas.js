@@ -128,7 +128,7 @@ createApp({
 
     function ofertaContieneCarta(oferta, carta) {
       const cartasOfrecidasDeOferta = oferta.cartasOfrecidas;
-      return cartasOfrecidasDeOferta.some(cartaOferta => JSON.stringify(cartaOferta) !== JSON.stringify(carta))
+      return !cartasOfrecidasDeOferta.some(cartaOferta => JSON.stringify(cartaOferta) === JSON.stringify(carta))
     }
 
     onMounted(async () => {

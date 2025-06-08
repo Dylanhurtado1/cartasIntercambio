@@ -1,0 +1,47 @@
+.preview-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+.preview-control{
+  display: flex;
+  align-items: center; /* Alineación vertical si es necesario */
+  gap: 20px; /* Espacio entre elementos */
+  margin-bottom: 1em;
+}
+.image-upload{
+  display: block;
+}
+
+.image-upload h5{
+  margin: 0;
+  margin-left: 1em;
+}
+
+.image-upload button{
+  width: fit-content;
+  margin-top: 0;
+}
+
+.preview{
+    margin: 0 auto;
+}
+
+.preview img {
+  width: 130px;
+  height: auto;
+  border-radius: 5px;
+  object-fit: cover;
+  border: 1px solid #ccc;
+}
+
+.borrar-todas {
+  margin-top: 1em;
+  background-color: #d9534f;
+  color: white;
+  padding: 0.5em 1em;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
