@@ -29,10 +29,20 @@ function manejarErrorImagen(event) {
 // URL DINÁMICO PORQUE EN AWS GENERA EL ID QUE SE LE CANTA
 
 function obtenerURLDinamico(){
+    /*
     const backendPort = 8080;
     const backendUrl = `${window.location.protocol}//${window.location.hostname}:${backendPort}`;
     console.log(backendUrl)
     return backendUrl
+    */
+    const hostname = window.location.hostname;
+    const protocol = window.location.protocol;
+
+    if(hostname == `localhost`) {
+        return `${protocol}//${hostname}:8080`;
+    }
+
+    return `${protocol}//${hostname}`;
 }
 
 // Poderoso vanilla slider, sigo sin estar orgulloso de esta solución
