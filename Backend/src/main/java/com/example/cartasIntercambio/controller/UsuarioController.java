@@ -19,6 +19,9 @@ public class UsuarioController {
     private final UsuarioServiceImpl usuarioService;
 
     @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
     public UsuarioController(UsuarioServiceImpl usuarioService) {
         this.usuarioService = usuarioService;
     }
@@ -73,7 +76,7 @@ public class UsuarioController {
         if(user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login inválido");
         }
-        String token = JwtUtil.generateToken(user.getId(), user.getUser());
+        String token = jwtUtil.generateToken(user.getId(), user.getUser());
         return ResponseEntity.ok(Map.of(
                 "token", token,
                 "usuario", user
