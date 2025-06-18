@@ -8,6 +8,7 @@ import com.example.cartasIntercambio.model.Usuario.Admin;
 import com.example.cartasIntercambio.model.Usuario.Usuario;
 import com.example.cartasIntercambio.repository.irepository.IUsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +19,9 @@ import java.util.stream.Collectors;
 public class UsuarioServiceImpl implements IUsuarioService{
 
     private final IUsuarioRepository usuarioRepository;
+
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
     public UsuarioServiceImpl(IUsuarioRepository usuarioRepository) {
@@ -33,7 +37,7 @@ public class UsuarioServiceImpl implements IUsuarioService{
         usuario.setUser(usuarioDto.getUser());
         usuario.setNombre(usuarioDto.getNombre());
         usuario.setEmail(usuarioDto.getCorreo());
-        usuario.setPassword(usuarioDto.getPassword());
+        usuario.setPassword(passwordEncoder.encode(usuarioDto.getPassword()));
         Usuario saved = usuarioRepository.save(usuario);
         return UsuarioResponseDto.builder()
                 .user(saved.getUser())
@@ -85,7 +89,7 @@ public class UsuarioServiceImpl implements IUsuarioService{
         usuario.setUser(usuarioDto.getUser());
         usuario.setNombre(usuarioDto.getNombre());
         usuario.setEmail(usuarioDto.getCorreo());
-        usuario.setPassword(usuarioDto.getPassword());
+        usuario.setPassword(passwordEncoder.encode(usuarioDto.getPassword()));
         Usuario updated = usuarioRepository.save(usuario);
         return UsuarioResponseDto.builder()
                 .id(updated.getId())
@@ -130,7 +134,7 @@ public class UsuarioServiceImpl implements IUsuarioService{
         admin.setUser(dto.getUser());
         admin.setNombre(dto.getNombre());
         admin.setEmail(dto.getCorreo());
-        admin.setPassword(dto.getPassword());
+        admin.setPassword(passwordEncoder.encode(dto.getPassword()));
         usuarioRepository.save(admin);
         return UsuarioResponseDto.builder()
                 .user(admin.getUser())
@@ -145,7 +149,7 @@ public class UsuarioServiceImpl implements IUsuarioService{
         Optional<Usuario> usuarioOpt = usuarioRepository.findByUser(userLogin.getUser());
         if(usuarioOpt.isEmpty()) return null;
         Usuario usuario = usuarioOpt.get();
-        if(!usuario.getPassword().equals(userLogin.getPassword())) return null;
+        if(!passwordEncoder.matches(userLogin.getPassword(), usuario.getPassword())) return null;
         return UsuarioResponseDto.builder()
                 .id(usuario.getId())
                 .user(usuario.getUser())
