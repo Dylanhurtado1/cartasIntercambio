@@ -39,10 +39,10 @@ function obtenerURLDinamico(){
     const protocol = window.location.protocol;
 
     if(hostname == `localhost`) {
-        return `${protocol}//${hostname}:8080`;
+        return `${protocol}//${hostname}:8080/api`;
     }
 
-    return `${protocol}//${hostname}`;
+    return `${protocol}//${hostname}/api`;
 }
 
 // Poderoso vanilla slider, sigo sin estar orgulloso de esta solución

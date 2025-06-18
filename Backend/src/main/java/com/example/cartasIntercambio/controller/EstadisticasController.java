@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/estadisticas")
+@RequestMapping("/api/estadisticas")
 public class EstadisticasController {
 
     private final PublicacionServiceImpl publicacionService;
