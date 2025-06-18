@@ -43,6 +43,8 @@ public class PublicacionController{
     private final PublicacionServiceImpl publicacionService;
     private final OfertaServiceImpl ofertaService;
     private final ObjectMapper mapper = new ObjectMapper();
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @Autowired
     private S3Service s3Service;
@@ -82,7 +84,7 @@ public class PublicacionController{
             @RequestHeader("Authorization") String authHeader,
             @RequestBody PublicacionDto publicacionDto) {
         String token = authHeader.replace("Bearer ", "");
-        Claims claims = JwtUtil.validateToken(token);
+        Claims claims = jwtUtil.validateToken(token);
         String userId = claims.getSubject();
         publicacionDto.getPublicador().setId(userId);
         PublicacionDto guardada= publicacionService.guardarPublicacion(publicacionDto);
@@ -96,7 +98,7 @@ public class PublicacionController{
             @PathVariable("idPublicacion") String idPublicacion,
             @RequestBody OfertaDto ofertaDto) {
         String token = authHeader.replace("Bearer ", "");
-        Claims claims = JwtUtil.validateToken(token);
+        Claims claims = jwtUtil.validateToken(token);
         String userId = claims.getSubject();
         ofertaDto.getOfertante().setId(userId);
 
@@ -130,7 +132,7 @@ public class PublicacionController{
 
         // 1. Validar token y obtener userId
         String token = authHeader.replace("Bearer ", "");
-        Claims claims = JwtUtil.validateToken(token);
+        Claims claims = jwtUtil.validateToken(token);
         String userId = claims.getSubject();
 
         // 2. Traer la oferta y la publicación asociada
@@ -235,7 +237,7 @@ public class PublicacionController{
         try {
             // --- USER DEL JWT ---
             String token = authHeader.replace("Bearer ", "");
-            Claims claims = JwtUtil.validateToken(token);
+            Claims claims = jwtUtil.validateToken(token);
             String userId = claims.getSubject();
 
             // Buscar usuario real desde tu service

@@ -58,6 +58,7 @@ AWS_S3_BUCKET=nombre-de-tu-bucket-s3
 AWS_ACCESS_KEY_ID=CAMBIA-ESTO
 AWS_SECRET_ACCESS_KEY=CAMBIA-ESTO
 AWS_S3_REGION=us-east-1
+JWT_SECRET=aca-va-clave-secreta-jwt
 ```
 
 
