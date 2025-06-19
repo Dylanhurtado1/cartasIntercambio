@@ -1,4 +1,4 @@
-import {guardarDatoCrudo, guardarDatoObjeto, obtenerURL} from './utils.js'
+import {guardarDatoCrudo, sesionAbierta, obtenerURL, setUserData, getUserData} from './utils.js'
 const { onMounted } = Vue;
 
 Vue.createApp({
@@ -23,14 +23,15 @@ Vue.createApp({
             })
             .then(response => {
                 guardarDatoCrudo("jwt", response.token)
-                guardarDatoObjeto("usuarioActual", response.usuario)
+                setUserData(response.usuario)
+                console.log(getUserData())
                 window.location.href = "/usuario"; // Redirige a la página principal
             })
             .catch(err => error.value = err.message)
     }
 
     onMounted(() => {
-      if (localStorage.getItem("jwt")) 
+      if (sesionAbierta()) 
         window.location.href = "/usuario";
     });
 

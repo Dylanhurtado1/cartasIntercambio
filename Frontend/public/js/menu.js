@@ -1,9 +1,9 @@
-import {obtenerDatoCrudo, vaciarDatos} from './utils.js'
+import {sesionAbierta, deleteUserData} from './utils.js'
 
 Vue.createApp({
   data() {
     return {
-      sesionCerrada: (obtenerDatoCrudo("jwt") === null),
+      sesionCerrada: !sesionAbierta(),
       isMenuOpen: false,
       menuItems: [
         { label: "Inicio", href: "/", public: true },
@@ -18,7 +18,7 @@ Vue.createApp({
       this.isMenuOpen = !this.isMenuOpen;
     },
     cerrarSesion(){
-      vaciarDatos()
+      deleteUserData()
       window.location.href = "/"
     }
   },

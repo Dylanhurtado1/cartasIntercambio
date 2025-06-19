@@ -1,5 +1,5 @@
 const { createApp, onMounted, nextTick, watch } = Vue;
-import {sesionAbierta, obtenerDatoCrudo, obtenerDatoObjeto, manejarErrorImagen, obtenerURL, ejecutarSliderVanilla} from './utils.js'
+import {sesionAbierta, obtenerDatoCrudo, getUserData, manejarErrorImagen, obtenerURL, ejecutarSliderVanilla} from './utils.js'
 //import {ejecutarSliderVanilla} from './sliderVanilla.js'
 
 
@@ -28,7 +28,7 @@ createApp({
         if (!res.ok) throw new Error("Error en la carga de publicacion");
         const data = await res.json();
         const id = data.publicador.id
-        usuarioEsElPublicador.value = (id == obtenerDatoObjeto("usuarioActual").id)
+        usuarioEsElPublicador.value = (id == getUserData().id)
         if(!usuarioEsElPublicador.value){
           explicacion.value = "Usted no es el dueño de la publicación, vuelva al inicio"
           return

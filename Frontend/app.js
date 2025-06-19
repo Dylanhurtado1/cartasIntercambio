@@ -17,11 +17,11 @@ const rateLimit = require('express-rate-limit')
 
 // sé perfectamente que esta no es la solución más escalabe, pero confío que AWS me va a atajar antes los problemas gordos
 
-const limiterTime = 5 * 60 * 1000 // 5 minutos en milisegundos
+const limiterTime = 1 * 60 * 1000 // 1 minuto en milisegundos
 
 const limiter = rateLimit({
     windowMs: limiterTime,
-    max: 50,  // si tengo más de 50 solicitudes en menos de 5 minutos, al rincón de la blacklist
+    max: 75,  // si tengo más de 75 solicitudes en menos de un minuto, al rincón de la blacklist
     handler: limiterHandler,
     message: generateMessage,
     headers: true,

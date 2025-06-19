@@ -1,4 +1,4 @@
-import {obtenerDatoObjeto, vaciarDatos} from './utils.js'
+import {getUserData, deleteUserData} from './utils.js'
 const { createApp, ref, onMounted } = Vue;
 
 createApp({
@@ -6,11 +6,11 @@ createApp({
     const usuario = ref("Cargando...");
 
     const cerrarSesion = () => {
-        vaciarDatos()
+        deleteUserData()
         window.location.href = "/login"
     };
     onMounted(() => {
-      const usuarioActual = obtenerDatoObjeto("usuarioActual");
+      const usuarioActual = getUserData();
       usuario.value = usuarioActual
     });
     return { usuario, cerrarSesion };

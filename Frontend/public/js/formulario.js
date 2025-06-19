@@ -5,13 +5,13 @@ import { ImageUpload } from "./imagenesBonitas.js";
 import {
   obtenerDatoCrudo,
   sesionAbierta,
-  obtenerDatoObjeto,
   obtenerURL,
+  getUserData
 } from "./utils.js";
 
 const backendURL = obtenerURL();
 
-const usuarioActual = obtenerDatoObjeto("usuarioActual");
+const usuarioActual = getUserData()//obtenerDatoObjeto("usuarioActual");
 
 createApp({
   components: {

@@ -1,5 +1,5 @@
 const { onMounted, nextTick, watch} = Vue;
-import {obtenerDatoObjeto, obtenerDatoCrudo, sesionAbierta, manejarErrorImagen, obtenerURL, ejecutarSliderVanilla} from './utils.js'
+import {getUserData, obtenerDatoCrudo, sesionAbierta, manejarErrorImagen, obtenerURL, ejecutarSliderVanilla} from './utils.js'
 //import {ejecutarSliderVanilla} from './sliderVanilla.js'
 
 
@@ -25,7 +25,7 @@ Vue.createApp({
         const data = await res.json();
         publicacion.value = data;
 
-        const idActual = obtenerDatoObjeto("usuarioActual")?.id;
+        const idActual = getUserData()?.id;
         const sesionValida = sesionAbierta() && idActual != publicacion.value.publicador.id
         formVisible.value = (publicacion.value.estado != "FINALIZADA") && sesionValida 
         esUsuarioOriginal.value = (idActual == publicacion.value.publicador.id)
