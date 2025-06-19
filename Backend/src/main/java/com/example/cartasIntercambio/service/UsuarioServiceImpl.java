@@ -21,7 +21,7 @@ public class UsuarioServiceImpl implements IUsuarioService{
     private final IUsuarioRepository usuarioRepository;
 
     @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Autowired
     public UsuarioServiceImpl(IUsuarioRepository usuarioRepository) {
