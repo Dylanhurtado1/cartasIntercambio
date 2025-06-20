@@ -16,6 +16,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.*;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -59,12 +62,19 @@ public class PublicacionServiceImpl implements IPublicacionService {
         return new PublicacionDto(publicacion);
     }
 
+
     @Override
-    public void finalizarPublicacion(String idPublicacion) {
-        Publicacion publicacion = publicacionRepository.findById(idPublicacion)
-                .orElseThrow(() -> new PublicacionNoEncontradaException("No existe la publicación con id: " + idPublicacion));
-        publicacion.setEstado(EstadoPublicacion.FINALIZADA);
-        publicacionRepository.save(publicacion);
+    public void finalizarPublicacion(String idPublicacion, Long versionActual) {
+        Query query = new Query(
+                Criteria.where("_id").is(idPublicacion)
+                        .and("version").is(versionActual)
+        );
+        Update update = new Update().set("estado", EstadoPublicacion.FINALIZADA);
+        Publicacion actualizada = mongoTemplate.findAndModify(query, update, Publicacion.class);
+
+        if (actualizada == null) {
+            throw new RuntimeException("La publicación fue modificada por otro usuario (o ya no existe).");
+        }
     }
 
     @Override
@@ -96,11 +106,12 @@ public class PublicacionServiceImpl implements IPublicacionService {
                 null,
                 nuevaPublicacionDto.getFecha(),
                 nuevaPublicacionDto.getDescripcion(),
-                dtoToCarta(nuevaPublicacionDto.getCartaOfrecida()),        // <--- ¡nuevo!
+                dtoToCarta(nuevaPublicacionDto.getCartaOfrecida()),
                 nuevaPublicacionDto.getPrecio(),
                 dtosToCartas(nuevaPublicacionDto.getCartasInteres()),      // <--- ¡nuevo!
                 nuevaPublicacionDto.getPublicador(),
-                EstadoPublicacion.valueOf("ACTIVA")
+                EstadoPublicacion.valueOf("ACTIVA"),
+                null
         );
         Publicacion guardada = publicacionRepository.save(nuevaPublicacion);
         return new PublicacionDto(guardada);
