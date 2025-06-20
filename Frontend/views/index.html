@@ -18,7 +18,7 @@
 
   <!-- Resto de la app -->
   <section id="app" class="buscador" v-cloak>
-    <form id="searchForm" @submit.prevent="getPublicaciones">
+    <form id="searchForm" @submit.prevent="getPublicaciones(true)">
       <input v-model="datosBuscador.nombre" type="text" name="nombre" placeholder="Nombre de la carta" />
       <input v-model="datosBuscador.preciomin" type="number" name="preciomin" placeholder="Precio mínimo" min="0" step="0.01" />
       <input v-model="datosBuscador.preciomax" type="number" name="preciomax" placeholder="Precio máximo" min="0" step="0.01" />

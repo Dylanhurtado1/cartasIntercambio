@@ -30,14 +30,25 @@ Vue.createApp({
 
     function getPublicaciones() {
       estadoDeLaCarga.value = "Cargando publicaciones..."
+      
       fetch(backendURL + "/publicaciones" + toQueryUrl(datosBuscador))
         .then(res => res.json())
         .then(json => {
+
+          // si estoy parado en una posicion que es mayor al de la búsqueda, me va a devolver 0 elementos. Por eso hago que vuelva a la posición 0
+          if(json.totalPages >= 1 && json.content.length == 0){
+            datosBuscador.pageNo = 0
+            getPublicaciones()
+            return
+          }
+
           listaDePublicaciones.value = json.content
           paginasTotal.value = json.totalPages
+
           estadoDeLaCarga.value = listaDePublicaciones.value.length === 0
             ? "No se han encontrado elementos en el sistema :("
             : ""
+            
         })
         .catch(err => {
           listaDePublicaciones.value = []
