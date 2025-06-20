@@ -2,27 +2,37 @@ package com.example.cartasIntercambio.service;
 
 import com.example.cartasIntercambio.dto.CartaDto;
 import com.example.cartasIntercambio.dto.PublicacionDto;
+import com.example.cartasIntercambio.dto.PublicacionResponse;
 import com.example.cartasIntercambio.exception.PublicacionNoEncontradaException;
 import com.example.cartasIntercambio.model.Mercado.EstadoPublicacion;
 import com.example.cartasIntercambio.model.Mercado.Publicacion;
 import com.example.cartasIntercambio.model.Producto_Carta.Carta;
 import com.example.cartasIntercambio.model.Producto_Carta.EstadoCarta;
 import com.example.cartasIntercambio.repository.irepository.IPublicacionRepository;
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.group;
+
 @Service
 public class PublicacionServiceImpl implements IPublicacionService {
     private final IPublicacionRepository publicacionRepository;
+    private final MongoTemplate mongoTemplate;
 
     @Autowired
-    public PublicacionServiceImpl(IPublicacionRepository publicacionRepository) {
+    public PublicacionServiceImpl(IPublicacionRepository publicacionRepository, MongoTemplate mongoTemplate) {
         this.publicacionRepository = publicacionRepository;
+        this.mongoTemplate = mongoTemplate;
     }
 
     public Publicacion buscarPublicacionPorId(String idPublicacion) {
@@ -30,16 +40,17 @@ public class PublicacionServiceImpl implements IPublicacionService {
                 .orElseThrow(() -> new PublicacionNoEncontradaException("No existe la publicación con id: " + idPublicacion));
     }
 
-    public List<PublicacionDto> buscarPublicacionesFiltradas(String nombre, String juego, String estado,
-                                                             BigDecimal preciomin, BigDecimal preciomax) {
-        return publicacionRepository.findAll().stream()
-                .filter(p -> nombre == null || p.getCartaOfrecida().getNombre().toLowerCase().contains(nombre.toLowerCase()))
-                .filter(p -> juego == null || p.getCartaOfrecida().getJuego().toLowerCase().contains(juego.toLowerCase()))
-                .filter(p -> estado == null || p.getCartaOfrecida().getEstado().toString().toLowerCase().contains(estado.toLowerCase()))
-                .filter(p -> preciomin == null || p.getPrecio().compareTo(preciomin) >= 0)
-                .filter(p -> preciomax == null || p.getPrecio().compareTo(preciomax) <= 0)
-                .map(PublicacionDto::new)
-                .toList();
+    public PublicacionResponse buscarPublicacionesFiltradas(String nombre, String juego, String estado,
+                                                            Double preciomin, Double preciomax, int pageNo, int pageSize) {
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Publicacion> paginaPublicaciones = publicacionRepository.findByFiltros(nombre, juego, estado, preciomin, preciomax, pageable);
+        List<Publicacion> publicaciones = paginaPublicaciones.getContent();
+        List<PublicacionDto> content = publicaciones.stream().map(PublicacionDto::new).toList();
+
+        return new PublicacionResponse(content, paginaPublicaciones.getNumber(),
+                paginaPublicaciones.getSize(), paginaPublicaciones.getTotalElements(),
+                paginaPublicaciones.getTotalPages(), paginaPublicaciones.isLast());
     }
 
     @Override
@@ -54,6 +65,19 @@ public class PublicacionServiceImpl implements IPublicacionService {
                 .orElseThrow(() -> new PublicacionNoEncontradaException("No existe la publicación con id: " + idPublicacion));
         publicacion.setEstado(EstadoPublicacion.FINALIZADA);
         publicacionRepository.save(publicacion);
+    }
+
+    @Override
+    public Document contarPublicacionesPorJuego() {
+
+        GroupOperation groupOp = group("cartaOfrecida.juego").count().as("totalJuego");
+        ProjectionOperation project = Aggregation.project("totalJuego");
+        UnionWithOperation unionWithCount = UnionWithOperation.unionWith("Publicacion")
+                .pipeline(Aggregation.count().as("Total"));
+
+        Aggregation aggregation = Aggregation.newAggregation(groupOp, project, unionWithCount);
+
+        return mongoTemplate.aggregate(aggregation, "Publicacion", Publicacion.class).getRawResults();
     }
 
     // TODO: Validar que exista el user

@@ -1,9 +1,6 @@
 package com.example.cartasIntercambio.controller;
 
-import com.example.cartasIntercambio.dto.CartaDto;
-import com.example.cartasIntercambio.dto.OfertaDto;
-import com.example.cartasIntercambio.dto.PublicacionDto;
-import com.example.cartasIntercambio.dto.UsuarioResponseDto;
+import com.example.cartasIntercambio.dto.*;
 import com.example.cartasIntercambio.jwt.JwtUtil;
 import com.example.cartasIntercambio.model.Mercado.EstadoOferta;
 import com.example.cartasIntercambio.model.Mercado.Oferta;
@@ -31,7 +28,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,6 +39,7 @@ public class PublicacionController{
     private final PublicacionServiceImpl publicacionService;
     private final OfertaServiceImpl ofertaService;
     private final ObjectMapper mapper = new ObjectMapper();
+
     @Autowired
     private JwtUtil jwtUtil;
 
@@ -60,15 +57,19 @@ public class PublicacionController{
 
     // Buscar todas las publicaciones con o sin filtros
     @GetMapping
-    public ResponseEntity<List<PublicacionDto>> listarPublicaciones(
+    public ResponseEntity<PublicacionResponse> listarPublicaciones(
             @RequestParam(required = false) String nombre,
             @RequestParam(required = false) String juego,
             @RequestParam(required = false) String estado,
-            @RequestParam(required = false) BigDecimal preciomin,
-            @RequestParam(required = false) BigDecimal preciomax
+            @RequestParam(required = false) Double preciomin,
+            @RequestParam(required = false) Double preciomax,
+            @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "15", required = false) int pageSize
+
     ) {
         return ResponseEntity.ok(
-                publicacionService.buscarPublicacionesFiltradas(nombre, juego, estado, preciomin, preciomax)
+                publicacionService.buscarPublicacionesFiltradas(nombre, juego, estado, preciomin,
+                        preciomax, pageNo, pageSize)
         );
     }
 
@@ -122,7 +123,6 @@ public class PublicacionController{
     }
 
 
-    // TODO: Chequear si una publicacion esta finalizada. Front??
     // Aceptar o rechazar una oferta
     @PatchMapping(path = "/ofertas/{idOferta}", consumes = "application/json-patch+json")
     public ResponseEntity<OfertaDto> responderOferta(

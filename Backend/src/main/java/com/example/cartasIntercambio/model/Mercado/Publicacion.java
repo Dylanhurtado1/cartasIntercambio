@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.data.mongodb.core.mapping.FieldType;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -21,7 +23,9 @@ public class Publicacion {
     private String id;
     private Date fecha;
     private String descripcion;
+    @Field("cartaOfrecida")
     private Carta cartaOfrecida;
+    @Field(targetType = FieldType.DOUBLE, name = "precio")
     private BigDecimal precio;
     private List<Carta> cartasInteres;
     //private Long idUsuario; TODO: Cuando haya servicio usuarios
