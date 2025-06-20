@@ -64,6 +64,11 @@ createApp({
     }
 
     async function aceptarOferta(idOferta) {
+      const ofertaActual = ofertas.value.find(o => o.id === idOferta);
+      if (!ofertaActual) {
+      alert("No se encontró la oferta para aceptar.");
+        return;
+      }
       console.log(`${backendURL}/ofertas/${idOferta}`)
       try {
         const res = await fetch(`${backendURL}/publicaciones/ofertas/${idOferta}`, {
@@ -77,6 +82,11 @@ createApp({
               op: "replace",
               path: "/estado",
               value: "ACEPTADO"
+            },
+            {
+              op: "replace",
+              path: "/version",
+              value: ofertaActual.version
             }
           ])
         });
@@ -84,6 +94,8 @@ createApp({
         if (res.ok) {
           alert("Oferta aceptada correctamente");
           cargarOfertas(); // recargar la lista
+        } else if (res.status === 409) {
+          alert("¡La oferta ya fue cambiada por otro usuario. Recargá!");
         } else {
           alert("Error al aceptar la oferta");
         }
@@ -95,6 +107,11 @@ createApp({
       
     async function rechazarOferta(idOferta) {
       try {
+        const ofertaActual = ofertas.value.find(o => o.id === idOferta);
+        if (!ofertaActual) {
+        alert("No se encontró la oferta para rechazar.");
+        return;
+        }
         const res = await fetch(`${backendURL}/publicaciones/ofertas/${idOferta}`, {
           method: "PATCH",
           headers: {
@@ -106,6 +123,11 @@ createApp({
               op: "replace",
               path: "/estado",
               value: "RECHAZADO"
+            },
+            {
+              op: "replace",
+              path: "/version",
+              value: ofertaActual.version
             }
           ])
         });
@@ -113,6 +135,8 @@ createApp({
         if (res.ok) {
           alert("Oferta rechazada");
           cargarOfertas(); // recargar la lista
+        } else if (res.status === 409) {
+          alert("¡La oferta ya fue cambiada por otro usuario. Recargá!");
         } else {
           alert("Error al rechazar la oferta");
         }

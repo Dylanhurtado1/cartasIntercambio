@@ -28,6 +28,8 @@ public class PublicacionDto {
     private Usuario publicador;
     //private Long idPublicador;
     private String estado;
+    private Long version;
+
 
     // Constructor desde entidad, ajustá si la entidad usa otra clase
     public PublicacionDto(Publicacion publicacion) {
