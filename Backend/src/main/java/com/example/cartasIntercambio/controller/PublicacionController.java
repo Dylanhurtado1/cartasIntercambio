@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/publicaciones")
+@RequestMapping("/api/publicaciones")
 public class PublicacionController{
     private final PublicacionServiceImpl publicacionService;
     private final OfertaServiceImpl ofertaService;

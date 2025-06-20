@@ -32,7 +32,9 @@ function obtenerURLDinamico(){
 
     if(hostname == "localhost") // si estamos en deploy, se agrega el puerto para ser felices
         URL += ":8080" // MMMMMMM, 100% seguro dejar esto acá
-    
+
+    URL += "/api";
+
     return URL
 }
 
