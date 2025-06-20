@@ -28,6 +28,7 @@ public class OfertaDto {
     private Usuario ofertante;
     //private Long idOfertante;
     private String estado;
+    private Long version;
 
   public OfertaDto(Date fecha, String idPublicacion, BigDecimal monto, List<Carta> cartasOfrecidas, Usuario ofertante, String estado) {
     this.fecha = fecha;
@@ -46,6 +47,7 @@ public class OfertaDto {
       this.cartasOfrecidas = oferta.getCartasOfrecidas();
       this.ofertante = oferta.getOfertante();
       this.estado = oferta.getEstado().toString();
+      this.version = oferta.getVersion();
   }
 
 }

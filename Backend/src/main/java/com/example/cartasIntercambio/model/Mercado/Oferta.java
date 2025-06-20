@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Version;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -30,6 +31,8 @@ public class Oferta {
   private Usuario ofertante;
 //  private Long idOfertante;
   private EstadoOferta estado;
+  @Version
+  private Long version;
 
   public Oferta(Date fecha, String idPublicacion, BigDecimal monto, List<Carta> cartasOfrecidas, Usuario ofertante, EstadoOferta estado) {
     this.fecha = fecha;

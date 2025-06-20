@@ -22,7 +22,7 @@ public interface IPublicacionService {
 
     PublicacionDto buscarPublicacionDTOPorId(String idPublicacion);
 
-    void finalizarPublicacion(String idPublicacion);
+    void finalizarPublicacion(String idPublicacion,Long version);
 
     Document contarPublicacionesPorJuego();
 }

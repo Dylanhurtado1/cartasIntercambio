@@ -138,7 +138,6 @@ public class PublicacionController{
         // 2. Traer la oferta y la publicación asociada
         Oferta oferta = ofertaService.buscarOfertaPorId(idOferta);
         Publicacion publicacion = publicacionService.buscarPublicacionPorId(oferta.getIdPublicacion());
-
         // 3. Chequear que el user actual sea el dueño de la publicación
         if (!publicacion.getPublicador().getId().equals(userId)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -150,7 +149,7 @@ public class PublicacionController{
             ofertaService.guardarOferta(ofertaActualizada);
             if(ofertaActualizada.getEstado().equals(EstadoOferta.ACEPTADO)){
                 ofertaService.rechazarOtrasOfertas(idOferta, ofertaActualizada.getIdPublicacion());
-                publicacionService.finalizarPublicacion(ofertaActualizada.getIdPublicacion());
+                publicacionService.finalizarPublicacion(ofertaActualizada.getIdPublicacion(), publicacion.getVersion());
             }
             return ResponseEntity.ok(new OfertaDto(ofertaActualizada));
         } catch (JsonPatchException | JsonProcessingException e) {
