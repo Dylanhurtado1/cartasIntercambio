@@ -9,6 +9,10 @@ import com.example.cartasIntercambio.model.Producto_Carta.Carta;
 import com.example.cartasIntercambio.model.Producto_Carta.EstadoCarta;
 import com.example.cartasIntercambio.repository.irepository.IPublicacionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -19,6 +23,9 @@ import java.util.stream.Collectors;
 @Service
 public class PublicacionServiceImpl implements IPublicacionService {
     private final IPublicacionRepository publicacionRepository;
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     @Autowired
     public PublicacionServiceImpl(IPublicacionRepository publicacionRepository) {
@@ -50,10 +57,13 @@ public class PublicacionServiceImpl implements IPublicacionService {
 
     @Override
     public void finalizarPublicacion(String idPublicacion) {
-        Publicacion publicacion = publicacionRepository.findById(idPublicacion)
-                .orElseThrow(() -> new PublicacionNoEncontradaException("No existe la publicación con id: " + idPublicacion));
-        publicacion.setEstado(EstadoPublicacion.FINALIZADA);
-        publicacionRepository.save(publicacion);
+        Query query = new Query(Criteria.where("_id").is(idPublicacion));
+        Update update = new Update().set("estado", EstadoPublicacion.FINALIZADA);
+        Publicacion actualizada = mongoTemplate.findAndModify(query, update, Publicacion.class);
+
+        if (actualizada == null) {
+            throw new RuntimeException("La publicación no existe.");
+        }
     }
 
     // TODO: Validar que exista el user
@@ -72,11 +82,12 @@ public class PublicacionServiceImpl implements IPublicacionService {
                 null,
                 nuevaPublicacionDto.getFecha(),
                 nuevaPublicacionDto.getDescripcion(),
-                dtoToCarta(nuevaPublicacionDto.getCartaOfrecida()),        // <--- ¡nuevo!
+                dtoToCarta(nuevaPublicacionDto.getCartaOfrecida()),
                 nuevaPublicacionDto.getPrecio(),
-                dtosToCartas(nuevaPublicacionDto.getCartasInteres()),      // <--- ¡nuevo!
+                dtosToCartas(nuevaPublicacionDto.getCartasInteres()),
                 nuevaPublicacionDto.getPublicador(),
-                EstadoPublicacion.valueOf("ACTIVA")
+                EstadoPublicacion.valueOf("ACTIVA"),
+                null
         );
         Publicacion guardada = publicacionRepository.save(nuevaPublicacion);
         return new PublicacionDto(guardada);

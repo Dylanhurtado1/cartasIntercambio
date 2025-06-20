@@ -91,7 +91,7 @@ public class PublicacionServiceImplTest {
 
         Publicacion publicacionMock = new Publicacion(
                 null, fechaHoy, "Intercambio de cartas Pokemon", cartaPokemon1, precio,
-                Arrays.asList(cartaPokemon2, cartaPokemon3), publicador1, EstadoPublicacion.ACTIVA
+                Arrays.asList(cartaPokemon2, cartaPokemon3), publicador1, EstadoPublicacion.ACTIVA,null
         );
         when(publicacionRepository.save(any(Publicacion.class))).thenReturn(publicacionMock);
 

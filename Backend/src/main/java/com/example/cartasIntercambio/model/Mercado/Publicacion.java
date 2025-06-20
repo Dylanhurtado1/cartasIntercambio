@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
@@ -27,5 +28,7 @@ public class Publicacion {
     //private Long idUsuario; TODO: Cuando haya servicio usuarios
     private Usuario publicador;
     private EstadoPublicacion estado;
+    @Version
+    private Long version;
 
 }

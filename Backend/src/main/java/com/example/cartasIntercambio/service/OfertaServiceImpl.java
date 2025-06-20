@@ -9,6 +9,10 @@ import com.example.cartasIntercambio.model.Mercado.Publicacion;
 import com.example.cartasIntercambio.repository.irepository.IOfertaRepository;
 import com.example.cartasIntercambio.repository.irepository.IPublicacionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -20,6 +24,8 @@ import java.util.stream.Collectors;
 public class OfertaServiceImpl implements IOfertaService{
     private final IOfertaRepository ofertaRepository;
     private final IPublicacionRepository publicacionRepository;
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     @Autowired
     public OfertaServiceImpl(IOfertaRepository ofertaRepository, IPublicacionRepository publicacionRepository) {
@@ -87,13 +93,12 @@ public class OfertaServiceImpl implements IOfertaService{
 
     @Override
     public void rechazarOtrasOfertas(String idOferta, String idPublicacion) {
-        List<Oferta> ofertas = ofertaRepository.findByIdPublicacion(idPublicacion);
-        for (Oferta oferta : ofertas) {
-            if (!oferta.getId().equals(idOferta)) {
-                oferta.setEstado(EstadoOferta.RECHAZADO);
-                ofertaRepository.save(oferta);
-            }
-        }
+        Query query = new Query(
+                Criteria.where("idPublicacion").is(idPublicacion)
+                        .and("_id").ne(idOferta)
+        );
+        Update update = new Update().set("estado", EstadoOferta.RECHAZADO);
+        mongoTemplate.updateMulti(query, update, Oferta.class);
     }
 
     // Ofertas hechas por el usuario logueado a publicaciones de otros usuarios
