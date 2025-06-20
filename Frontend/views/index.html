@@ -18,20 +18,27 @@
 
   <!-- Resto de la app -->
   <section id="app" class="buscador" v-cloak>
-    <form id="searchForm">
+    <form id="searchForm" @submit.prevent="getPublicaciones">
       <input v-model="datosBuscador.nombre" type="text" name="nombre" placeholder="Nombre de la carta" />
       <input v-model="datosBuscador.preciomin" type="number" name="preciomin" placeholder="Precio mínimo" min="0" step="0.01" />
       <input v-model="datosBuscador.preciomax" type="number" name="preciomax" placeholder="Precio máximo" min="0" step="0.01" />
-      <input v-model="datosBuscador.usuario" type="text" name="usuario" placeholder="Usuario" />
+      <select v-model="datosBuscador.estado" name="estado">
+          <option value="">Todos los estados</option>
+          <option value="NUEVO">NUEVO</option>
+          <option value="MUY_BUENO">MUY BUENO</option>
+          <option value="BUENO">BUENO</option>
+          <option value="MALO">MALO</option>
+          <option value="MUY_MALO">MUY MALO</option>
+      </select>
 
-      <select name="juego">
+      <select v-model="datosBuscador.juego" name="juego">
         <option value="">Todos los juegos</option>
         <option value="Magic">Magic</option>
         <option value="Pokémon">Pokémon</option>
         <option value="Yu-Gi-Oh!">Yu-Gi-Oh!</option>
       </select>
 
-      <button>Buscar</button>
+      <button type="submit">Buscar</button>
     </form>
 
     <section class="productos">
@@ -52,6 +59,13 @@
     <h3> 
       {{estadoDeLaCarga}} 
     </h3>
+    
+    <pagination 
+      v-if="paginasTotal > 1"
+      :total-pages="paginasTotal" 
+      v-model="datosBuscador.pageNo"
+    ></pagination>
+
 
   </section>
 

@@ -12,6 +12,7 @@ Vue.createApp({
         .then(res => res.json())
         .then(json => {
             estadisticas.value = json;
+            console.log(json)
         })
         .catch(err => {
             mensaje.value = "Error al obtener estadísticas";
