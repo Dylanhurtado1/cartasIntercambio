@@ -34,6 +34,11 @@ public class JwtUtil {
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
+    public boolean isTokenExpired(String token) {
+        Claims claims = validateToken(token);
+        Date expirationDate = claims.getExpiration();
+        return expirationDate.before(new Date());
+    }
 
     public Claims validateToken(String token) {
         return Jwts.parserBuilder()
@@ -41,5 +46,14 @@ public class JwtUtil {
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
+    }
+
+    public String extractUsername(String token) {
+        return validateToken(token).getSubject();
+    }
+
+    public boolean isValidToken(String token, String username) {
+        //veo si el nombre obtenido y la cookie concuerdan y además si no expiró
+        return (username.equals(extractUsername(token)) && !isTokenExpired(token));
     }
 }

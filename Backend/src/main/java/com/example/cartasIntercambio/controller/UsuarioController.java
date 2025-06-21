@@ -4,6 +4,7 @@ import com.example.cartasIntercambio.dto.UsuarioDto;
 import com.example.cartasIntercambio.dto.UsuarioResponseDto;
 import com.example.cartasIntercambio.jwt.JwtUtil;
 import com.example.cartasIntercambio.service.UsuarioServiceImpl;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -71,15 +72,17 @@ public class UsuarioController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody UsuarioDto loginDTO) {
-        UsuarioResponseDto user = usuarioService.login(loginDTO);
-        if(user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login inválido");
-        }
-        String token = jwtUtil.generateToken(user.getId(), user.getUser());
-        return ResponseEntity.ok(Map.of(
-                "token", token,
-                "usuario", user
-        ));
+    public ResponseEntity<?> login(@RequestBody UsuarioDto loginDTO, HttpServletResponse response) {
+      UsuarioResponseDto user = usuarioService.login(loginDTO);
+      if (user == null) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login inválido");
+      }
+      String token = jwtUtil.generateToken(user.getId(), user.getUser());
+
+      response.setHeader("Set-Cookie", "jwt=" + token + "; HttpOnly; Secure; Path=/; Max-Age=3600; SameSite=None");
+
+
+      return new ResponseEntity<>("Login exitoso", HttpStatus.OK);
+
     }
 }
