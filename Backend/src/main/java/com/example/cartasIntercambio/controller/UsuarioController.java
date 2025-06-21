@@ -73,6 +73,7 @@ public class UsuarioController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UsuarioDto loginDTO, HttpServletResponse response) {
+<<<<<<< Updated upstream
       UsuarioResponseDto user = usuarioService.login(loginDTO);
       if (user == null) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login inválido");
@@ -84,5 +85,31 @@ public class UsuarioController {
 
       return new ResponseEntity<>("Login exitoso", HttpStatus.OK);
 
+=======
+        UsuarioResponseDto user = usuarioService.login(loginDTO);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login inválido");
+        }
+        String token = jwtUtil.generateToken(user.getId(), user.getUser());
+
+        response.setHeader("Set-Cookie", "jwt=" + token + "; HttpOnly; Secure; Path=/; Max-Age=3600; SameSite=None");
+
+
+        return new ResponseEntity<>("Login exitoso", HttpStatus.OK);
+    }
+
+    // Verifica si el usuario está autenticado mediante la cookie
+    @GetMapping("/check")
+    public ResponseEntity<String> checkLogin(@CookieValue(name = "jwt", required = false) String token) {
+        JwtUtil ejemplo = new JwtUtil();
+
+        if (token != null && ejemplo.isValidToken(token, ejemplo.extractUsername(token))) {
+            // A futuro hay que cambiarlo que retorne los datos básicos del usuario, es decir, confirma que está logueado y el
+            // server te dice amablemente datos básicos tuyos para que el front lo maneje
+            return new ResponseEntity<>("Estás logueado como " + ejemplo.extractUsername(token), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("No estás logueado", HttpStatus.UNAUTHORIZED);
+        }
+>>>>>>> Stashed changes
     }
 }

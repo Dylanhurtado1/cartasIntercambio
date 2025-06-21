@@ -80,17 +80,27 @@ public class PublicacionController{
     }
 
 
-    @PostMapping
-    public ResponseEntity<PublicacionDto> crearPublicacion(
-            @RequestHeader("Authorization") String authHeader,
+/*    @PostMapping //TODO: Hace algo?
+        public ResponseEntity<PublicacionDto> crearPublicacion(
+            @CookieValue(name = "jwt", required = false) String token,
             @RequestBody PublicacionDto publicacionDto) {
-        String token = authHeader.replace("Bearer ", "");
-        Claims claims = jwtUtil.validateToken(token);
-        String userId = claims.getSubject();
-        publicacionDto.getPublicador().setId(userId);
-        PublicacionDto guardada= publicacionService.guardarPublicacion(publicacionDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(guardada);
-    }
+
+        JwtUtil ejemplo = new JwtUtil();
+
+        if (ejemplo.isValidCookie(token)) {
+            Claims claims = ejemplo.validateToken(token);
+            String userId = claims.getSubject();
+            publicacionDto.getPublicador().setId(userId);
+            // A futuro hay que cambiarlo que retorne los datos básicos del usuario, es decir, confirma que está logueado y el
+            // server te dice amablemente datos básicos tuyos para que el front lo maneje
+            PublicacionDto guardada= publicacionService.guardarPublicacion(publicacionDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(guardada);
+        } else {
+            PublicacionDto vacio = new PublicacionDto();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(vacio);
+        }
+
+    }*/
 
     // Crear una oferta para una publicacion
     @PostMapping("/{idPublicacion}/ofertas")
@@ -231,71 +241,85 @@ public class PublicacionController{
             @RequestHeader("Authorization") String authHeader,
             @RequestPart("publicacion") PublicacionDto publicacionDto,
             @RequestPart(value = "publicacionImagenes", required = true) MultipartFile[] publicacionImagenes,
-            HttpServletRequest restoDeInformacion // acá estará el "cartaInteres[i]" por cada carta de interés, en orden 
+            HttpServletRequest restoDeInformacion, // acá estará el "cartaInteres[i]" por cada carta de interés, en orden
+            @CookieValue(name = "jwt", required = false) String token
     ) {
-        try {
-            // --- USER DEL JWT ---
-            String token = authHeader.replace("Bearer ", "");
-            Claims claims = jwtUtil.validateToken(token);
-            String userId = claims.getSubject();
+        JwtUtil ejemplo = new JwtUtil();
 
-            // Buscar usuario real desde tu service
-            UsuarioResponseDto usuarioDto = usuarioService.buscarUsuarioPorId(userId);
-            // Conversión manual, o implementá un método .toModel() si tienes en UsuarioResponseDto
-            Usuario usuario = new Usuario();
-            usuario.setId(usuarioDto.getId());
-            usuario.setUser(usuarioDto.getUser());
-            usuario.setNombre(usuarioDto.getNombre());
 
-            publicacionDto.setPublicador(usuario);
+        if (ejemplo.isValidCookie(token)) {
+            try {
+                // --- USER DEL JWT ---
 
-            // --- Imagenes carta principal ---
-            List<String> urlsPrincipal = new ArrayList<>();
-            if (publicacionImagenes != null) {
-                for (MultipartFile img : publicacionImagenes) {
-                    urlsPrincipal.add(s3Service.uploadFile(img));
+                Claims claims = ejemplo.validateToken(token);
+                String userId = claims.getSubject();
+
+                // Buscar usuario real desde tu service
+                UsuarioResponseDto usuarioDto = usuarioService.buscarUsuarioPorId(userId);
+                // Conversión manual, o implementá un método .toModel() si tienes en UsuarioResponseDto
+                Usuario usuario = new Usuario();
+                usuario.setId(usuarioDto.getId());
+                usuario.setUser(usuarioDto.getUser());
+                usuario.setNombre(usuarioDto.getNombre());
+
+                publicacionDto.setPublicador(usuario);
+
+                // --- Imagenes carta principal ---
+                List<String> urlsPrincipal = new ArrayList<>();
+                if (publicacionImagenes != null) {
+                    for (MultipartFile img : publicacionImagenes) {
+                        urlsPrincipal.add(s3Service.uploadFile(img));
+                    }
                 }
-            }
-            if (publicacionDto.getCartaOfrecida() != null) {
-                publicacionDto.getCartaOfrecida().setImagenes(urlsPrincipal);
-            }
-
-            // --- Imagenes de cartas de interés (ahora si acepta N de una vez) ---
-            Map<String, List<MultipartFile>> cartaInteresImagenes = extraerImagenesPorCarta(restoDeInformacion);
-            List<CartaDto> cartasInteres = publicacionDto.getCartasInteres();
-            int cantidadDeCTs = cartasInteres.size();
-
-            // Itero por cada carta de interés
-            System.out.println("Llegó " + cantidadDeCTs + " cartas de interés");
-            for (int i = 0; i < cantidadDeCTs; i++) {
-                // Obtengo las imágenes asociadas a "cartaInteres[i]"
-                List<MultipartFile> imgDeCTActual = cartaInteresImagenes.get("cartaInteres[" + i + "]");
-                
-                System.out.println("La carta " + i + " tiene " + imgDeCTActual.size() + " fotos");
-                
-                // No puede haber cartas de interés sin imágenes, es ridículo
-                if (imgDeCTActual == null || imgDeCTActual.size() == 0) {
-                    return ResponseEntity.badRequest().body("La oferta #" + (i + 1) + " debe tener al menos una imagen.");
+                if (publicacionDto.getCartaOfrecida() != null) {
+                    publicacionDto.getCartaOfrecida().setImagenes(urlsPrincipal);
                 }
 
-                // Guardar imágenes de la oferta y asignar URLs
-                CartaDto CTActual = cartasInteres.get(i);
-                List<String> urls = getUrlsFromS3(imgDeCTActual);
+                // --- Imagenes de cartas de interés (ahora si acepta N de una vez) ---
+                Map<String, List<MultipartFile>> cartaInteresImagenes = extraerImagenesPorCarta(restoDeInformacion);
+                List<CartaDto> cartasInteres = publicacionDto.getCartasInteres();
+                int cantidadDeCTs = cartasInteres.size();
 
-                // Al final, guardo las imágenes en la carta de interés que estoy parado en la iteración
-                CTActual.setImagenes(urls);
-                System.out.println(CTActual.getImagenes());
+                // Itero por cada carta de interés
+                System.out.println("Llegó " + cantidadDeCTs + " cartas de interés");
+                for (int i = 0; i < cantidadDeCTs; i++) {
+                    // Obtengo las imágenes asociadas a "cartaInteres[i]"
+                    List<MultipartFile> imgDeCTActual = cartaInteresImagenes.get("cartaInteres[" + i + "]");
+
+                    System.out.println("La carta " + i + " tiene " + imgDeCTActual.size() + " fotos");
+
+                    // No puede haber cartas de interés sin imágenes, es ridículo
+                    if (imgDeCTActual == null || imgDeCTActual.size() == 0) {
+                        return ResponseEntity.badRequest().body("La oferta #" + (i + 1) + " debe tener al menos una imagen.");
+                    }
+
+                    // Guardar imágenes de la oferta y asignar URLs
+                    CartaDto CTActual = cartasInteres.get(i);
+                    List<String> urls = getUrlsFromS3(imgDeCTActual);
+
+                    // Al final, guardo las imágenes en la carta de interés que estoy parado en la iteración
+                    CTActual.setImagenes(urls);
+                    System.out.println(CTActual.getImagenes());
+                }
+
+                // --- Guardar publicación en BD ---
+                PublicacionDto guardada = publicacionService.guardarPublicacion(publicacionDto);
+
+                return ResponseEntity.status(HttpStatus.CREATED).body(guardada);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error subiendo publicación o imágenes: " + e.getMessage());
             }
 
-            // --- Guardar publicación en BD ---
-            PublicacionDto guardada = publicacionService.guardarPublicacion(publicacionDto);
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(guardada);
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error subiendo publicación o imágenes: " + e.getMessage());
+        } else {
+            PublicacionDto vacio = new PublicacionDto();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(vacio);
         }
+
+
     }
 
 }

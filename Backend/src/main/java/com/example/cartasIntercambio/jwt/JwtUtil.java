@@ -48,6 +48,15 @@ public class JwtUtil {
                 .getBody();
     }
 
+<<<<<<< Updated upstream
+=======
+    public Claims getClaims(String token) {
+        return Jwts.parser()
+            .setSigningKey(key)
+            .parseClaimsJws(token)
+            .getBody();
+    }
+>>>>>>> Stashed changes
     public String extractUsername(String token) {
         return validateToken(token).getSubject();
     }
@@ -56,4 +65,11 @@ public class JwtUtil {
         //veo si el nombre obtenido y la cookie concuerdan y además si no expiró
         return (username.equals(extractUsername(token)) && !isTokenExpired(token));
     }
+<<<<<<< Updated upstream
+=======
+    public boolean isValidCookie(String token) {
+        //veo si el nombre obtenido y la cookie concuerdan y además si no expiró
+        return token != null && this.isValidToken(token, this.extractUsername(token));
+    }
+>>>>>>> Stashed changes
 }
