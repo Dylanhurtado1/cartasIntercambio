@@ -2,9 +2,8 @@ package com.example.cartasIntercambio.service;
 
 import com.example.cartasIntercambio.dto.PublicacionDto;
 import com.example.cartasIntercambio.dto.PublicacionResponse;
-import org.bson.Document;
-
 import java.util.List;
+import java.util.Map;
 
 public interface IPublicacionService {
 
@@ -13,6 +12,8 @@ public interface IPublicacionService {
     PublicacionResponse buscarPublicacionesFiltradas(String nombre, String juego, String estado,
                                                      Double preciomin, Double preciomax, int pageNo,
                                                      int pageSize);
+
+    PublicacionResponse buscarPublicacionesPorUsuario(String idUsuario, int pageNo, int pageSize);
 
     List<PublicacionDto> buscarPublicacionesPorUsuario(String idUsuario);
 
@@ -24,5 +25,5 @@ public interface IPublicacionService {
 
     void finalizarPublicacion(String idPublicacion,Long version);
 
-    Document contarPublicacionesPorJuego();
+    Map<String, Integer> contarPublicacionesPorJuego();
 }

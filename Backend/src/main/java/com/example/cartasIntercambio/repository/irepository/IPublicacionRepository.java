@@ -13,15 +13,10 @@ public interface IPublicacionRepository extends MongoRepository<Publicacion, Str
 
 
 
+  Page<Publicacion> findByPublicadorId(String idUser, Pageable pageable);
+
   List<Publicacion> findByPublicadorId(String idUser);
 
-//  @Query("{ $and: [ " +
-//          "{ $or: [ { $where: '?0 == null' }, { 'cartaOfrecida.nombre' : ?#{[0]} } ] }, " +
-//          "{ $or: [ { $where: '?1 == null' }, { 'cartaOfrecida.juego' : ?#{[1]} } ] }, " +
-//          "{ $or: [ { $where: '?2 == null' }, { 'cartaOfrecida.estado' : ?#{[2]} } ] }, " +
-//          "{ $or: [ { $where: '?3 == null' }, { 'precio' : {$gt: ?#{[3]}} } ] }, " +
-//          "{ $or: [ { $where: '?4 == null' }, { 'precio' : {$lt: ?#{[4]}} } ] } " +
-//          "]}" )
   @Query("{ $and : [ " +
           "?#{ #nombre == null ? { $expr: true } : { 'cartaOfrecida.nombre' : #nombre } }, " +
           "?#{ #juego == null ? { $expr: true } : { 'cartaOfrecida.juego' : #juego } }, " +

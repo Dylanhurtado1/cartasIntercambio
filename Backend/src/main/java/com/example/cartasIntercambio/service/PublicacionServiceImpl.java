@@ -9,7 +9,6 @@ import com.example.cartasIntercambio.model.Mercado.Publicacion;
 import com.example.cartasIntercambio.model.Producto_Carta.Carta;
 import com.example.cartasIntercambio.model.Producto_Carta.EstadoCarta;
 import com.example.cartasIntercambio.repository.irepository.IPublicacionRepository;
-import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,7 +21,9 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.group;
@@ -78,16 +79,44 @@ public class PublicacionServiceImpl implements IPublicacionService {
     }
 
     @Override
-    public Document contarPublicacionesPorJuego() {
+    public Map<String, Integer> contarPublicacionesPorJuego() {
 
         GroupOperation groupOp = group("cartaOfrecida.juego").count().as("totalJuego");
         ProjectionOperation project = Aggregation.project("totalJuego");
-        UnionWithOperation unionWithCount = UnionWithOperation.unionWith("Publicacion")
-                .pipeline(Aggregation.count().as("Total"));
+        Aggregation aggregation = Aggregation.newAggregation(groupOp, project);
 
-        Aggregation aggregation = Aggregation.newAggregation(groupOp, project, unionWithCount);
+        List<Stat> stats = mongoTemplate.aggregate(aggregation, "Publicacion", Stat.class).getMappedResults();
+        Map<String, Integer> map = new HashMap<>(Map.of(
+                "Magic", 0,
+                "Pokémon", 0,
+                "Yu-Gi-Oh!", 0
+        ));
 
-        return mongoTemplate.aggregate(aggregation, "Publicacion", Publicacion.class).getRawResults();
+        Integer total = 0;
+
+        for (Stat stat : stats) {
+            if(map.containsKey(stat._id)){
+                map.put(stat._id, stat.totalJuego);
+            }
+            total += stat.totalJuego;
+        }
+        map.put("Total", total);
+
+        return map;
+    }
+
+    // TODO: Validar que exista el user
+    @Override
+    public PublicacionResponse buscarPublicacionesPorUsuario(String idUsuario, int pageNo, int pageSize) {
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Publicacion> pagina = publicacionRepository.findByPublicadorId(idUsuario, pageable);
+        List<Publicacion> publicaciones = pagina.getContent();
+        List<PublicacionDto> content = publicaciones.stream().map(PublicacionDto::new).toList();
+
+        return new PublicacionResponse(content, pagina.getNumber(),
+                pagina.getSize(), pagina.getTotalElements(),
+                pagina.getTotalPages(), pagina.isLast());
     }
 
     // TODO: Validar que exista el user
@@ -97,7 +126,6 @@ public class PublicacionServiceImpl implements IPublicacionService {
         return publicacionRepository.findByPublicadorId(idUsuario).stream()
                 .map(PublicacionDto::new)
                 .collect(Collectors.toList());
-
     }
 
     @Override
@@ -144,5 +172,11 @@ public class PublicacionServiceImpl implements IPublicacionService {
         return publicacionRepository.findAll().stream()
                 .map(PublicacionDto::new)
                 .collect(Collectors.toList());
-    }
+   }
+
+   public static class Stat {
+        String _id;
+        Integer totalJuego;
+   }
+
 }

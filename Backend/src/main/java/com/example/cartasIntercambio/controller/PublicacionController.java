@@ -64,7 +64,7 @@ public class PublicacionController{
             @RequestParam(required = false) Double preciomin,
             @RequestParam(required = false) Double preciomax,
             @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
-            @RequestParam(value = "pageSize", defaultValue = "15", required = false) int pageSize
+            @RequestParam(value = "pageSize", defaultValue = "6", required = false) int pageSize
 
     ) {
         return ResponseEntity.ok(
@@ -164,9 +164,12 @@ public class PublicacionController{
 
     // Mis publicaciones
     @GetMapping("/usuario/{idUsuario}") // TODO: El ID del usuario no lo vamos a pasar por URL
-    public ResponseEntity<List<PublicacionDto>> listarPublicacionesPorUsuario(@PathVariable("idUsuario") String idUsuario) {
-        List<PublicacionDto> publicacionesDTO = publicacionService.buscarPublicacionesPorUsuario(idUsuario);
-        return ResponseEntity.ok(publicacionesDTO);
+    public ResponseEntity<PublicacionResponse> listarPublicacionesPorUsuario(
+            @PathVariable("idUsuario") String idUsuario,
+            @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "5", required = false) int pageSize) {
+
+        return ResponseEntity.ok(publicacionService.buscarPublicacionesPorUsuario(idUsuario, pageNo, pageSize));
     }
 
     // Mis ofertas recibidas
