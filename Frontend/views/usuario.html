@@ -8,6 +8,7 @@
 
     <link rel="stylesheet" href="/public/css/menu.css" />
     <link rel="stylesheet" href="/public/css/auth-user.css" />
+    <link rel="stylesheet" href="/public/css/paginacion.css" />
     <link rel="stylesheet" href="/public/css/usuario.css" />
 
     <script src="https://unpkg.com/vue@3/dist/vue.global.js" defer></script>
@@ -19,13 +20,21 @@
       
       
       <section id="app" v-cloak class="contenedor">
+        
         <div class="app" v-show="usuario.user">
-          <h2>Usuario actual: {{usuario.user}}</h2>
           
+          <h2 
+            v-show="contenidoCargado != 1" 
+            :style="{ color: contenidoCargado === 2 ? 'red' : 'inherit' }"
+          >
+            {{ contenidoCargado === 2 ? 'Error con el servidor' : 'Cargando datos' }}
+          </h2>          
+          
+          <h3>Usuario actual: {{usuario.user}}</h3>
           <!-- PUBLICACIONES -->
-          <h2>Tus Publicaciones: {{publicaciones.length}}</h2>
+          <h3>Tus Publicaciones: {{publicacionesTotales}}</h3>
           <section class="cartas">
-            <a v-for="carta in publicaciones" class="carta" :href="`/publicacion/${carta.id}`">
+            <a v-for="carta in publicacionesCargadas" class="carta" :href="`/publicacion/${carta.id}`">
               <img
                 v-if="carta.cartaOfrecida.imagenes && carta.cartaOfrecida.imagenes.length"
                 :src="carta.cartaOfrecida.imagenes[0]"
@@ -40,8 +49,15 @@
             </a>
           </section>
 
+          <!-- Paginación de publicaciones -->
+          <pagination 
+            v-if="paginasTotales > 1"
+            :total-pages="paginasTotales" 
+            v-model="paginaActual"
+          ></pagination>
+
           <!-- OFERTAS -->
-          <h2>Tus Ofertas: {{ofertas.length}}</h2>
+          <h3>Tus Ofertas: {{ofertas.length}}</h3>
           <div class="lista">
             <div class="item" v-for="oferta in ofertas" :key="oferta.id">
               <p>Oferta para publicación ID: {{ oferta.idPublicacion }}</p>
@@ -57,6 +73,9 @@
               </div>
             </div> <!-- Ricas cadenas de divs -->
           </div>
+
+
+
         </div>
       </section>
 

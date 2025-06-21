@@ -40,6 +40,7 @@ export const Pagination = {
         :key="p"
         @click="goTo(p)"
         :class="{ active: p === modelValue }"
+        :disabled="p === modelValue"
       >
         {{ p + 1 }}
       </button>
