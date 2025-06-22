@@ -35,6 +35,9 @@
           <h3>Tus Publicaciones: {{publicacionesTotales}}</h3>
           <section class="cartas">
             <a v-for="carta in publicacionesCargadas" class="carta" :href="`/publicacion/${carta.id}`">
+              <span class="hayOferta" v-show="carta.estaOfertado">
+                Ofertas disponibles
+              </span>
               <img
                 v-if="carta.cartaOfrecida.imagenes && carta.cartaOfrecida.imagenes.length"
                 :src="carta.cartaOfrecida.imagenes[0]"
@@ -45,7 +48,6 @@
               />
               <h2>{{ carta.cartaOfrecida.nombre }}</h2>
               <p>{{ carta.cartaOfrecida.juego }}</p>
-              <span>$ {{ carta.precio }}</span>
             </a>
           </section>
 

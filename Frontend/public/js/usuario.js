@@ -9,6 +9,7 @@ Vue.createApp({
     const usuario = Vue.ref(usuarioActual);
     const publicacionesCargadas = Vue.ref([]);
     const ofertas = Vue.ref([]);
+    const ofertasRecibidas = Vue.ref([]);
 
     // Datos para paginación, arrepentido de no hacerlo un objeto y listo
     const paginaActual = Vue.ref(0)
@@ -20,7 +21,6 @@ Vue.createApp({
     const backendURL = obtenerURL(); 
 
     async function fetchDatos() {
-      console.log(paginaActual.value)
       contenidoCargado.value = 0
       try {
         const headers = {
@@ -40,14 +40,25 @@ Vue.createApp({
           paginaActual.value = contenido.pageNo
           paginasTotales.value = contenido.totalPages
           publicacionesCargadas.value = contenido.content
-
         }
 
-        // Obtener ofertas
-        const ofertasRes = await fetch(`${backendURL}/publicaciones/usuario/${id}/ofertas/realizadas`, { headers })
-        if (ofertasRes.ok) {
-          ofertas.value = await ofertasRes.json()
+        // Obtener ofertas hechas por el usuario
+        const ofertasMias = await fetch(`${backendURL}/publicaciones/usuario/${id}/ofertas/realizadas`, { headers })
+        if (ofertasMias.ok) {
+          ofertas.value = await ofertasMias.json()
         }
+
+        // Obtener ofertas hacia el usuario (ofertas que le hicieron a mis publicaciones)
+        const ofertasRecibidas = await fetch(`${backendURL}/publicaciones/usuario/${id}/ofertas/recibidas`, { headers })
+        if (ofertasRecibidas.ok) {
+          ofertasRecibidas.value = await ofertasRecibidas.json()
+        }
+
+        // le agrego el atributo para saber si la publicación tiene ofertas para ver
+        (publicacionesCargadas.value).forEach(publicacion => {
+          publicacion.estaOfertado = (ofertasRecibidas.value).some(oferta => 
+                                      oferta.idPublicacion == publicacion.id && oferta.estado == "PENDIENTE")
+        })
 
       } catch (err) {
         contenidoCargado.value = 2

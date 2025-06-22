@@ -23,6 +23,17 @@
   border-radius: 8px;
 }
 
+.hayOferta{
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 4px;
+}
+
 .cartas {
     display: flex;
     gap: 1.5em;
@@ -42,6 +53,7 @@
     text-decoration: none;
     color: inherit;
     transition: transform 0.2s;
+    position: relative;
 }
 
 .carta:hover {
