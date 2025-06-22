@@ -177,6 +177,11 @@ public class PublicacionServiceImpl implements IPublicacionService {
    public static class Stat {
         String _id;
         Integer totalJuego;
+
+       public Stat(String _id, int totalJuego) {
+           this._id = _id;
+           this.totalJuego = totalJuego;
+       }
    }
 
 }

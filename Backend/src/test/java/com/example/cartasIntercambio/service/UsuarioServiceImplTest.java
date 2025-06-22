@@ -7,19 +7,22 @@ import com.example.cartasIntercambio.exception.UsuarioYaExisteException;
 import com.example.cartasIntercambio.model.Usuario.Admin;
 import com.example.cartasIntercambio.model.Usuario.Usuario;
 import com.example.cartasIntercambio.repository.irepository.IUsuarioRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.test.util.ReflectionTestUtils;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(org.mockito.junit.jupiter.MockitoExtension.class)
 public class UsuarioServiceImplTest {
@@ -29,6 +32,17 @@ public class UsuarioServiceImplTest {
 
     @InjectMocks
     UsuarioServiceImpl usuarioService;
+
+    @Mock
+    private BCryptPasswordEncoder passwordEncoder;
+
+    @BeforeEach
+    void init() {
+        // Reemplazamos el passwordEncoder manualmente con un mock
+        ReflectionTestUtils.setField(usuarioService, "passwordEncoder", passwordEncoder);
+    }
+
+    // ---------------------------------------- TESTS ---------------------------------------- //
 
     @Test
     void registrarUsuario_ok() {
@@ -335,4 +349,59 @@ public class UsuarioServiceImplTest {
         assertEquals("admin", respAdmin.getTipo());
         assertEquals("usuario", respUser.getTipo());
     }
+
+    @Test
+    void testLogin() throws Exception {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date fechaNacimiento = sdf.parse("2013-11-13");
+        Usuario usuario = new Usuario("1", "Morita", "Mora", "Gonzales", "mgonzales@cartas.com", "123456", fechaNacimiento);
+        UsuarioDto usuarioDTO = new UsuarioDto("Morita", "Mora", "mgonzales@cartas.com", "123456");
+
+        usuario.setPassword(new BCryptPasswordEncoder().encode("123456"));
+
+        when(usuarioRepository.findByUser(usuario.getUser())).thenReturn(Optional.of(usuario));
+        when(passwordEncoder.matches("123456", usuario.getPassword())).thenReturn(true);
+
+        UsuarioResponseDto usuarioResponseDto = usuarioService.login(usuarioDTO);
+
+        assertNotNull(usuarioResponseDto);
+        assertEquals(usuario.getId(), usuarioResponseDto.getId());
+        assertEquals(usuario.getUser(), usuarioResponseDto.getUser());
+        assertEquals("usuario", usuarioResponseDto.getTipo());
+    }
+
+    @Test
+    void testLogin_UsuarioNoExiste_LanzaExcepcion() {
+        UsuarioDto usuarioDTO = new UsuarioDto();
+
+        usuarioDTO.setUser("Usuario");
+        usuarioDTO.setPassword("Password");
+
+        when(usuarioRepository.findByUser("Usuario")).thenReturn(Optional.empty());
+
+        UsuarioResponseDto response = usuarioService.login(usuarioDTO);
+
+        assertNull(response);
+    }
+
+    @Test
+    void testLogin_CredencialesIncorrectas_LanzaExcepcion() throws Exception {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date fechaNacimiento = sdf.parse("2013-11-13");
+        Usuario usuario = new Usuario("1", "Morita", "Mora", "Gonzales", "mgonzales@cartas.com", "123456", fechaNacimiento);
+        UsuarioDto usuarioDTO = new UsuarioDto("Morita", "Mora", "mgonzales@cartas.com", "123456");
+
+        usuarioDTO.setUser(usuario.getUser());
+        usuarioDTO.setPassword("123456");
+
+        usuario.setPassword(new BCryptPasswordEncoder().encode("123456"));
+
+        when(usuarioRepository.findByUser(usuario.getUser())).thenReturn(Optional.of(usuario));
+        when(passwordEncoder.matches("123456", usuario.getPassword())).thenReturn(false);
+
+        UsuarioResponseDto response = usuarioService.login(usuarioDTO);
+
+        assertNull(response);
+    }
+
 }
