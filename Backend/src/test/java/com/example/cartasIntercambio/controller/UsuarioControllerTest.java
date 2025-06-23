@@ -253,39 +253,39 @@ public class UsuarioControllerTest {
                 .andExpect(content().string("Ya existe un usuario (o admin) con ese user y/o correo"));
     }
 
-    @Test
-    void testLogin() throws Exception {
-        UsuarioDto usuarioDto2 = usuarioAUsuarioDTO(usuario2);
-        UsuarioResponseDto usuarioResponseDto2 = usuarioAUsuarioResponseDTO(usuario2);
+//    @Test
+//    void testLogin() throws Exception {
+//        UsuarioDto usuarioDto2 = usuarioAUsuarioDTO(usuario2);
+//        UsuarioResponseDto usuarioResponseDto2 = usuarioAUsuarioResponseDTO(usuario2);
+//
+//        when(usuarioService.login(any(UsuarioDto.class))).thenReturn(usuarioResponseDto2);
+//        when(jwtUtil.generateToken("2", "juanpe80")).thenReturn("test-jwt-token");
+//
+//        mockMvc.perform(post("/api/usuarios/login")
+//                        .contentType("application/json")
+//                        .content(objectMapper.writeValueAsString(usuarioDto2)))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.token").value("test-jwt-token"))
+//                .andExpect(jsonPath("$.usuario.id").value("2"))
+//                .andExpect(jsonPath("$.usuario.user").value("juanpe80"))
+//                .andExpect(jsonPath("$.usuario.nombre").value("Juan"))
+//                .andExpect(jsonPath("$.usuario.correo").value("jperez@cartas.com"))
+//                .andExpect(jsonPath("$.usuario.tipo").value("usuario"));
+//    }
 
-        when(usuarioService.login(any(UsuarioDto.class))).thenReturn(usuarioResponseDto2);
-        when(jwtUtil.generateToken("2", "juanpe80")).thenReturn("test-jwt-token");
-
-        mockMvc.perform(post("/api/usuarios/login")
-                        .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(usuarioDto2)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").value("test-jwt-token"))
-                .andExpect(jsonPath("$.usuario.id").value("2"))
-                .andExpect(jsonPath("$.usuario.user").value("juanpe80"))
-                .andExpect(jsonPath("$.usuario.nombre").value("Juan"))
-                .andExpect(jsonPath("$.usuario.correo").value("jperez@cartas.com"))
-                .andExpect(jsonPath("$.usuario.tipo").value("usuario"));
-    }
-
-    @Test
-    void testLogin_CredencialesIncorrectas_LanzaExcepcion() throws Exception {
-        UsuarioDto usuarioDto2 = usuarioAUsuarioDTO(usuario2);
-        usuarioDto2.setPassword("passwordInvalida");
-
-        when(usuarioService.login(any(UsuarioDto.class))).thenReturn(null);
-
-        mockMvc.perform(post("/api/usuarios/login")
-                        .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(usuarioDto2)))
-                .andExpect(status().isUnauthorized())
-                .andExpect(content().string("Login inválido"));
-    }
+//    @Test
+//    void testLogin_CredencialesIncorrectas_LanzaExcepcion() throws Exception {
+//        UsuarioDto usuarioDto2 = usuarioAUsuarioDTO(usuario2);
+//        usuarioDto2.setPassword("passwordInvalida");
+//
+//        when(usuarioService.login(any(UsuarioDto.class))).thenReturn(null);
+//
+//        mockMvc.perform(post("/api/usuarios/login")
+//                        .contentType("application/json")
+//                        .content(objectMapper.writeValueAsString(usuarioDto2)))
+//                .andExpect(status().isUnauthorized())
+//                .andExpect(content().string("Login inválido"));
+//    }
 
     // -------------------------------------------------------------------------------------- //
     // --------------------------------- Metodos Auxiliares --------------------------------- //

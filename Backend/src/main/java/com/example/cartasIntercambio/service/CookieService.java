@@ -1,7 +1,6 @@
 package com.example.cartasIntercambio.service;
 
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Service;
 
@@ -26,13 +25,5 @@ public class CookieService {
         cookie.setMaxAge(0);
 
         response.addCookie(cookie);
-    }
-
-    public String extractCookie(HttpServletRequest req) {
-        for (Cookie c : req.getCookies()) {
-            if (c.getName().equals("jwt"))
-                return c.getValue();
-        }
-        return null;
     }
 }

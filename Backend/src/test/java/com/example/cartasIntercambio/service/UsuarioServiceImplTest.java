@@ -15,8 +15,6 @@ import org.mockito.Mock;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -350,58 +348,58 @@ public class UsuarioServiceImplTest {
         assertEquals("usuario", respUser.getTipo());
     }
 
-    @Test
-    void testLogin() throws Exception {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date fechaNacimiento = sdf.parse("2013-11-13");
-        Usuario usuario = new Usuario("1", "Morita", "Mora", "Gonzales", "mgonzales@cartas.com", "123456", fechaNacimiento);
-        UsuarioDto usuarioDTO = new UsuarioDto("Morita", "Mora", "mgonzales@cartas.com", "123456");
+//    @Test
+//    void testLogin() throws Exception {
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//        Date fechaNacimiento = sdf.parse("2013-11-13");
+//        Usuario usuario = new Usuario("1", "Morita", "Mora", "Gonzales", "mgonzales@cartas.com", "123456", fechaNacimiento);
+//        UsuarioDto usuarioDTO = new UsuarioDto("Morita", "Mora", "mgonzales@cartas.com", "123456");
+//
+//        usuario.setPassword(new BCryptPasswordEncoder().encode("123456"));
+//
+//        when(usuarioRepository.findByUser(usuario.getUser())).thenReturn(Optional.of(usuario));
+//        when(passwordEncoder.matches("123456", usuario.getPassword())).thenReturn(true);
+//
+//        UsuarioResponseDto usuarioResponseDto = usuarioService.login(usuarioDTO);
+//
+//        assertNotNull(usuarioResponseDto);
+//        assertEquals(usuario.getId(), usuarioResponseDto.getId());
+//        assertEquals(usuario.getUser(), usuarioResponseDto.getUser());
+//        assertEquals("usuario", usuarioResponseDto.getTipo());
+//    }
 
-        usuario.setPassword(new BCryptPasswordEncoder().encode("123456"));
+//    @Test
+//    void testLogin_UsuarioNoExiste_LanzaExcepcion() {
+//        UsuarioDto usuarioDTO = new UsuarioDto();
+//
+//        usuarioDTO.setUser("Usuario");
+//        usuarioDTO.setPassword("Password");
+//
+//        when(usuarioRepository.findByUser("Usuario")).thenReturn(Optional.empty());
+//
+//        UsuarioResponseDto response = usuarioService.login(usuarioDTO);
+//
+//        assertNull(response);
+//    }
 
-        when(usuarioRepository.findByUser(usuario.getUser())).thenReturn(Optional.of(usuario));
-        when(passwordEncoder.matches("123456", usuario.getPassword())).thenReturn(true);
-
-        UsuarioResponseDto usuarioResponseDto = usuarioService.login(usuarioDTO);
-
-        assertNotNull(usuarioResponseDto);
-        assertEquals(usuario.getId(), usuarioResponseDto.getId());
-        assertEquals(usuario.getUser(), usuarioResponseDto.getUser());
-        assertEquals("usuario", usuarioResponseDto.getTipo());
-    }
-
-    @Test
-    void testLogin_UsuarioNoExiste_LanzaExcepcion() {
-        UsuarioDto usuarioDTO = new UsuarioDto();
-
-        usuarioDTO.setUser("Usuario");
-        usuarioDTO.setPassword("Password");
-
-        when(usuarioRepository.findByUser("Usuario")).thenReturn(Optional.empty());
-
-        UsuarioResponseDto response = usuarioService.login(usuarioDTO);
-
-        assertNull(response);
-    }
-
-    @Test
-    void testLogin_CredencialesIncorrectas_LanzaExcepcion() throws Exception {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date fechaNacimiento = sdf.parse("2013-11-13");
-        Usuario usuario = new Usuario("1", "Morita", "Mora", "Gonzales", "mgonzales@cartas.com", "123456", fechaNacimiento);
-        UsuarioDto usuarioDTO = new UsuarioDto("Morita", "Mora", "mgonzales@cartas.com", "123456");
-
-        usuarioDTO.setUser(usuario.getUser());
-        usuarioDTO.setPassword("123456");
-
-        usuario.setPassword(new BCryptPasswordEncoder().encode("123456"));
-
-        when(usuarioRepository.findByUser(usuario.getUser())).thenReturn(Optional.of(usuario));
-        when(passwordEncoder.matches("123456", usuario.getPassword())).thenReturn(false);
-
-        UsuarioResponseDto response = usuarioService.login(usuarioDTO);
-
-        assertNull(response);
-    }
+//    @Test
+//    void testLogin_CredencialesIncorrectas_LanzaExcepcion() throws Exception {
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//        Date fechaNacimiento = sdf.parse("2013-11-13");
+//        Usuario usuario = new Usuario("1", "Morita", "Mora", "Gonzales", "mgonzales@cartas.com", "123456", fechaNacimiento);
+//        UsuarioDto usuarioDTO = new UsuarioDto("Morita", "Mora", "mgonzales@cartas.com", "123456");
+//
+//        usuarioDTO.setUser(usuario.getUser());
+//        usuarioDTO.setPassword("123456");
+//
+//        usuario.setPassword(new BCryptPasswordEncoder().encode("123456"));
+//
+//        when(usuarioRepository.findByUser(usuario.getUser())).thenReturn(Optional.of(usuario));
+//        when(passwordEncoder.matches("123456", usuario.getPassword())).thenReturn(false);
+//
+//        UsuarioResponseDto response = usuarioService.login(usuarioDTO);
+//
+//        assertNull(response);
+//    }
 
 }

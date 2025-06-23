@@ -10,24 +10,12 @@ import com.example.cartasIntercambio.model.Usuario.Usuario;
 import com.example.cartasIntercambio.repository.irepository.IUsuarioRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class UsuarioServiceImpl implements IUsuarioService {
@@ -129,5 +117,10 @@ public class UsuarioServiceImpl implements IUsuarioService {
                 .correo(usuarioDB.getEmail())
                 .tipo(usuarioDB instanceof Admin ? "admin" : "usuario")
                 .build();
+    }
+
+    @Override
+    public void logout(HttpServletResponse response) {
+        cookieService.deleteHttpCookie("jwt", response);
     }
 }

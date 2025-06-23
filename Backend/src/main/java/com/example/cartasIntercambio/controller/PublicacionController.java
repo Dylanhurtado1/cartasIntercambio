@@ -36,14 +36,10 @@ public class PublicacionController{
 
     @Autowired
     private JwtUtil jwtUtil;
-
     @Autowired
     private S3Service s3Service;
-
     @Autowired
     private IUsuarioService usuarioService;
-    @Autowired
-    private CookieService cookieService;
 
     @Autowired
     public PublicacionController(PublicacionServiceImpl publicacionService, OfertaServiceImpl ofertaService) {
@@ -79,8 +75,7 @@ public class PublicacionController{
     @PostMapping
     public ResponseEntity<PublicacionDto> crearPublicacion(
             @RequestBody PublicacionDto publicacionDto,
-            HttpServletRequest request) {
-        String token = cookieService.extractCookie(request);
+            @CookieValue("jwt") String token) {
         Claims claims = jwtUtil.validateToken(token);
         String userId = claims.getSubject();
         publicacionDto.getPublicador().setId(userId);
@@ -90,31 +85,57 @@ public class PublicacionController{
 
     // Crear una oferta para una publicacion
     @PostMapping("/{idPublicacion}/ofertas")
-    public ResponseEntity<OfertaDto> crearOferta(
+    public ResponseEntity<?> crearOferta(
             @PathVariable("idPublicacion") String idPublicacion,
             @RequestBody OfertaDto ofertaDto,
-            HttpServletRequest request) {
-        String token = cookieService.extractCookie(request);
+            @CookieValue("jwt") String token) {
         Claims claims = jwtUtil.validateToken(token);
         String userId = claims.getSubject();
         ofertaDto.getOfertante().setId(userId);
 
         Publicacion publicacion = publicacionService.buscarPublicacionPorId(idPublicacion);
+
+        if(userId.equals(publicacion.getPublicador().getId())){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Error: No podes ofertar sobre tu propia publicacion");
+        }
+
         OfertaDto dtoGuardado = ofertaService.crearOferta(ofertaDto, publicacion);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(dtoGuardado);
     }
 
     //Buscar todas las ofertas de una publicacion
     @GetMapping("/{idPublicacion}/ofertas")
-    public ResponseEntity<List<OfertaDto>> buscarOfertasDeUnaPublicacion(@PathVariable("idPublicacion") String idPublicacion) {
+    public ResponseEntity<?> buscarOfertasDeUnaPublicacion(@PathVariable("idPublicacion") String idPublicacion,
+                                                                         @CookieValue("jwt") String token) {
+        Claims claims = jwtUtil.validateToken(token);
+        String userId = claims.getSubject();
+
+        //Comentar estas lineas si necesitas que un usuario cualquiera puede ver todas las ofertas
+        PublicacionDto publicacionDto = publicacionService.buscarPublicacionDTOPorId(idPublicacion);
+        if(!userId.equals(publicacionDto.getPublicador().getId())){
+
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Error: Acceso denegado");
+        }
+
         List<OfertaDto> ofertas = ofertaService.buscarOfertasPorPublicacion(idPublicacion);
         return ResponseEntity.ok(ofertas);
     }
 
     // Buscar una oferta de una publicacion
     @GetMapping("/ofertas/{idOferta}")
-    public ResponseEntity<OfertaDto> buscarOferta(@PathVariable("idOferta") String idOferta) {
-        OfertaDto oferta = ofertaService.buscarOfertaDto(idOferta);
+    public ResponseEntity<?> buscarOferta(@PathVariable("idOferta") String idOferta,
+                                          @CookieValue("jwt") String token) {
+        //Comentar si esta mal la logica
+        Claims claims = jwtUtil.validateToken(token);
+        String userId = claims.getSubject();
+        OfertaDto oferta = ofertaService.buscarOfertaDto(idOferta);//Esta no
+        PublicacionDto publicacionDto = publicacionService.buscarPublicacionDTOPorId(oferta.getIdPublicacion());
+        //Si no sos el duenio de la oferta ni de la publicacion => denegado
+        if(!publicacionDto.getPublicador().getId().equals(userId) && !oferta.getOfertante().getId().equals(userId)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Error: Acceso denegado");
+        }
+
         return new ResponseEntity<>(oferta, HttpStatus.OK);
     }
 
@@ -124,10 +145,9 @@ public class PublicacionController{
     public ResponseEntity<OfertaDto> responderOferta(
             @PathVariable("idOferta") String idOferta,
             @RequestBody JsonPatch patch,
-            HttpServletRequest request) {
+            @CookieValue("jwt") String token) {
 
         // 1. Validar token y obtener userId
-        String token = cookieService.extractCookie(request);
         Claims claims = jwtUtil.validateToken(token);
         String userId = claims.getSubject();
 
@@ -162,15 +182,29 @@ public class PublicacionController{
     @GetMapping("/usuario/{idUsuario}") // TODO: El ID del usuario no lo vamos a pasar por URL
     public ResponseEntity<PublicacionResponse> listarPublicacionesPorUsuario(
             @PathVariable("idUsuario") String idUsuario,
+            @CookieValue("jwt") String token,
             @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
             @RequestParam(value = "pageSize", defaultValue = "5", required = false) int pageSize) {
+
+        Claims claims = jwtUtil.validateToken(token);
+        String userId = claims.getSubject();
+
+        if(!userId.equals(idUsuario)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
 
         return ResponseEntity.ok(publicacionService.buscarPublicacionesPorUsuario(idUsuario, pageNo, pageSize));
     }
 
     // Mis ofertas recibidas
     @GetMapping("/usuario/{idUsuario}/ofertas/recibidas") // TODO: El ID del usuario no lo vamos a pasar por URL
-    public ResponseEntity<List<OfertaDto>> listarOfertasRecibidas(@PathVariable("idUsuario") String idUsuario) {
+    public ResponseEntity<List<OfertaDto>> listarOfertasRecibidas(@PathVariable("idUsuario") String idUsuario,
+                                                                  @CookieValue("jwt") String token) {
+        Claims claims = jwtUtil.validateToken(token);
+        String userId = claims.getSubject();
+        if(!userId.equals(idUsuario)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         List<PublicacionDto> publicacionesUsuario = publicacionService.buscarPublicacionesPorUsuario(idUsuario);
         List<OfertaDto> ofertasRecibidas = new ArrayList<>();
         for(PublicacionDto publicacion : publicacionesUsuario){
@@ -181,7 +215,15 @@ public class PublicacionController{
 
     // Mis ofertas realizadas
     @GetMapping("/usuario/{idUsuario}/ofertas/realizadas")
-    public ResponseEntity<List<OfertaDto>> listarOfertasRealizadas(@PathVariable("idUsuario") String idUsuario) {
+    public ResponseEntity<List<OfertaDto>> listarOfertasRealizadas(@PathVariable("idUsuario") String idUsuario,
+                                                                   @CookieValue("jwt") String token) {
+
+        Claims claims = jwtUtil.validateToken(token);
+        String userId = claims.getSubject();
+        if(!userId.equals(idUsuario)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         List<OfertaDto> ofertasRealizadas = ofertaService.buscarOfertasRealizadas(idUsuario);
         return ResponseEntity.ok(ofertasRealizadas);
     }
@@ -229,11 +271,11 @@ public class PublicacionController{
     public ResponseEntity<?> crearPublicacionMultipart(
             @RequestPart("publicacion") PublicacionDto publicacionDto,
             @RequestPart(value = "publicacionImagenes", required = true) MultipartFile[] publicacionImagenes,
+            @CookieValue("jwt") String token,
             HttpServletRequest restoDeInformacion // acá estará el "cartaInteres[i]" por cada carta de interés, en orden 
     ) {
         try {
             // --- USER DEL JWT ---
-            String token = cookieService.extractCookie(restoDeInformacion);
             Claims claims = jwtUtil.validateToken(token);
             String userId = claims.getSubject();
 

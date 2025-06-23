@@ -2,8 +2,6 @@ package com.example.cartasIntercambio.controller;
 
 import com.example.cartasIntercambio.dto.UsuarioDto;
 import com.example.cartasIntercambio.dto.UsuarioResponseDto;
-import com.example.cartasIntercambio.jwt.JwtUtil;
-import com.example.cartasIntercambio.service.CookieService;
 import com.example.cartasIntercambio.service.UsuarioServiceImpl;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/usuarios")
@@ -40,4 +36,13 @@ public class UsuarioController {
 
         return ResponseEntity.ok(user);
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+
+        usuarioService.logout(response);
+
+        return ResponseEntity.status(HttpStatus.OK).body("Sesion cerrada correctamente");
+    }
+
 }
