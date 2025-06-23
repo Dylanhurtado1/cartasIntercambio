@@ -23,14 +23,14 @@ Vue.createApp({
     async function fetchDatos() {
       contenidoCargado.value = 0
       try {
-        const headers = {
-          "Authorization": `Bearer ${obtenerDatoCrudo("jwt")}`
+        const data = {
+          credentials: 'include'
         }
  
         const URL = paginaActual.value == 0 ? `${backendURL}/publicaciones/usuario/${id}` : `${backendURL}/publicaciones/usuario/${id}?pageNo=${paginaActual.value}`
 
         // Obtener publicaciones
-        const pubRes = await fetch(URL, { headers })
+        const pubRes = await fetch( URL, data )
         if (pubRes.ok) {
           const contenido = await pubRes.json()
           
@@ -43,13 +43,13 @@ Vue.createApp({
         }
 
         // Obtener ofertas hechas por el usuario
-        const ofertasMias = await fetch(`${backendURL}/publicaciones/usuario/${id}/ofertas/realizadas`, { headers })
+        const ofertasMias = await fetch(`${backendURL}/publicaciones/usuario/${id}/ofertas/realizadas`, data)
         if (ofertasMias.ok) {
           ofertas.value = await ofertasMias.json()
         }
 
         // Obtener ofertas hacia el usuario (ofertas que le hicieron a mis publicaciones)
-        const ofertasRecibidas = await fetch(`${backendURL}/publicaciones/usuario/${id}/ofertas/recibidas`, { headers })
+        const ofertasRecibidas = await fetch(`${backendURL}/publicaciones/usuario/${id}/ofertas/recibidas`,  data)
         if (ofertasRecibidas.ok) {
           ofertasRecibidas.value = await ofertasRecibidas.json()
         }

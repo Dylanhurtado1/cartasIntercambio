@@ -12,6 +12,7 @@ Vue.createApp({
     function handleLogin() {
         fetch(backendURL + "/usuarios/login", {
         method: "POST",
+        credentials: 'include',
         headers: {
             "Content-Type": "application/json"
         },
@@ -22,10 +23,9 @@ Vue.createApp({
                 return res.json()
             })
             .then(response => {
-                guardarDatoCrudo("jwt", response.token)
-                setUserData(response.usuario)
-                console.log(getUserData())
-                window.location.href = "/usuario"; // Redirige a la página principal
+                //guardarDatoCrudo("jwt", response.token)
+                setUserData(response)
+                //window.location.href = "/usuario"; // Redirige a la página principal
             })
             .catch(err => error.value = err.message)
     }
