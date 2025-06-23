@@ -6,10 +6,7 @@ import com.example.cartasIntercambio.model.Mercado.EstadoOferta;
 import com.example.cartasIntercambio.model.Mercado.Oferta;
 import com.example.cartasIntercambio.model.Mercado.Publicacion;
 import com.example.cartasIntercambio.model.Usuario.Usuario;
-import com.example.cartasIntercambio.service.IUsuarioService;
-import com.example.cartasIntercambio.service.OfertaServiceImpl;
-import com.example.cartasIntercambio.service.PublicacionServiceImpl;
-import com.example.cartasIntercambio.service.S3Service;
+import com.example.cartasIntercambio.service.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,10 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/publicaciones")
@@ -48,6 +42,8 @@ public class PublicacionController{
 
     @Autowired
     private IUsuarioService usuarioService;
+    @Autowired
+    private CookieService cookieService;
 
     @Autowired
     public PublicacionController(PublicacionServiceImpl publicacionService, OfertaServiceImpl ofertaService) {
@@ -82,23 +78,23 @@ public class PublicacionController{
 
     @PostMapping
     public ResponseEntity<PublicacionDto> crearPublicacion(
-            @RequestHeader("Authorization") String authHeader,
-            @RequestBody PublicacionDto publicacionDto) {
-        String token = authHeader.replace("Bearer ", "");
+            @RequestBody PublicacionDto publicacionDto,
+            HttpServletRequest request) {
+        String token = cookieService.extractCookie(request);
         Claims claims = jwtUtil.validateToken(token);
         String userId = claims.getSubject();
         publicacionDto.getPublicador().setId(userId);
-        PublicacionDto guardada= publicacionService.guardarPublicacion(publicacionDto);
+        PublicacionDto guardada = publicacionService.guardarPublicacion(publicacionDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(guardada);
     }
 
     // Crear una oferta para una publicacion
     @PostMapping("/{idPublicacion}/ofertas")
     public ResponseEntity<OfertaDto> crearOferta(
-            @RequestHeader("Authorization") String authHeader,
             @PathVariable("idPublicacion") String idPublicacion,
-            @RequestBody OfertaDto ofertaDto) {
-        String token = authHeader.replace("Bearer ", "");
+            @RequestBody OfertaDto ofertaDto,
+            HttpServletRequest request) {
+        String token = cookieService.extractCookie(request);
         Claims claims = jwtUtil.validateToken(token);
         String userId = claims.getSubject();
         ofertaDto.getOfertante().setId(userId);
@@ -126,12 +122,12 @@ public class PublicacionController{
     // Aceptar o rechazar una oferta
     @PatchMapping(path = "/ofertas/{idOferta}", consumes = "application/json-patch+json")
     public ResponseEntity<OfertaDto> responderOferta(
-            @RequestHeader("Authorization") String authHeader,
             @PathVariable("idOferta") String idOferta,
-            @RequestBody JsonPatch patch) {
+            @RequestBody JsonPatch patch,
+            HttpServletRequest request) {
 
         // 1. Validar token y obtener userId
-        String token = authHeader.replace("Bearer ", "");
+        String token = cookieService.extractCookie(request);
         Claims claims = jwtUtil.validateToken(token);
         String userId = claims.getSubject();
 
@@ -231,14 +227,13 @@ public class PublicacionController{
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> crearPublicacionMultipart(
-            @RequestHeader("Authorization") String authHeader,
             @RequestPart("publicacion") PublicacionDto publicacionDto,
             @RequestPart(value = "publicacionImagenes", required = true) MultipartFile[] publicacionImagenes,
             HttpServletRequest restoDeInformacion // acá estará el "cartaInteres[i]" por cada carta de interés, en orden 
     ) {
         try {
             // --- USER DEL JWT ---
-            String token = authHeader.replace("Bearer ", "");
+            String token = cookieService.extractCookie(restoDeInformacion);
             Claims claims = jwtUtil.validateToken(token);
             String userId = claims.getSubject();
 

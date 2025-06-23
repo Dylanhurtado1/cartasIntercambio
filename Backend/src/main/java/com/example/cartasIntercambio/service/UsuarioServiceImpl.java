@@ -4,32 +4,50 @@ import com.example.cartasIntercambio.dto.UsuarioDto;
 import com.example.cartasIntercambio.dto.UsuarioResponseDto;
 import com.example.cartasIntercambio.exception.UsuarioNoEncontradoException;
 import com.example.cartasIntercambio.exception.UsuarioYaExisteException;
+import com.example.cartasIntercambio.jwt.JwtUtil;
 import com.example.cartasIntercambio.model.Usuario.Admin;
 import com.example.cartasIntercambio.model.Usuario.Usuario;
 import com.example.cartasIntercambio.repository.irepository.IUsuarioRepository;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class UsuarioServiceImpl implements IUsuarioService{
+public class UsuarioServiceImpl implements IUsuarioService {
 
     private final IUsuarioRepository usuarioRepository;
+    private final JwtUtil jwtUtil;
+    private final CookieService cookieService;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
-    @Autowired
-    public UsuarioServiceImpl(IUsuarioRepository usuarioRepository) {
+    public UsuarioServiceImpl(IUsuarioRepository usuarioRepository, JwtUtil jwtUtil, CookieService cookieService, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
+        this.jwtUtil = jwtUtil;
+        this.cookieService = cookieService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public UsuarioResponseDto registrarUsuario(UsuarioDto usuarioDto) {
+        System.out.println(usuarioDto);
         if (usuarioRepository.existsByUser(usuarioDto.getUser()) || usuarioRepository.existsByEmail(usuarioDto.getCorreo())) {
             throw new UsuarioYaExisteException("Ya existe un usuario con ese user y/o correo");
         }
@@ -43,24 +61,9 @@ public class UsuarioServiceImpl implements IUsuarioService{
                 .user(saved.getUser())
                 .nombre(saved.getNombre())
                 .correo(saved.getEmail())
-                .tipo("usuario")
+                .tipo("USER")
                 .id(saved.getId())
                 .build();
-    }
-
-    @Override
-    public List<UsuarioResponseDto> listarUsuarios() {
-        List<Usuario> usuarios = usuarioRepository.findAll();
-
-        return usuarios.stream()
-                .map(usuario -> UsuarioResponseDto.builder()
-                        .id(usuario.getId())
-                        .user(usuario.getUser())
-                        .nombre(usuario.getNombre())
-                        .correo(usuario.getEmail())
-                        .tipo(usuario instanceof Admin ? "admin" : "usuario")
-                        .build())
-                .toList();
     }
 
     @Override
@@ -80,82 +83,51 @@ public class UsuarioServiceImpl implements IUsuarioService{
     }
 
     @Override
-    public UsuarioResponseDto actualizarUsuario(String id, UsuarioDto usuarioDto) {
-        Optional<Usuario> usuarioOpcional = usuarioRepository.findById(id);
-        if (usuarioOpcional.isEmpty()) {
-            throw new UsuarioNoEncontradoException("Usuario con id " + id + " no existe");
-        }
-        Usuario usuario = usuarioOpcional.get();
-        usuario.setUser(usuarioDto.getUser());
-        usuario.setNombre(usuarioDto.getNombre());
-        usuario.setEmail(usuarioDto.getCorreo());
-        usuario.setPassword(passwordEncoder.encode(usuarioDto.getPassword()));
-        Usuario updated = usuarioRepository.save(usuario);
-        return UsuarioResponseDto.builder()
-                .id(updated.getId())
-                .user(updated.getUser())
-                .nombre(updated.getNombre())
-                .correo(updated.getEmail())
-                .tipo(usuario instanceof Admin ? "admin" : "usuario")
-                .build();
-    }
-
-    @Override
-    public void borrarUsuario(String id) {
-        if (!usuarioRepository.existsById(id)) {
-            throw new UsuarioNoEncontradoException("Usuario con id " + id + " no existe");
-        }
-        usuarioRepository.deleteById(id);
-    }
-
-    @Override
     public List<UsuarioResponseDto> buscarUsuarios(String user, String nombre, String correo) {
-        List<Usuario> todos = usuarioRepository.findAll();
-        return todos.stream()
-                .filter(u -> user == null    || u.getUser().toLowerCase().contains(user.toLowerCase()))
-                .filter(u -> nombre == null  || u.getNombre().toLowerCase().contains(nombre.toLowerCase()))
-                .filter(u -> correo == null  || u.getEmail().toLowerCase().contains(correo.toLowerCase()))
-                .map(u -> UsuarioResponseDto.builder()
-                        .id(u.getId())
-                        .user(u.getUser())
-                        .nombre(u.getNombre())
-                        .correo(u.getEmail())
-                        .tipo(u instanceof Admin ? "admin" : "usuario")
-                        .build())
-                .collect(Collectors.toList());
+        return List.of();
+    }
+
+    @Override
+    public UsuarioResponseDto actualizarUsuario(String id, UsuarioDto usuarioDto) {
+        return null;
+    }
+
+    @Override
+    public List<UsuarioResponseDto> listarUsuarios() {
+        return List.of();
     }
 
     @Override
     public UsuarioResponseDto crearAdmin(UsuarioDto dto) {
-        if (usuarioRepository.existsByUser(dto.getUser()) || usuarioRepository.existsByEmail(dto.getCorreo())) {
-            throw new UsuarioYaExisteException("Ya existe un usuario (o admin) con ese user y/o correo");
-        }
-        Admin admin = new Admin();
-        admin.setUser(dto.getUser());
-        admin.setNombre(dto.getNombre());
-        admin.setEmail(dto.getCorreo());
-        admin.setPassword(passwordEncoder.encode(dto.getPassword()));
-        usuarioRepository.save(admin);
-        return UsuarioResponseDto.builder()
-                .user(admin.getUser())
-                .nombre(admin.getNombre())
-                .correo(admin.getEmail())
-                .tipo("admin")
-                .id(admin.getId())
-                .build();
+        return null;
     }
 
-    public UsuarioResponseDto login(UsuarioDto userLogin) {
+    @Override
+    public void borrarUsuario(String id) {
+
+    }
+
+
+    @Override
+    public UsuarioResponseDto login(UsuarioDto userLogin, HttpServletResponse response) {
+
         Optional<Usuario> usuarioOpt = usuarioRepository.findByUser(userLogin.getUser());
         if(usuarioOpt.isEmpty()) return null;
         Usuario usuario = usuarioOpt.get();
         if(!passwordEncoder.matches(userLogin.getPassword(), usuario.getPassword())) return null;
+
+        Usuario usuarioDB = usuarioOpt.get();
+
+
+        String jwt = jwtUtil.generateToken(usuarioDB.getId(), usuarioDB.getUser());
+        cookieService.addHttpCookie("jwt", jwt, 60*60, response);
+
         return UsuarioResponseDto.builder()
-                .id(usuario.getId())
-                .user(usuario.getUser())
-                .nombre(usuario.getNombre())
-                .correo(usuario.getEmail())
-                .tipo(usuario instanceof Admin ? "admin" : "usuario")
+                .id(usuarioDB.getId())
+                .user(usuarioDB.getUser())
+                .nombre(usuarioDB.getNombre())
+                .correo(usuarioDB.getEmail())
+                .tipo(usuarioDB instanceof Admin ? "admin" : "usuario")
                 .build();
     }
 }
