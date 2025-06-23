@@ -3,7 +3,6 @@ const { createApp, ref, onMounted, reactive } = Vue;
 import { ImageUpload } from "./imagenesBonitas.js";
 
 import {
-  obtenerDatoCrudo,
   sesionAbierta,
   obtenerURL,
   getUserData
@@ -19,7 +18,7 @@ createApp({
   },
   setup() {
     // variables reactivas
-    const sesionAbiertaValue = ref(sesionAbierta()); // Asume que sesionAbierta() viene de un helper global
+    const sesionAbiertaValue = ref(sesionAbierta())
     const formDisable = ref(false);
     const form = reactive({
       nombreCarta: "",
@@ -29,28 +28,28 @@ createApp({
       precio: "",
       imagenesCarta: [],
       cartasDeInteres: [],
-    });
+    })
 
-    const imagenPublicacion = ref(null);
+    const imagenPublicacion = ref(null)
 
-    const jsonResultado = ref("");
+    const jsonResultado = ref("")
 
-    const usuario = ref(usuarioActual || { id: null, user: null });
+    const usuario = ref(usuarioActual || { id: null, user: null })
 
     onMounted(() => {
       console.log("FUNCA");
-      // if (!sesionAbiertaValue.value) window.location.href = "/";
+      // if (!sesionAbiertaValue.value) window.location.href = "/"
     });
 
     // métodos 
     const onMainImagesChange = (event) => {
-      form.imagenesCarta = Array.from(event.target.files);
+      form.imagenesCarta = Array.from(event.target.files)
     };
 
     const resetImages = () => {
       form.imagenesCarta = []
       if (imagenPublicacion.value) {
-        imagenPublicacion.value.value = "";
+        imagenPublicacion.value.value = ""
       }
     };
 
@@ -65,7 +64,7 @@ createApp({
     }
 
     const onInterestImagesChange = (event, index) => {
-      form.cartasDeInteres[index].imagenes = Array.from(event.target.files);
+      form.cartasDeInteres[index].imagenes = Array.from(event.target.files)
     };
 
     const agregarCartaInteres = () => {
@@ -74,38 +73,38 @@ createApp({
         juego: "",
         estado: "",
         imagenes: [],
-      });
-    };
+      })
+    }
 
     const eliminarCartaInteres = (index) => {
-      form.cartasDeInteres.splice(index, 1);
-    };
+      form.cartasDeInteres.splice(index, 1)
+    }
 
     const eliminarTodasCartasInteres = () => {
-      form.cartasDeInteres = [];
+      form.cartasDeInteres = []
     };
 
     const submitForm = () => {
       if (form.imagenesCarta.length === 0) {
-        alert("Debes subir al menos una imagen de la carta en venta.");
-        return;
+        alert("Debes subir al menos una imagen de la carta en venta.")
+        return
       }
 
       if ((parseFloat(form.precio) <= 0 || isNaN(parseFloat(form.precio))) &&
         form.cartasDeInteres.length === 0) 
       {
-        alert("Debes ingresar un precio válido o al menos una carta de interés.");
-        return;
+        alert("Debes ingresar un precio válido o al menos una carta de interés.")
+        return
       }
 
       for (let i = 0; i < form.cartasDeInteres.length; i++) {
         if (form.cartasDeInteres[i].imagenes.length === 0) {
-          alert(`Cada carta de interés debe tener al menos una imagen (Error en carta #${i + 1}).`);
-          return;
+          alert(`Cada carta de interés debe tener al menos una imagen (Error en carta #${i + 1}).`)
+          return
         }
       }
 
-      formDisable.value = true;
+      formDisable.value = true
 
       // arma el JSON sin imágenes
       const data = {
@@ -138,21 +137,19 @@ createApp({
       );
 
       form.imagenesCarta.forEach((file) => {
-        formData.append("publicacionImagenes", file);
+        formData.append("publicacionImagenes", file)
       });
 
       form.cartasDeInteres.forEach((carta, index) => {
         carta.imagenes.forEach((file) => {
-          formData.append(`cartaInteres[${index}]`, file);
+          formData.append(`cartaInteres[${index}]`, file)
         });
       });
 
       fetch(backendURL + "/publicaciones", {
         method: "POST",
         body: formData,
-        headers: {
-          Authorization: "Bearer " + obtenerDatoCrudo("jwt"),
-        },
+        credentials: 'include',
       }).then((response) => response.json())
         .then((json) => {
           console.log(json);

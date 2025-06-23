@@ -101,7 +101,8 @@ function getUserData() {
 
 function deleteUserData() {
     document.cookie = "userData=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/"
-    localStorage.clear() //por ahora lo dejo porque el jwt aún se guarda en localstorate
+    const url = obtenerURLDinamico()
+    fetch(url + "usuarios/logout", { credentials: "include"})
 }
 
 // Mis exports <3

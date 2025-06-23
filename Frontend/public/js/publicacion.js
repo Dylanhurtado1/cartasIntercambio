@@ -84,9 +84,9 @@ Vue.createApp({
         fetch(backendURL + "/publicaciones/" + oferta.idPublicacion + "/ofertas", {
           method: "POST",
           body: JSON.stringify(oferta),
+          credentials: 'include',
           headers: {
             "Content-type": "application/json; charset=UTF-8",
-            "Authorization": "Bearer " + obtenerDatoCrudo("jwt")
           }
         })
         .then(response => response.json()) 

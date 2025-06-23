@@ -85,12 +85,10 @@
         align-items: stretch;
     }
 
-    .buscador input,
-    .buscador select,
-    .buscador button {
-        width: 100%;
-        flex: 1 1 auto;
-        height: auto;    
+    #searchForm input,
+    #searchForm select,
+    #searchForm button {
+        flex: 0;
     }
 
     .productos {

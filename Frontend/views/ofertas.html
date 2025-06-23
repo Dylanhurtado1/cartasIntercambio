@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <title>Ofertas de la Publicación</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="/public/img/Icon.png" rel="shortcut icon" type="image/png" />
 
     <link rel="stylesheet" href="/public/css/menu.css" />
@@ -43,7 +44,7 @@
             </span>
           </p>
 
-          <p><strong>Cartas en disposición del ofertante: </strong></p>
+          <p v-show="cartaInteresPublicacion"><strong>Cartas en disposición del ofertante: </strong></p>
           <div class="cartas">
             <div class="carta" v-for="cartaInteresPublicacion in publicacionDeOrigen.cartasInteres">
               <!-- Por ahora lo dejo así, después se puede agregar/sacar cosas o directo cambiarlo  -->

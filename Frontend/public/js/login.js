@@ -1,4 +1,4 @@
-import {guardarDatoCrudo, sesionAbierta, obtenerURL, setUserData, getUserData} from './utils.js'
+import {sesionAbierta, obtenerURL, setUserData, getUserData} from './utils.js'
 const { onMounted } = Vue;
 
 Vue.createApp({
@@ -25,7 +25,7 @@ Vue.createApp({
             .then(response => {
                 //guardarDatoCrudo("jwt", response.token)
                 setUserData(response)
-                //window.location.href = "/usuario"; // Redirige a la página principal
+                window.location.href = "/usuario"; // Redirige a la página principal
             })
             .catch(err => error.value = err.message)
     }

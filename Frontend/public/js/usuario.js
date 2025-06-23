@@ -46,6 +46,12 @@ Vue.createApp({
         const ofertasMias = await fetch(`${backendURL}/publicaciones/usuario/${id}/ofertas/realizadas`, data)
         if (ofertasMias.ok) {
           ofertas.value = await ofertasMias.json()
+          
+          const url = window.location.origin
+          console.log(ofertas.value[0])
+          ofertas.value.forEach(oferta => {
+            oferta.enlace =  `${url}/publicacion/${oferta.idPublicacion}`
+          });
         }
 
         // Obtener ofertas hacia el usuario (ofertas que le hicieron a mis publicaciones)

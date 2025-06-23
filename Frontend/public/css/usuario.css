@@ -73,3 +73,15 @@
 h3{
   font-size: 20px;
 }
+
+.item a {
+  color: #1a73e8; /* azul sobrio y legible */
+  text-decoration: none;
+  transition: color 0.3s, border-bottom 0.3s;
+  border-bottom: 1px solid transparent;
+}
+
+.item a:hover {
+  color: #1558b0;
+  border-bottom: 1px solid #1558b0;
+}

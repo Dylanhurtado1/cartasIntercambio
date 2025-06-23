@@ -51,7 +51,7 @@ createApp({
     async function cargarOfertas() {
       const publicacionId = obtenerIdDesdeURL();
       try {
-        const res = await fetch(`${backendURL}/publicaciones/${publicacionId}/ofertas`);
+        const res = await fetch(`${backendURL}/publicaciones/${publicacionId}/ofertas`,{ credentials: 'include'})
         if (!res.ok) throw new Error("Error en la carga de ofertas");
         const data = await res.json();
         ofertas.value = data;
@@ -73,9 +73,9 @@ createApp({
       try {
         const res = await fetch(`${backendURL}/publicaciones/ofertas/${idOferta}`, {
           method: "PATCH",
+          credentials: "include",
           headers: {
-            "Content-Type": "application/json-patch+json",
-            "Authorization": "Bearer " + obtenerDatoCrudo("jwt")
+            "Content-Type": "application/json-patch+json"
           },
           body: JSON.stringify([
             {
@@ -114,9 +114,9 @@ createApp({
         }
         const res = await fetch(`${backendURL}/publicaciones/ofertas/${idOferta}`, {
           method: "PATCH",
+          credentials: "include",
           headers: {
-            "Content-Type": "application/json-patch+json",
-            "Authorization": "Bearer " + obtenerDatoCrudo("jwt")
+            "Content-Type": "application/json-patch+json"
           },
           body: JSON.stringify([
             {

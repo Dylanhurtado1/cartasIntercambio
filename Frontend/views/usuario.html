@@ -3,18 +3,21 @@
   <head>
     <meta charset="UTF-8" />
     <title>Mi Cuenta</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="/public/img/Icon.png" rel="shortcut icon" type="image/png"/>
 
 
     <link rel="stylesheet" href="/public/css/menu.css" />
     <link rel="stylesheet" href="/public/css/auth-user.css" />
     <link rel="stylesheet" href="/public/css/paginacion.css" />
+    <link rel="stylesheet" href="/public/css/flotante.css" />
     <link rel="stylesheet" href="/public/css/usuario.css" />
 
     <script src="https://unpkg.com/vue@3/dist/vue.global.js" defer></script>
   </head>
   <body>
       <header id="menu-app"></header>
+      <div id="datos-f"></div>
       
       <div id="user-certification" data-texto="Para continuar necesitás iniciar sesión o registrarte."></div>
       
@@ -59,19 +62,19 @@
           ></pagination>
 
           <!-- OFERTAS -->
-          <h3>Tus Ofertas: {{ofertas.length}}</h3>
+          <h3>Tus Ofertas realizada: {{ofertas.length}}</h3>
           <div class="lista">
             <div class="item" v-for="oferta in ofertas" :key="oferta.id">
-              <p>Oferta para publicación ID: {{ oferta.idPublicacion }}</p>
+              <p>Estado: <strong  :style="{ color: oferta.estado === 'RECHAZADO' ? 'red' : 'green' }" > {{ oferta.estado }} </strong></p>
               <p v-if="oferta.monto">Monto ofrecido: ${{ oferta.monto }}</p>
-              <p>Estado: {{ oferta.estado }}</p>
               <div v-if="oferta.cartasOfrecidas.length">
                 <p>Cartas ofrecidas:</p>
-                <ul>
+                <ol>
                   <li v-for="carta in oferta.cartasOfrecidas" :key="carta.nombre">
-                    {{ carta.nombre }} ({{ carta.juego }}) - {{ carta.estado }}
+                    {{ carta.nombre }} ({{ carta.juego }})
                   </li>
-                </ul>
+                </ol>
+                <p style="font-size: 12px;"> Para más detalles sobre la publicación que se ofertó, entre al siguiente <a :href="oferta.enlace">enlace</a> </p>
               </div>
             </div> <!-- Ricas cadenas de divs -->
           </div>
