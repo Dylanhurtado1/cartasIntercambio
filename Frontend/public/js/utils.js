@@ -76,7 +76,7 @@ function setUserData(value) {
     }
 
     const expires = new Date()
-    expires.setTime(expires.getTime() + (24 * 60 * 60 * 1000)) // vence lo mismo que el jwt
+    expires.setTime(expires.getTime() + (1 * 60 * 60 * 1000)) // vence lo mismo que el jwt
     const expiresString = "expires=" + expires.toUTCString()
     const valueString = encodeURIComponent(JSON.stringify(value)) // lo convierto en un json y lo limpio de boludeces con el "encodeURIComponent" 
     document.cookie = "userData=" + valueString + ";" + expiresString + ";path=/"
