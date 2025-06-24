@@ -12,9 +12,13 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry){
         registry.addMapping("/**")                
-                .allowedOrigins("http://localhost:9090") // sacar esto en producción, en teoría al tener el mismo dominio en el server no es necesario
+                .allowedOrigins("http://localhost:9090",
+                        "https://intercambiocartas.online",
+                        "https://www.intercambiocartas.online",
+                        "https://mongo.intercambiocartas.online")
                 .allowedMethods("*")
                 .allowCredentials(true);
         // Configuración del CORS que no permitía mandar queries
     }
+
 }

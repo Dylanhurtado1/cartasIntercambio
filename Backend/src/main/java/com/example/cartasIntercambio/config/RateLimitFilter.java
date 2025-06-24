@@ -24,7 +24,7 @@ public class RateLimitFilter implements Filter { // Bucket4j + Blacklist tempora
 
     // Config
     private final int MAX_REQUESTS_PER_MINUTE = 50;
-    private final int BLACKLIST_DURATION_MINUTES = 2;
+    private final int BLACKLIST_DURATION_MINUTES = 1;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)

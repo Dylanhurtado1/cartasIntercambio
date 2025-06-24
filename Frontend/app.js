@@ -17,7 +17,7 @@ const rateLimit = require('express-rate-limit')
 
 // sé perfectamente que esta no es la solución más escalabe, pero confío que AWS me va a atajar antes los problemas gordos
 
-const limiterTime = 2 * 60 * 1000 // 2 minutos en milisegundos
+const limiterTime = 1 * 60 * 1000 // 1 minuto en milisegundos
 
 const limiter = rateLimit({
     windowMs: limiterTime,
