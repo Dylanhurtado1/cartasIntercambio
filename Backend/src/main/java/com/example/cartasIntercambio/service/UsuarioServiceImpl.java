@@ -42,6 +42,7 @@ public class UsuarioServiceImpl implements IUsuarioService {
         usuario.setNombre(usuarioDto.getNombre());
         usuario.setEmail(usuarioDto.getCorreo());
         usuario.setPassword(passwordEncoder.encode(usuarioDto.getPassword()));
+        usuario.setTipo("USER");
         Usuario saved = usuarioRepository.save(usuario);
         return UsuarioResponseDto.builder()
                 .user(saved.getUser())

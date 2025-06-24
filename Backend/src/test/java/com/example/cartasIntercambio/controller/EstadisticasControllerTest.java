@@ -10,6 +10,7 @@ import com.example.cartasIntercambio.service.PublicacionServiceImpl;
 import com.example.cartasIntercambio.service.UsuarioServiceImpl;
 
 import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -90,7 +91,8 @@ public class EstadisticasControllerTest {
         when(usuarioRepository.findById(any())).thenReturn(Optional.ofNullable(admin));
         when(publicacionService.contarPublicacionesPorJuego()).thenReturn(mockStats);
 
-        mockMvc.perform(get("/api/estadisticas"))
+        mockMvc.perform(get("/api/estadisticas")
+                .cookie(new Cookie("jwt", "testdetoken")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.Magic").value(2))
                 .andExpect(jsonPath("$.Pokémon").value(3))
@@ -131,18 +133,16 @@ public class EstadisticasControllerTest {
 
     @Test
     void testObtenerEstadisticas_UsuarioNoAdmin_LanzaExcepcion() throws Exception {
+
         String token = "Bearer testdetoken";
         Claims claims = mock(Claims.class);
 
-        when(claims.getSubject()).thenReturn("2"); // id del usuario
         when(jwtUtil.validateToken("testdetoken")).thenReturn(claims);
-
-        UsuarioResponseDto usuarioResponseDTO = usuarioAUsuarioResponseDTO(usuario);
-
-        when(usuarioService.buscarUsuarioPorId("2")).thenReturn(usuarioResponseDTO);
+        when(claims.getSubject()).thenReturn("2"); // id del usuario
+        when(usuarioRepository.findById(any())).thenReturn(Optional.ofNullable(usuario));
 
         mockMvc.perform(get("/api/estadisticas")
-                        .header("Authorization", token))
+                        .cookie(new Cookie("jwt", "testdetoken")))
                 .andExpect(status().isUnauthorized());
     }
 
