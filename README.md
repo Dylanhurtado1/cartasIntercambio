@@ -69,7 +69,7 @@ JWT_SECRET=aca-va-clave-secreta-jwt
 
 3. Compilá el proyecto:
 
-    ```mvn clean package -DskipTests```
+    ```mvn clean package```
 
 4. Volvé a la raíz del proyecto
 
@@ -201,6 +201,7 @@ JWT_SECRET=aca-va-clave-secreta-jwt
     AWS_ACCESS_KEY_ID=CAMBIA-ESTO
     AWS_SECRET_ACCESS_KEY=CAMBIA-ESTO
     AWS_S3_REGION=us-east-1
+    JWT_SECRET=aca-va-clave-secreta-jwt
    ```
    
    Ctrl+O y Enter para guardar
@@ -215,7 +216,7 @@ JWT_SECRET=aca-va-clave-secreta-jwt
    ```
    - Compilar
    ```
-   mvn clean package -DskipTests
+   mvn clean package
    ```
    - Volver a la raíz del proyecto
    ```
@@ -243,8 +244,22 @@ JWT_SECRET=aca-va-clave-secreta-jwt
 
 ### Para acceder desde el navegador:
 
-Podés ver los datos de MongoDB usando el cliente web **mongo-express** desde http://<IP_PUBLICA_EC2>:8081
-- USERNAME = admin
-- PASSWORD = admin123
+Podés ver los datos de MongoDB usando el cliente web **mongo-express** desde https://mongo.intercambiocartas.online/
 
-La aplicación estará disponible en http://<IP_PUBLICA_EC2>:9090
+La aplicación estará disponible en:
+- https://intercambiocartas.online/
+
+- https://www.intercambiocartas.online/
+
+## Tests
+La aplicación incluye tests unitarios para los servicios y controladores. Utilizamos Jacoco para medir el coverage. 
+
+### Cómo generar el reporte de cobertura
+
+Desde el directorio del proyecto:
+```bash
+cd Backend
+mvn clean test
+mvn jacoco:report
+```
+El reporte HTML se genera en target/site/jacoco/index.html
