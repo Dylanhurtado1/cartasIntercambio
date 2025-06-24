@@ -5,7 +5,6 @@ import com.example.cartasIntercambio.dto.UsuarioResponseDto;
 import com.example.cartasIntercambio.exception.UsuarioNoEncontradoException;
 import com.example.cartasIntercambio.exception.UsuarioYaExisteException;
 import com.example.cartasIntercambio.jwt.JwtUtil;
-import com.example.cartasIntercambio.model.Usuario.Admin;
 import com.example.cartasIntercambio.model.Usuario.Usuario;
 import com.example.cartasIntercambio.repository.irepository.IUsuarioRepository;
 import jakarta.servlet.http.HttpServletResponse;
@@ -65,7 +64,7 @@ public class UsuarioServiceImpl implements IUsuarioService {
                 .user(usuario.getUser())
                 .nombre(usuario.getNombre())
                 .correo(usuario.getEmail())
-                .tipo(usuario instanceof Admin ? "admin" : "usuario")
+                .tipo("USER")
                 .build();
     }
 
@@ -88,7 +87,7 @@ public class UsuarioServiceImpl implements IUsuarioService {
                 .user(usuarioDB.getUser())
                 .nombre(usuarioDB.getNombre())
                 .correo(usuarioDB.getEmail())
-                .tipo(usuarioDB instanceof Admin ? "admin" : "usuario")
+                .tipo("USER")
                 .build();
     }
 

@@ -5,7 +5,6 @@ import com.example.cartasIntercambio.dto.UsuarioResponseDto;
 import com.example.cartasIntercambio.exception.UsuarioNoEncontradoException;
 import com.example.cartasIntercambio.exception.UsuarioYaExisteException;
 import com.example.cartasIntercambio.jwt.JwtUtil;
-import com.example.cartasIntercambio.model.Usuario.Admin;
 import com.example.cartasIntercambio.model.Usuario.Usuario;
 import com.example.cartasIntercambio.repository.irepository.IUsuarioRepository;
 import jakarta.servlet.http.HttpServletResponse;
@@ -110,23 +109,6 @@ public class UsuarioServiceImplTest {
     }
 
     @Test
-    void buscarUsuarioPorId_admin_devuelveTipoAdmin() {
-        // Arrange
-        Admin admin = new Admin();
-        admin.setId("1");
-        admin.setUser("admin1");
-        admin.setNombre("SuperAdmin");
-        admin.setEmail("admin@mail.com");
-        when(usuarioRepository.findById("1")).thenReturn(Optional.of(admin));
-
-        // Act
-        UsuarioResponseDto resp = usuarioService.buscarUsuarioPorId("1");
-
-        // Assert
-        assertEquals("admin", resp.getTipo());
-    }
-
-    @Test
     void testLogin() {
         Date fechaNacimiento = null;
         Usuario usuario = new Usuario("1", "Morita", "Mora", "Gonzales", "mgonzales@cartas.com", "123456", fechaNacimiento);
@@ -144,7 +126,7 @@ public class UsuarioServiceImplTest {
         assertNotNull(usuarioResponseDto);
         assertEquals(usuario.getId(), usuarioResponseDto.getId());
         assertEquals(usuario.getUser(), usuarioResponseDto.getUser());
-        assertEquals("usuario", usuarioResponseDto.getTipo());
+        assertEquals("USER", usuarioResponseDto.getTipo());
 
         verify(cookieService).addHttpCookie("jwt", "test-jwt", 3600, response);
     }

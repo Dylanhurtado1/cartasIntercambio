@@ -20,8 +20,18 @@ public class Usuario {
     private String apellido;
     private String email;
     private String password;
+    private String tipo;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date fechaNacimiento;
 
+    public Usuario(String id, String user, String nombre, String apellido, String email, String password, Date fechaNacimiento) {
+        this.id = id;
+        this.user = user;
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.email = email;
+        this.password = password;
+        this.fechaNacimiento = fechaNacimiento;
+    }
 }

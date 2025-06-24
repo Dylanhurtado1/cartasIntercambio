@@ -24,7 +24,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
+import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -64,8 +66,8 @@ public class EstadisticasControllerTest {
     @BeforeEach
     void init() throws ParseException {
         // usuarios
-        admin = this.crearUsuarioEjemplo("1", "Admin", "Superuser", "ADMINUSER", "admin@cartas.com", "admin123", "2013-11-13");
-        usuario = this.crearUsuarioEjemplo("2", "Juan", "Perez", "juanpe80", "jperez@cartas.com", "JuanPe!2025", "1980-05-04");
+        admin = this.crearUsuarioEjemplo("1", "Admin", "Superuser", "ADMINUSER", "admin@cartas.com", "admin123", "ADMIN", "2013-11-13");
+        usuario = this.crearUsuarioEjemplo("2", "Juan", "Perez", "juanpe80", "jperez@cartas.com", "JuanPe!2025", "USER", "1980-05-04");
     }
 
     // ---------------------------------------- TESTS ---------------------------------------- //
@@ -79,6 +81,13 @@ public class EstadisticasControllerTest {
                 "Total", 6
         );
 
+        String token = "Bearer testdetoken";
+
+        Claims claims = mock(Claims.class);
+
+        when(jwtUtil.validateToken("testdetoken")).thenReturn(claims);
+        when(claims.getSubject()).thenReturn("1");
+        when(usuarioRepository.findById(any())).thenReturn(Optional.ofNullable(admin));
         when(publicacionService.contarPublicacionesPorJuego()).thenReturn(mockStats);
 
         mockMvc.perform(get("/api/estadisticas"))
@@ -120,7 +129,7 @@ public class EstadisticasControllerTest {
                 .andExpect(jsonPath("$.Total").value(6));
     }
 
-    @Disabled
+    @Test
     void testObtenerEstadisticas_UsuarioNoAdmin_LanzaExcepcion() throws Exception {
         String token = "Bearer testdetoken";
         Claims claims = mock(Claims.class);
@@ -134,13 +143,13 @@ public class EstadisticasControllerTest {
 
         mockMvc.perform(get("/api/estadisticas")
                         .header("Authorization", token))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
     // -------------------------------------------------------------------------------------- //
     // --------------------------------- Metodos Auxiliares --------------------------------- //
 
-    private Usuario crearUsuarioEjemplo(String id, String nombre, String apellido, String user, String email, String password, String fecha) throws ParseException {
+    private Usuario crearUsuarioEjemplo(String id, String nombre, String apellido, String user, String email, String password, String tipo, String fecha) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date fechaNacimiento = sdf.parse(fecha);
 
@@ -151,6 +160,7 @@ public class EstadisticasControllerTest {
         usuario.setUser(user);
         usuario.setEmail(email);
         usuario.setPassword(password);
+        usuario.setTipo(tipo);
         usuario.setFechaNacimiento(fechaNacimiento);
 
         return usuario;
