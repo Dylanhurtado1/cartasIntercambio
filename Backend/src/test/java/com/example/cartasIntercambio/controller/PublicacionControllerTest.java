@@ -19,8 +19,8 @@ import com.github.fge.jsonpatch.JsonPatch;
 import io.jsonwebtoken.Claims;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -255,7 +255,7 @@ public class PublicacionControllerTest {
     }
 
     @Test
-    void buscarPublicacionPorId_NoExiste_LanzaExcepcion() throws Exception {
+    void testBuscarPublicacionPorId_NoExiste_LanzaExcepcion() throws Exception {
         when(publicacionService.buscarPublicacionDTOPorId("10"))
                 .thenThrow(new PublicacionNoEncontradaException("No existe la publicación con id: 10"));
 
@@ -281,7 +281,7 @@ public class PublicacionControllerTest {
 
         // Verificamos
         mockMvc.perform(post("/api/publicaciones")
-                .header("Authorization", token)
+                .cookie(new Cookie("jwt", "testdetoken"))
                 .contentType("application/json")
                 .content(asJsonString(publicacionDto)))
                 .andExpect(status().isCreated())
@@ -304,7 +304,7 @@ public class PublicacionControllerTest {
         when(ofertaService.crearOferta(any(), eq(publicacion1))).thenReturn(ofertaDto);
 
         mockMvc.perform(post("/api/publicaciones/" + idPublicacion + "/ofertas")
-                        .header("Authorization", token)
+                        .cookie(new Cookie("jwt", "testdetoken"))
                         .contentType("application/json")
                         .content(asJsonString(ofertaDto)))
                 .andExpect(status().isCreated())
@@ -334,7 +334,7 @@ public class PublicacionControllerTest {
                 .thenThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "La publicación ya no está activa."));
 
         mockMvc.perform(post("/api/publicaciones/" + idPublicacion + "/ofertas")
-                .header("Authorization", token)
+                .cookie(new Cookie("jwt", "testdetoken"))
                 .contentType("application/json")
                 .content(asJsonString(ofertaDto)))
                 .andExpect(status().isBadRequest());
@@ -345,10 +345,17 @@ public class PublicacionControllerTest {
         String idPublicacion = publicacion1.getId();
         OfertaDto ofertaDto1 = ofertaAOfertaDTO(oferta1);
         OfertaDto ofertaDto2 = ofertaAOfertaDTO(oferta2);
+        PublicacionDto publicacionDto1 = publicacionAPublicacionDTO(publicacion1);
 
+        Claims claims = mock(Claims.class);
+        when(claims.getSubject()).thenReturn("1");
+        when(jwtUtil.validateToken("testdetoken")).thenReturn(claims);
+
+        when(publicacionService.buscarPublicacionDTOPorId(idPublicacion)).thenReturn(publicacionDto1);
         when(ofertaService.buscarOfertasPorPublicacion(idPublicacion)).thenReturn(List.of(ofertaDto1, ofertaDto2));
 
-        mockMvc.perform(get("/api/publicaciones/" + idPublicacion + "/ofertas"))
+        mockMvc.perform(get("/api/publicaciones/" + idPublicacion + "/ofertas")
+                        .cookie(new Cookie("jwt", "testdetoken")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("$[0].id").value("1"))
@@ -367,10 +374,17 @@ public class PublicacionControllerTest {
     void testBuscarOfertasDeUnaPublicacionNoExiste_LanzaExcepcion() throws Exception {
         String idPublicacion = "10";
 
-        when(ofertaService.buscarOfertasPorPublicacion(idPublicacion))
-                .thenThrow(new PublicacionNoEncontradaException("No existe la publicación con id: 10"));
+        // Mock del JWT
+        Claims claims = mock(Claims.class);
+        when(claims.getSubject()).thenReturn("2");
+        when(jwtUtil.validateToken("testdetoken")).thenReturn(claims);
 
-        mockMvc.perform(get("/api/publicaciones/" + idPublicacion + "/ofertas"))
+        // no se llega a ejecutar ofertaService.buscarOfertasPorPublicacion
+        when(publicacionService.buscarPublicacionDTOPorId(idPublicacion))
+                .thenThrow(new PublicacionNoEncontradaException("No existe la publicación con id: " + idPublicacion));
+
+        mockMvc.perform(get("/api/publicaciones/" + idPublicacion + "/ofertas")
+                .cookie(new Cookie("jwt", "testdetoken")))
                 .andExpect(status().isNotFound());
     }
 
@@ -378,10 +392,19 @@ public class PublicacionControllerTest {
     void testBuscarOfertaPorId() throws Exception {
         String idOferta = oferta1.getId();
         OfertaDto ofertaDto = ofertaAOfertaDTO(oferta1);
+        PublicacionDto publicacionDto1 = publicacionAPublicacionDTO(publicacion1);
+
+        // Mock de JWT y de la publicacion asociada a la oferta 1
+        Claims claims = mock(Claims.class);
+        when(claims.getSubject()).thenReturn(oferta1.getOfertante().getId());
+        when(jwtUtil.validateToken("testdetoken")).thenReturn(claims);
 
         when(ofertaService.buscarOfertaDto(idOferta)).thenReturn(ofertaDto);
+        when(publicacionService.buscarPublicacionDTOPorId(ofertaDto.getIdPublicacion()))
+                .thenReturn(publicacionDto1);
 
-        mockMvc.perform(get("/api/publicaciones/ofertas/1"))
+        mockMvc.perform(get("/api/publicaciones/ofertas/1")
+                .cookie(new Cookie("jwt", "testdetoken")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(idOferta))
                 .andExpect(jsonPath("$.monto").value(45000))
@@ -394,10 +417,17 @@ public class PublicacionControllerTest {
     void testBuscarOfertaPorId_NoExiste_LanzaExcepcion() throws Exception {
         String idOferta = "10";
 
+        // Mock del JWT
+        Claims claims = mock(Claims.class);
+        when(claims.getSubject()).thenReturn("2");
+        when(jwtUtil.validateToken("testdetoken")).thenReturn(claims);
+
+        // Mock de la excepcion
         when(ofertaService.buscarOfertaDto(idOferta))
                 .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe la oferta con id: " + idOferta));
 
-        mockMvc.perform(get("/api/publicaciones/ofertas/" + idOferta))
+        mockMvc.perform(get("/api/publicaciones/ofertas/" + idOferta)
+                        .cookie(new Cookie("jwt", "testdetoken")))
                 .andExpect(status().isNotFound());
     }
 
@@ -431,7 +461,7 @@ public class PublicacionControllerTest {
         doNothing().when(publicacionService).finalizarPublicacion(idPublicacion, publicacion1.getVersion());
 
         mockMvc.perform(patch("/api/publicaciones/ofertas/" + idOferta)
-                        .header("Authorization", token)
+                        .cookie(new Cookie("jwt", "testdetoken"))
                         .contentType("application/json-patch+json")
                         .content("[{ \"op\": \"replace\", \"path\": \"/estado\", \"value\": \"ACEPTADO\" }]"))
                 .andExpect(status().isOk())
@@ -454,7 +484,7 @@ public class PublicacionControllerTest {
         when(publicacionService.buscarPublicacionPorId(idPublicacion)).thenReturn(publicacion1);
 
         mockMvc.perform(patch("/api/publicaciones/ofertas/" + idOferta)
-                        .header("Authorization", token)
+                        .cookie(new Cookie("jwt", "testdetoken"))
                         .contentType("application/json-patch+json")
                         .content("[{ \"op\": \"replace\", \"path\": \"/estado\", \"value\": \"ACEPTADO\" }]"))
                 .andExpect(status().isForbidden());
@@ -487,7 +517,7 @@ public class PublicacionControllerTest {
         doNothing().when(publicacionService).finalizarPublicacion(idPublicacion, publicacion1.getVersion());
 
         mockMvc.perform(patch("/api/publicaciones/ofertas/" + idOferta)
-                        .header("Authorization", token)
+                        .cookie(new Cookie("jwt", "testdetoken"))
                         .contentType("application/json-patch+json")
                         .content(patchJson))
                 .andExpect(status().isOk());
@@ -517,7 +547,7 @@ public class PublicacionControllerTest {
         String patchJson = "[{ \"op\": \"replace\", \"path\": \"/estado\", \"value\": \"RECHAZADO\" }]";
 
         mockMvc.perform(patch("/api/publicaciones/ofertas/" + idOferta)
-                        .header("Authorization", token)
+                        .cookie(new Cookie("jwt", "testdetoken"))
                         .contentType("application/json-patch+json")
                         .content(patchJson))
                 .andExpect(status().isOk());
@@ -540,11 +570,16 @@ public class PublicacionControllerTest {
         response.setPageSize(6);
         response.setLastPage(true);
 
+        Claims claims = mock(Claims.class);
+        when(claims.getSubject()).thenReturn("1");
+        when(jwtUtil.validateToken("testdetoken")).thenReturn(claims);
+
         when(publicacionService.buscarPublicacionesPorUsuario("1", 0, 6)).thenReturn(response);
 
         mockMvc.perform(get("/api/publicaciones/usuario/1")
                         .param("pageNo", "0")
-                        .param("pageSize", "6"))
+                        .param("pageSize", "6")
+                        .cookie(new Cookie("jwt", "testdetoken")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.length()").value(2))
                 .andExpect(jsonPath("$.content[0].id").value("1"))
@@ -568,11 +603,16 @@ public class PublicacionControllerTest {
         response.setPageSize(2);
         response.setLastPage(true);
 
+        Claims claims = mock(Claims.class);
+        when(claims.getSubject()).thenReturn("1");
+        when(jwtUtil.validateToken("testdetoken")).thenReturn(claims);
+
         when(publicacionService.buscarPublicacionesPorUsuario("1", 1, 2)).thenReturn(response);
 
         mockMvc.perform(get("/api/publicaciones/usuario/1")
                         .param("pageNo", "1")
-                        .param("pageSize", "2"))
+                        .param("pageSize", "2")
+                        .cookie(new Cookie("jwt", "testdetoken")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.length()").value(0))
                 .andExpect(jsonPath("$.totalElements").value(2))
@@ -594,6 +634,10 @@ public class PublicacionControllerTest {
         OfertaDto ofertaDto2 = ofertaAOfertaDTO(oferta2);
         OfertaDto ofertaDto3 = ofertaAOfertaDTO(oferta3);
 
+        Claims claims = mock(Claims.class);
+        when(claims.getSubject()).thenReturn("1");
+        when(jwtUtil.validateToken("testdetoken")).thenReturn(claims);
+
         // Mock servicios
         when(publicacionService.buscarPublicacionesPorUsuario("1"))
                 .thenReturn(List.of(publicacionDto1, publicacionDto2));
@@ -604,7 +648,8 @@ public class PublicacionControllerTest {
         when(ofertaService.buscarOfertasPorPublicacion(publicacion2.getId()))
                 .thenReturn(List.of(ofertaDto3));
 
-        mockMvc.perform(get("/api/publicaciones/usuario/1/ofertas/recibidas"))
+        mockMvc.perform(get("/api/publicaciones/usuario/1/ofertas/recibidas")
+                        .cookie(new Cookie("jwt", "testdetoken")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(3))
                 .andExpect(jsonPath("$[0].id").value("1"))
@@ -618,10 +663,15 @@ public class PublicacionControllerTest {
         OfertaDto ofertaDto1 = ofertaAOfertaDTO(oferta1);
         OfertaDto ofertaDto2 = ofertaAOfertaDTO(oferta2);
 
+        Claims claims = mock(Claims.class);
+        when(claims.getSubject()).thenReturn("4"); // id del ofertante
+        when(jwtUtil.validateToken("testdetoken")).thenReturn(claims);
+
         when(ofertaService.buscarOfertasRealizadas("4"))
                 .thenReturn(List.of(ofertaDto1, ofertaDto2));
 
-        mockMvc.perform(get("/api/publicaciones/usuario/4/ofertas/realizadas"))
+        mockMvc.perform(get("/api/publicaciones/usuario/4/ofertas/realizadas")
+                .cookie(new Cookie("jwt", "testdetoken")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("$[0].id").value("1"))
@@ -633,9 +683,14 @@ public class PublicacionControllerTest {
     @Test
     void testListarOfertasRealizadasPorUnUsuario_SinOfertas() throws Exception {
         // El usuario con ID 3 es elpublicador3 el cual no realizo ofertas
+        Claims claims = mock(Claims.class);
+        when(claims.getSubject()).thenReturn("3");
+        when(jwtUtil.validateToken("testdetoken")).thenReturn(claims);
+
         when(ofertaService.buscarOfertasRealizadas("3")).thenReturn(List.of());
 
-        mockMvc.perform(get("/api/publicaciones/usuario/3/ofertas/realizadas"))
+        mockMvc.perform(get("/api/publicaciones/usuario/3/ofertas/realizadas")
+                        .cookie(new Cookie("jwt", "testdetoken")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(0));
     }
@@ -679,7 +734,7 @@ public class PublicacionControllerTest {
                         .file(cartaInteresImagen1)
                         .file(cartaInteresImagen3)
                         .part(publicacionPart)
-                        .header("Authorization", token)
+                        .cookie(new Cookie("jwt", "testdetoken"))
                         .contentType("multipart/form-data"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value("1"))

@@ -8,7 +8,7 @@ import com.example.cartasIntercambio.repository.irepository.IPublicacionReposito
 import com.example.cartasIntercambio.repository.irepository.IUsuarioRepository;
 import com.example.cartasIntercambio.service.PublicacionServiceImpl;
 import com.example.cartasIntercambio.service.UsuarioServiceImpl;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -22,9 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 import static org.mockito.Mockito.mock;
