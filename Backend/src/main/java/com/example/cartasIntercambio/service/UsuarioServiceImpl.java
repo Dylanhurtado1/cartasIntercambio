@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -71,32 +70,6 @@ public class UsuarioServiceImpl implements IUsuarioService {
     }
 
     @Override
-    public List<UsuarioResponseDto> buscarUsuarios(String user, String nombre, String correo) {
-        return List.of();
-    }
-
-    @Override
-    public UsuarioResponseDto actualizarUsuario(String id, UsuarioDto usuarioDto) {
-        return null;
-    }
-
-    @Override
-    public List<UsuarioResponseDto> listarUsuarios() {
-        return List.of();
-    }
-
-    @Override
-    public UsuarioResponseDto crearAdmin(UsuarioDto dto) {
-        return null;
-    }
-
-    @Override
-    public void borrarUsuario(String id) {
-
-    }
-
-
-    @Override
     public UsuarioResponseDto login(UsuarioDto userLogin, HttpServletResponse response) {
 
         Optional<Usuario> usuarioOpt = usuarioRepository.findByUser(userLogin.getUser());
@@ -123,4 +96,5 @@ public class UsuarioServiceImpl implements IUsuarioService {
     public void logout(HttpServletResponse response) {
         cookieService.deleteHttpCookie("jwt", response);
     }
+
 }

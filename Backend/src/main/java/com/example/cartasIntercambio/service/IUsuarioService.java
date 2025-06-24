@@ -12,16 +12,5 @@ public interface IUsuarioService {
     UsuarioResponseDto login(UsuarioDto usuarioDto, HttpServletResponse response);
     void logout(HttpServletResponse response);
     UsuarioResponseDto buscarUsuarioPorId(String id);
-    List<UsuarioResponseDto> buscarUsuarios(String user, String nombre, String correo);
-    UsuarioResponseDto actualizarUsuario(String id, UsuarioDto usuarioDto);
-    List<UsuarioResponseDto> listarUsuarios();
-    UsuarioResponseDto crearAdmin(UsuarioDto dto);
-    void borrarUsuario(String id);
-
-
-
-
-
-
 
 }

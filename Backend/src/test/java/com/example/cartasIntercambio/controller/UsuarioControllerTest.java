@@ -2,14 +2,15 @@ package com.example.cartasIntercambio.controller;
 
 import com.example.cartasIntercambio.dto.UsuarioDto;
 import com.example.cartasIntercambio.dto.UsuarioResponseDto;
-import com.example.cartasIntercambio.exception.UsuarioNoEncontradoException;
 import com.example.cartasIntercambio.exception.UsuarioYaExisteException;
 import com.example.cartasIntercambio.jwt.JwtUtil;
 import com.example.cartasIntercambio.model.Usuario.Usuario;
 import com.example.cartasIntercambio.repository.irepository.IOfertaRepository;
 import com.example.cartasIntercambio.repository.irepository.IPublicacionRepository;
 import com.example.cartasIntercambio.repository.irepository.IUsuarioRepository;
+import com.example.cartasIntercambio.service.CookieService;
 import com.example.cartasIntercambio.service.UsuarioServiceImpl;
+import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,14 +26,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(UsuarioController.class)
@@ -61,13 +61,19 @@ public class UsuarioControllerTest {
     private IPublicacionRepository publicacionRepository;
 
     @MockBean
-    private JwtUtil jwtUtil;
-
-    @MockBean
     private MongoTemplate mongoTemplate;
 
     @MockBean
-    private BCryptPasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
+
+    @MockBean
+    private JwtUtil jwtUtil;
+
+    @MockBean
+    private CookieService cookieService;
+
+    @MockBean
+    private HttpServletResponse response;
 
     @BeforeEach
     void init() throws ParseException {
@@ -123,169 +129,47 @@ public class UsuarioControllerTest {
     }
 
     @Test
-    void testListarUsuarios() throws Exception {
-        UsuarioResponseDto adminResponseDto1 = adminAUsuarioResponseDTO(admin1);
+    void testLogin() throws Exception {
+        UsuarioDto usuarioDto2 = usuarioAUsuarioDTO(usuario2);
         UsuarioResponseDto usuarioResponseDto2 = usuarioAUsuarioResponseDTO(usuario2);
-        UsuarioResponseDto usuarioResponseDto3 = usuarioAUsuarioResponseDTO(usuario3);
 
-        when(usuarioService.listarUsuarios()).thenReturn(List.of(adminResponseDto1, usuarioResponseDto2, usuarioResponseDto3));
+        when(usuarioService.login(any(UsuarioDto.class), any(HttpServletResponse.class))).thenReturn(usuarioResponseDto2);
 
-        mockMvc.perform(get("/api/usuarios"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()").value(3))
-                .andExpect(jsonPath("$[0].id").value(adminResponseDto1.getId()))
-                .andExpect(jsonPath("$[0].user").value(adminResponseDto1.getUser()))
-                .andExpect(jsonPath("$[0].correo").value(adminResponseDto1.getCorreo()))
-                .andExpect(jsonPath("$[0].tipo").value("admin"))
-                .andExpect(jsonPath("$[1].id").value(usuarioResponseDto2.getId()))
-                .andExpect(jsonPath("$[1].user").value(usuarioResponseDto2.getUser()))
-                .andExpect(jsonPath("$[1].correo").value(usuarioResponseDto2.getCorreo()))
-                .andExpect(jsonPath("$[1].tipo").value("usuario"))
-                .andExpect(jsonPath("$[2].id").value(usuarioResponseDto3.getId()))
-                .andExpect(jsonPath("$[2].user").value(usuarioResponseDto3.getUser()))
-                .andExpect(jsonPath("$[2].correo").value(usuarioResponseDto3.getCorreo()))
-                .andExpect(jsonPath("$[2].tipo").value("usuario"));
-    }
-
-    @Test
-    void testListarUsuarios_Vacio() throws Exception {
-        when(usuarioService.listarUsuarios()).thenReturn(List.of());
-
-        mockMvc.perform(get("/api/usuarios"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(0));
-    }
-
-    @Test
-    void testBuscarUsuarioPorId() throws Exception {
-        UsuarioResponseDto usuarioResponseDto2 = usuarioAUsuarioResponseDTO(usuario2); // tiene id 2
-
-        when(usuarioService.buscarUsuarioPorId("2")).thenReturn(usuarioResponseDto2);
-
-        mockMvc.perform(get("/api/usuarios/2"))
+        mockMvc.perform(post("/api/usuarios/login")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(usuarioDto2)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value("2"))
-                .andExpect(jsonPath("$.user").value(usuario2.getUser()))
-                .andExpect(jsonPath("$.nombre").value(usuario2.getNombre()))
-                .andExpect(jsonPath("$.correo").value(usuario2.getEmail()))
+                .andExpect(jsonPath("$.user").value("juanpe80"))
+                .andExpect(jsonPath("$.nombre").value("Juan"))
+                .andExpect(jsonPath("$.correo").value("jperez@cartas.com"))
                 .andExpect(jsonPath("$.tipo").value("usuario"));
     }
 
     @Test
-    void testBuscarUsuarioPorId_NoEncontrado_LanzaExcepcion() throws Exception {
-        when(usuarioService.buscarUsuarioPorId("10"))
-                .thenThrow(new UsuarioNoEncontradoException("Usuario con id 10 no existe"));
+    void testLogin_CredencialesIncorrectas_LanzaExcepcion() throws Exception {
+        UsuarioDto usuarioDto2 = usuarioAUsuarioDTO(usuario2);
+        usuarioDto2.setPassword("passwordInvalida");
 
-        mockMvc.perform(get("/api/usuarios/10"))
-                .andExpect(status().isNotFound());
-    }
+        when(usuarioService.login(any(UsuarioDto.class), any(HttpServletResponse.class))).thenReturn(null);
 
-    @Test
-    void testBuscarUsuariosConFiltros() throws Exception { // filtro por user
-        UsuarioResponseDto usuarioResponseDto3 = usuarioAUsuarioResponseDTO(usuario3);
-
-        when(usuarioService.buscarUsuarios(eq("pedro25"), isNull(), isNull()))
-                .thenReturn(List.of(usuarioResponseDto3));
-
-        mockMvc.perform(get("/api/usuarios/search")
-                        .param("user", "pedro25"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(1))
-                .andExpect(jsonPath("$[0].id").value("3"))
-                .andExpect(jsonPath("$[0].user").value("pedro25"))
-                .andExpect(jsonPath("$[0].nombre").value("Pedro"))
-                .andExpect(jsonPath("$[0].correo").value("pgonzales@cartas.com"))
-                .andExpect(jsonPath("$[0].tipo").value("usuario"));
-    }
-
-    @Test
-    void testBuscarUsuariosConFiltrosVacio() throws Exception {
-        UsuarioResponseDto adminResponseDto1 = adminAUsuarioResponseDTO(admin1);
-        UsuarioResponseDto usuarioResponseDto2 = usuarioAUsuarioResponseDTO(usuario2);
-        UsuarioResponseDto usuarioResponseDto3 = usuarioAUsuarioResponseDTO(usuario3);
-        UsuarioResponseDto usuarioResponseDto4 = usuarioAUsuarioResponseDTO(usuario4);
-
-        when(usuarioService.buscarUsuarios(isNull(), isNull(), isNull()))
-                .thenReturn(List.of(adminResponseDto1, usuarioResponseDto2, usuarioResponseDto3, usuarioResponseDto4));
-
-        mockMvc.perform(get("/api/usuarios/search"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(4))
-                .andExpect(jsonPath("$[0].id").value("1"))
-                .andExpect(jsonPath("$[0].nombre").value("Admin"))
-                .andExpect(jsonPath("$[1].id").value("2"))
-                .andExpect(jsonPath("$[1].nombre").value("Juan"))
-                .andExpect(jsonPath("$[2].id").value("3"))
-                .andExpect(jsonPath("$[2].nombre").value("Pedro"))
-                .andExpect(jsonPath("$[3].id").value("4"))
-                .andExpect(jsonPath("$[3].nombre").value("Kaila"));
-    }
-
-    @Test
-    void testCrearAdmin() throws Exception {
-        UsuarioDto adminDTO = usuarioAUsuarioDTO(admin1);
-        UsuarioResponseDto adminResponseDTO = adminAUsuarioResponseDTO(admin1);
-
-        when(usuarioService.crearAdmin(any(UsuarioDto.class))).thenReturn(adminResponseDTO);
-
-        mockMvc.perform(post("/api/usuarios/admins")
+        mockMvc.perform(post("/api/usuarios/login")
                         .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(adminResponseDTO)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value("1"))
-                .andExpect(jsonPath("$.user").value("ADMINUSER"))
-                .andExpect(jsonPath("$.nombre").value("Admin"))
-                .andExpect(jsonPath("$.correo").value("admin@cartas.com"))
-                .andExpect(jsonPath("$.tipo").value("admin"));
+                        .content(objectMapper.writeValueAsString(usuarioDto2)))
+                .andExpect(status().isUnauthorized())
+                .andExpect(content().string("Login inválido"));
     }
 
     @Test
-    void testCrearAdmin_YaExistente_LanzaExcepcion() throws Exception {
-        UsuarioDto adminDTO = usuarioAUsuarioDTO(admin1);
+    void testLogout() throws Exception {
 
-        when(usuarioService.crearAdmin(any(UsuarioDto.class)))
-                .thenThrow(new UsuarioYaExisteException("Ya existe un usuario (o admin) con ese user y/o correo"));
+        doNothing().when(usuarioService).logout(any(HttpServletResponse.class));
 
-        mockMvc.perform(post("/api/usuarios/admins")
-                        .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(adminDTO)))
-                .andExpect(status().isConflict())
-                .andExpect(content().string("Ya existe un usuario (o admin) con ese user y/o correo"));
+        mockMvc.perform(post("/api/usuarios/logout"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Sesion cerrada correctamente"));
     }
 
-//    @Test
-//    void testLogin() throws Exception {
-//        UsuarioDto usuarioDto2 = usuarioAUsuarioDTO(usuario2);
-//        UsuarioResponseDto usuarioResponseDto2 = usuarioAUsuarioResponseDTO(usuario2);
-//
-//        when(usuarioService.login(any(UsuarioDto.class))).thenReturn(usuarioResponseDto2);
-//        when(jwtUtil.generateToken("2", "juanpe80")).thenReturn("test-jwt-token");
-//
-//        mockMvc.perform(post("/api/usuarios/login")
-//                        .contentType("application/json")
-//                        .content(objectMapper.writeValueAsString(usuarioDto2)))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.token").value("test-jwt-token"))
-//                .andExpect(jsonPath("$.usuario.id").value("2"))
-//                .andExpect(jsonPath("$.usuario.user").value("juanpe80"))
-//                .andExpect(jsonPath("$.usuario.nombre").value("Juan"))
-//                .andExpect(jsonPath("$.usuario.correo").value("jperez@cartas.com"))
-//                .andExpect(jsonPath("$.usuario.tipo").value("usuario"));
-//    }
-
-//    @Test
-//    void testLogin_CredencialesIncorrectas_LanzaExcepcion() throws Exception {
-//        UsuarioDto usuarioDto2 = usuarioAUsuarioDTO(usuario2);
-//        usuarioDto2.setPassword("passwordInvalida");
-//
-//        when(usuarioService.login(any(UsuarioDto.class))).thenReturn(null);
-//
-//        mockMvc.perform(post("/api/usuarios/login")
-//                        .contentType("application/json")
-//                        .content(objectMapper.writeValueAsString(usuarioDto2)))
-//                .andExpect(status().isUnauthorized())
-//                .andExpect(content().string("Login inválido"));
-//    }
 
     // -------------------------------------------------------------------------------------- //
     // --------------------------------- Metodos Auxiliares --------------------------------- //
