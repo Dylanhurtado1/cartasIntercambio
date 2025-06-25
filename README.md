@@ -244,12 +244,12 @@ JWT_SECRET=aca-va-clave-secreta-jwt
 
 ### Para acceder desde el navegador:
 
-Podés ver los datos de MongoDB usando el cliente web **mongo-express** desde https://mongo.intercambiocartas.online/
+Podés ver los datos de MongoDB usando el cliente web **mongo-express** desde **https://mongo.intercambiocartas.online/**
 
 La aplicación estará disponible en:
-- https://intercambiocartas.online/
+- **https://intercambiocartas.online/**
 
-- https://www.intercambiocartas.online/
+- **https://www.intercambiocartas.online/**
 
 ## Tests
 La aplicación incluye tests unitarios para los servicios y controladores. Utilizamos Jacoco para medir el coverage. 
@@ -263,3 +263,31 @@ mvn clean test
 mvn jacoco:report
 ```
 El reporte HTML se genera en target/site/jacoco/index.html
+
+## Seguridad
+
+Implementamos múltiples capas de protección para asegurar la estabilidad de la aplicación frente a posibles ataques, como DDoS o tests de carga:
+
+- Dominio propio **intercambiocartas.online**
+
+- **Cloudflare como proxy DNS**:
+  * Protección contra DDoS y el modo Bot Fight.
+  * Se agregó una regla personalizada que bloquea el acceso a cualquier IP fuera de Argentina.
+  * Opera como proxy para ocultar la IP real de la instancia EC2.
+
+- **NGINX instalado en la instancia EC2**:
+  * Proxy inverso entre el tráfico externo y los contenedores de la aplicación.
+  * Configuración para limitar peticiones a 60 por minuto por IP (retorna 429 Too Many Requests).
+
+- **HTTPS**:
+  * Se instaló Certbot en la instancia para obtener un certificado SSL gratuito de Let's Encrypt.
+  * Se configuró NGINX para forzar HTTPS y asegurar el tráfico.
+
+- **Frontend**:
+
+  Bloquea durante 1 minuto si se realizan más de 75 requests en 1 minuto.
+
+- **Backend**:
+  * Clase RateLimitFilter que bloquea por 1 minuto a cualquier IP que supere 50 peticiones por minuto.
+  * El filtro devuelve un 429 Too Many Requests cuando se excede el límite.
+
